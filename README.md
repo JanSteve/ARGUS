@@ -53,24 +53,20 @@ argus/
 
 ## Getting Started
 
-> **Note:** ARGUS is in the planning phase. There is no application to run yet. The instructions below will be updated when Phase 1 (Foundation) is complete.
+To clone the repository, validate system dependencies (Node.js, Rust, Ollama), install node modules, and bootstrap the project in one command, run the following for your platform:
 
-### Prerequisites
-
-- Node.js 22+
-- Rust (latest stable) — if using Tauri
-- Git 2.x+
-
-### Development
-
+### macOS / Linux
 ```bash
-git clone https://github.com/JanSteve/argus.git
-cd argus
-npm install
-npm run dev
+git clone https://github.com/JanSteve/ARGUS.git && cd ARGUS && git checkout batman && chmod +x setup.sh && ./setup.sh
 ```
 
-> These commands will work once Phase 1 scaffolding is complete.
+### Windows (PowerShell)
+```powershell
+git clone https://github.com/JanSteve/ARGUS.git; cd ARGUS; git checkout batman; .\setup.ps1
+```
+
+> **Note:** The `git checkout batman` step is only required during the active planning phase. Once Phase 1 is completed and merged, you will be able to run this directly from the `main` branch.
+
 
 ## Documentation
 
