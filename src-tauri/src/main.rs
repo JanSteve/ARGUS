@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    tmp_scaffold_lib::run()
+    argus_lib::run()
 }
