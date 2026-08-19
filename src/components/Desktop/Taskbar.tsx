@@ -12,12 +12,14 @@ interface TaskbarProps {
   windows: WindowSummary[];
   onToggleStartMenu: () => void;
   onToggleWindowMin: (id: string) => void;
+  onToggleControlPanel: () => void;
 }
 
 export const Taskbar: React.FC<TaskbarProps> = ({
   windows,
   onToggleStartMenu,
   onToggleWindowMin,
+  onToggleControlPanel,
 }) => {
   const [timeStr, setTimeStr] = useState("");
 
@@ -41,11 +43,14 @@ export const Taskbar: React.FC<TaskbarProps> = ({
   }, []);
 
   return (
-    <div className={`${styles.taskbar} glass-blur`}>
+    <div className={`${styles.taskbar} glass-blur`} onClick={(e) => e.stopPropagation()}>
       {/* Start Button App Launcher */}
       <button
         className={styles.startButton}
-        onClick={onToggleStartMenu}
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggleStartMenu();
+        }}
         data-testid="start-button"
         title="Open App Launcher"
       >
@@ -77,7 +82,15 @@ export const Taskbar: React.FC<TaskbarProps> = ({
 
       {/* System Tray (Clock) */}
       <div className={styles.tray}>
-        <div className={styles.time} data-testid="taskbar-clock">
+        <div
+          className={styles.time}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleControlPanel();
+          }}
+          style={{ cursor: "pointer", padding: "4px 8px", borderRadius: "4px", background: "rgba(255,255,255,0.02)" }}
+          data-testid="taskbar-clock"
+        >
           {timeStr}
         </div>
       </div>

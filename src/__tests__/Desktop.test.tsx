@@ -82,4 +82,34 @@ describe("ARGUS Desktop Window Manager UI", () => {
     // Window should be removed from DOM
     expect(screen.queryByTestId(/^window-frame-chat/)).not.toBeInTheDocument();
   });
+
+  it("opens custom right-click context menu on desktop wallpaper", () => {
+    render(<Desktop />);
+    
+    // Check that context menu does not exist
+    expect(screen.queryByTestId("context-menu")).not.toBeInTheDocument();
+    
+    // Trigger right click (context menu event) on desktop wallpaper
+    fireEvent.contextMenu(screen.getByTestId("desktop-wallpaper"));
+    
+    // Context menu should now be visible
+    expect(screen.getByTestId("context-menu")).toBeInTheDocument();
+    expect(screen.getByText("Refresh Desktop")).toBeInTheDocument();
+    expect(screen.getByText("Cycle Wallpaper")).toBeInTheDocument();
+  });
+
+  it("toggles Control Panel Action Center when clicking taskbar clock", () => {
+    render(<Desktop />);
+    
+    // Panel should be closed initially
+    expect(screen.queryByTestId("control-panel")).not.toBeInTheDocument();
+    
+    // Click clock to toggle open
+    fireEvent.click(screen.getByTestId("taskbar-clock"));
+    expect(screen.getByTestId("control-panel")).toBeInTheDocument();
+    
+    // Click clock again to toggle close
+    fireEvent.click(screen.getByTestId("taskbar-clock"));
+    expect(screen.queryByTestId("control-panel")).not.toBeInTheDocument();
+  });
 });

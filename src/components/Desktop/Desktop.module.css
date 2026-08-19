@@ -78,3 +78,20 @@
   bottom: var(--taskbar-height);
   z-index: 3;
 }
+
+/* Wallpaper Themes */
+.wSpace {
+  background: radial-gradient(circle at 80% 20%, #1e1b4b 0%, #0f172a 50%, #020617 100%) !important;
+}
+
+.wAurora {
+  background: linear-gradient(135deg, #115e59 0%, #0f172a 60%, #022c22 100%) !important;
+}
+
+.wForest {
+  background: linear-gradient(135deg, #334155 0%, #0f172a 70%, #020617 100%) !important;
+}
+
+.wCrimson {
+  background: radial-gradient(circle at 80% 20%, #581c87 0%, #0f172a 60%, #020617 100%) !important;
+}

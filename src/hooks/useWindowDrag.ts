@@ -3,11 +3,13 @@ import { useCallback, useRef } from "react";
 interface DragOptions {
   onDrag: (x: number, y: number) => void;
   onStartDrag?: () => void;
+  onDragEnd?: (x: number, y: number) => void;
 }
 
-export function useWindowDrag({ onDrag, onStartDrag }: DragOptions) {
+export function useWindowDrag({ onDrag, onStartDrag, onDragEnd }: DragOptions) {
   const isDragging = useRef(false);
   const startOffset = useRef({ x: 0, y: 0 });
+  const lastCoords = useRef({ x: 0, y: 0 });
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
@@ -16,6 +18,7 @@ export function useWindowDrag({ onDrag, onStartDrag }: DragOptions) {
       const newX = e.clientX - startOffset.current.x;
       const newY = e.clientY - startOffset.current.y;
       
+      lastCoords.current = { x: newX, y: newY };
       onDrag(newX, newY);
     },
     [onDrag]
@@ -25,7 +28,11 @@ export function useWindowDrag({ onDrag, onStartDrag }: DragOptions) {
     isDragging.current = false;
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", handleMouseUp);
-  }, [handleMouseMove]);
+    
+    if (onDragEnd) {
+      onDragEnd(lastCoords.current.x, lastCoords.current.y);
+    }
+  }, [handleMouseMove, onDragEnd]);
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent, currentX: number, currentY: number) => {
@@ -43,6 +50,8 @@ export function useWindowDrag({ onDrag, onStartDrag }: DragOptions) {
         x: e.clientX - currentX,
         y: e.clientY - currentY,
       };
+      
+      lastCoords.current = { x: currentX, y: currentY };
       
       if (onStartDrag) {
         onStartDrag();

@@ -19,6 +19,7 @@ interface WindowFrameProps {
   onMinimize: () => void;
   onMaximize: () => void;
   onMove: (x: number, y: number) => void;
+  onDragEnd?: (x: number, y: number) => void;
   onResize: (x: number, y: number, width: number, height: number) => void;
   children: React.ReactNode;
 }
@@ -39,12 +40,14 @@ export const WindowFrame: React.FC<WindowFrameProps> = ({
   onMinimize,
   onMaximize,
   onMove,
+  onDragEnd,
   onResize,
   children,
 }) => {
   const { handleMouseDown: startDrag } = useWindowDrag({
     onDrag: onMove,
     onStartDrag: onFocus,
+    onDragEnd,
   });
 
   const { handleMouseDown: startResize } = useWindowResize({

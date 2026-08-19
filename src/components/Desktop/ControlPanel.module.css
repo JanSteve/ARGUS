@@ -1,0 +1,159 @@
+.panel {
+  position: absolute;
+  bottom: calc(var(--taskbar-height) + 8px);
+  right: 16px;
+  width: 290px;
+  border-radius: var(--radius-panel);
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  z-index: 99999;
+  animation: slideUp 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Grid of quick setting toggle buttons */
+.toggles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggleBtn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-control);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.toggleBtn:hover {
+  background: var(--taskbar-item-hover);
+}
+
+.activeToggle {
+  background: var(--accent-color) !important;
+  color: white;
+  border-color: transparent;
+}
+
+.toggleIcon {
+  font-size: 14px;
+}
+
+.toggleLabel {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* Sliders section */
+.sliders {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.sliderRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sliderIcon {
+  font-size: 14px;
+  color: var(--fg-muted);
+  width: 18px;
+  text-align: center;
+}
+
+.slider {
+  flex: 1;
+  -webkit-appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  outline: none;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+/* Wallpapers selection */
+.wallpaperSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sectionTitle {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+}
+
+.wallpaperGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.thumb {
+  height: 38px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.15s ease;
+}
+
+.thumb:hover {
+  transform: scale(1.05);
+}
+
+.activeThumb {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 6px 0 var(--accent-color);
+}
+
+.wSpace { background: radial-gradient(circle, #1e1b4b 0%, #020617 100%); }
+.wAurora { background: linear-gradient(135deg, #115e59 0%, #022c22 100%); }
+.wForest { background: linear-gradient(135deg, #334155 0%, #0f172a 100%); }
+.wCrimson { background: radial-gradient(circle, #581c87 0%, #020617 100%); }
+
+/* Footer status info */
+.footer {
+  margin-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--fg-muted);
+}

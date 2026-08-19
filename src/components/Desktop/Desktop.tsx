@@ -1,8 +1,10 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import styles from "./Desktop.module.css";
 import { WindowFrame } from "./WindowFrame";
 import { Taskbar } from "./Taskbar";
 import { StartMenu } from "./StartMenu";
+import { ContextMenu } from "./ContextMenu";
+import { ControlPanel, WallpaperTheme } from "./ControlPanel";
 
 export interface WindowInstance {
   id: string;
@@ -17,10 +19,23 @@ export interface WindowInstance {
   zIndex: number;
 }
 
+interface SnapPreview {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export const Desktop: React.FC = () => {
   const [windows, setWindows] = useState<WindowInstance[]>([]);
   const [startMenuOpen, setStartMenuOpen] = useState(false);
+  const [controlPanelOpen, setControlPanelOpen] = useState(false);
   const [topZIndex, setTopZIndex] = useState(10);
+
+  // Wallpaper and Context Menu states
+  const [wallpaper, setWallpaper] = useState<WallpaperTheme>("space");
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
+  const [snapPreview, setSnapPreview] = useState<SnapPreview | null>(null);
 
   // Focus window: bring to front by incrementing and assigning top Z-index
   const focusWindow = useCallback((id: string) => {
@@ -40,18 +55,16 @@ export const Desktop: React.FC = () => {
     (appId: string, title: string) => {
       const existing = windows.find((w) => w.component === appId);
       if (existing) {
-        // Just focus the existing app window
         focusWindow(existing.id);
         return;
       }
 
-      // Position new window near center with slight offset based on existing windows
       const offset = windows.length * 24;
       const newWin: WindowInstance = {
         id: `${appId}-${Date.now()}`,
         title,
         component: appId as "chat" | "settings" | "explorer",
-        x: 100 + offset,
+        x: 120 + offset,
         y: 80 + offset,
         width: appId === "chat" ? 640 : 480,
         height: appId === "chat" ? 480 : 360,
@@ -82,9 +95,79 @@ export const Desktop: React.FC = () => {
     );
   }, []);
 
+  // Track window movements and trigger Aero Snap preview triggers
   const moveWindow = useCallback((id: string, x: number, y: number) => {
     setWindows((prev) => prev.map((w) => (w.id === id ? { ...w, x, y } : w)));
+
+    const taskbarHeight = 48;
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight - taskbarHeight;
+
+    // Detect edges for Aero Snap visual indicators
+    if (y < 8) {
+      // Top Edge: Maximize preview
+      setSnapPreview({ x: 0, y: 0, width: screenWidth, height: screenHeight });
+    } else if (x < 15) {
+      // Left Edge: Left half preview
+      setSnapPreview({ x: 0, y: 0, width: screenWidth / 2, height: screenHeight });
+    } else if (x > screenWidth - 100) {
+      // Right Edge: Right half preview
+      setSnapPreview({ x: screenWidth / 2, y: 0, width: screenWidth / 2, height: screenHeight });
+    } else {
+      setSnapPreview(null);
+    }
   }, []);
+
+  // Handle snap drop calculation when user releases window header
+  const handleDragEnd = useCallback(
+    (id: string, x: number, y: number) => {
+      const taskbarHeight = 48;
+      const screenWidth = window.innerWidth;
+      const screenHeight = window.innerHeight - taskbarHeight;
+
+      if (y < 8) {
+        // Snap Maximize
+        setWindows((prev) =>
+          prev.map((w) => (w.id === id ? { ...w, isMaximized: true, x: 0, y: 0 } : w))
+        );
+      } else if (x < 15) {
+        // Snap Left Half
+        setWindows((prev) =>
+          prev.map((w) =>
+            w.id === id
+              ? {
+                  ...w,
+                  isMaximized: false,
+                  x: 0,
+                  y: 0,
+                  width: screenWidth / 2,
+                  height: screenHeight,
+                }
+              : w
+          )
+        );
+      } else if (x > screenWidth - 100) {
+        // Snap Right Half
+        setWindows((prev) =>
+          prev.map((w) =>
+            w.id === id
+              ? {
+                  ...w,
+                  isMaximized: false,
+                  x: screenWidth / 2,
+                  y: 0,
+                  width: screenWidth / 2,
+                  height: screenHeight,
+                }
+              : w
+          )
+        );
+      }
+
+      setSnapPreview(null);
+    },
+    []
+  );
 
   const resizeWindow = useCallback(
     (id: string, x: number, y: number, width: number, height: number) => {
@@ -114,9 +197,73 @@ export const Desktop: React.FC = () => {
     [focusWindow]
   );
 
+  const handleDesktopClick = () => {
+    setStartMenuOpen(false);
+    setControlPanelOpen(false);
+    setContextMenu(null);
+  };
+
+  const handleRightClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setContextMenu({
+      x: e.clientX,
+      y: e.clientY,
+    });
+  };
+
+  const cycleWallpaper = () => {
+    const themes: WallpaperTheme[] = ["space", "aurora", "forest", "crimson"];
+    const nextIdx = (themes.indexOf(wallpaper) + 1) % themes.length;
+    setWallpaper(themes[nextIdx]);
+  };
+
+  // Close context menu on window resize
+  useEffect(() => {
+    const handleResize = () => setContextMenu(null);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const wallpaperClass = 
+    wallpaper === "space" ? styles.wSpace :
+    wallpaper === "aurora" ? styles.wAurora :
+    wallpaper === "forest" ? styles.wForest : styles.wCrimson;
+
+  // Context Menu option list
+  const contextMenuItems = [
+    {
+      label: "Refresh Desktop",
+      icon: "🔄",
+      onClick: () => {
+        // Aesthetic trigger
+      },
+    },
+    {
+      label: "Cycle Wallpaper",
+      icon: "🖼️",
+      onClick: cycleWallpaper,
+    },
+    {
+      label: "System Settings",
+      icon: "⚙️",
+      onClick: () => launchApp("settings", "Settings"),
+      dividerBefore: true,
+    },
+    {
+      label: "File Explorer",
+      icon: "📁",
+      onClick: () => launchApp("explorer", "File Explorer"),
+    },
+  ];
+
   return (
-    <div className={styles.desktop} data-testid="desktop-wallpaper">
-      {/* Wallpapers and texture */}
+    <div
+      className={`${styles.desktop} ${wallpaperClass}`}
+      onClick={handleDesktopClick}
+      onContextMenu={handleRightClick}
+      data-testid="desktop-wallpaper"
+    >
+      {/* Wallpapers texture grid overlay */}
       <div className={styles.wallpaper} />
 
       {/* Grid of shortcuts */}
@@ -139,6 +286,26 @@ export const Desktop: React.FC = () => {
         </div>
       </div>
 
+      {/* Aero Snap dashed preview overlay */}
+      {snapPreview && (
+        <div
+          style={{
+            position: "absolute",
+            left: `${snapPreview.x}px`,
+            top: `${snapPreview.y}px`,
+            width: `${snapPreview.width}px`,
+            height: `${snapPreview.height}px`,
+            border: "2px dashed var(--accent-color)",
+            background: "rgba(59, 130, 246, 0.08)",
+            zIndex: 99998,
+            pointerEvents: "none",
+            borderRadius: "4px",
+            transition: "all 0.1s ease",
+          }}
+          data-testid="snap-preview"
+        />
+      )}
+
       {/* Floating Window Container */}
       <div className={styles.workspace}>
         {windows.map((win) => (
@@ -150,7 +317,10 @@ export const Desktop: React.FC = () => {
             y={win.y}
             width={win.width}
             height={win.height}
-            isActive={windows.reduce((max, w) => (w.zIndex > max.zIndex ? w : max), windows[0]).id === win.id}
+            isActive={
+              windows.length > 0 &&
+              windows.reduce((max, w) => (w.zIndex > max.zIndex ? w : max), windows[0]).id === win.id
+            }
             isMinimized={win.isMinimized}
             isMaximized={win.isMaximized}
             zIndex={win.zIndex}
@@ -159,9 +329,9 @@ export const Desktop: React.FC = () => {
             onMinimize={() => minimizeWindow(win.id)}
             onMaximize={() => toggleMaximizeWindow(win.id)}
             onMove={(x, y) => moveWindow(win.id, x, y)}
+            onDragEnd={(x, y) => handleDragEnd(win.id, x, y)}
             onResize={(x, y, w, h) => resizeWindow(win.id, x, y, w, h)}
           >
-            {/* Render Mock Application content depending on type */}
             {win.component === "chat" && <ChatAppMock />}
             {win.component === "settings" && <SettingsAppMock />}
             {win.component === "explorer" && <FileExplorerAppMock />}
@@ -169,11 +339,30 @@ export const Desktop: React.FC = () => {
         ))}
       </div>
 
-      {/* Launcher Drawer (Start Menu) */}
+      {/* Right-click Context Menu */}
+      {contextMenu && (
+        <ContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          items={contextMenuItems}
+          onClose={() => setContextMenu(null)}
+        />
+      )}
+
+      {/* Start Menu Drawer */}
       {startMenuOpen && (
         <StartMenu
           onLaunchApp={launchApp}
           onClose={() => setStartMenuOpen(false)}
+        />
+      )}
+
+      {/* Control Panel Widget (Action Center) */}
+      {controlPanelOpen && (
+        <ControlPanel
+          currentWallpaper={wallpaper}
+          onChangeWallpaper={setWallpaper}
+          onClose={() => setControlPanelOpen(false)}
         />
       )}
 
@@ -182,11 +371,14 @@ export const Desktop: React.FC = () => {
         windows={windows.map((w) => ({
           id: w.id,
           title: w.title,
-          isActive: windows.reduce((max, w) => (w.zIndex > max.zIndex ? w : max), windows[0]).id === w.id,
+          isActive:
+            windows.length > 0 &&
+            windows.reduce((max, w) => (w.zIndex > max.zIndex ? w : max), windows[0]).id === w.id,
           isMinimized: w.isMinimized,
         }))}
         onToggleStartMenu={() => setStartMenuOpen(!startMenuOpen)}
         onToggleWindowMin={toggleWindowMinimize}
+        onToggleControlPanel={() => setControlPanelOpen(!controlPanelOpen)}
       />
     </div>
   );
