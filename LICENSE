@@ -1,0 +1,28 @@
+Copyright (c) 2026 Jan Steve Daniel. All rights reserved.
+
+Source-Available & Proprietary License
+
+By downloading, copying, installing, or using this software ("ARGUS" or "ARGUS OS"), you agree to the terms of this License. If you do not agree, do not use the software.
+
+1. PERMITTED USE
+You are granted a non-exclusive, non-transferable, royalty-free license to download the source code, compile it, and run the software locally on your personal device(s) solely for personal evaluation, educational exploration, and non-commercial development.
+
+2. RESTRICTIONS ON USE AND REDISTRIBUTION
+- You may NOT distribute, sublicense, rent, lease, or sell the software, its source code, or compiled binaries (whether modified or unmodified) in whole or in part, under any circumstances.
+- You may NOT host the software as a service, include it in a commercial SaaS offering, or bundle it as part of any commercial product without the prior written consent of the Copyright Holder (Jan Steve Daniel).
+- Any fork of the repository made under the terms of GitHub hosting must remain non-commercial and must link back directly to the original repository (https://github.com/JanSteve/ARGUS).
+
+3. TRADEMARKS AND BRANDING
+- The names "ARGUS", "ARGUS OS", the ARGUS logos, and all related branding are exclusive trademarks of Jan Steve Daniel.
+- You may not use these trademarks to promote, distribute, or label any derivative works or modified versions of the software.
+- The "About ARGUS" interface and system-wide trademark watermarks embedded in the User Interface (UI) must remain fully intact and visible in all compiled versions of the software. Removing or obscuring these notices constitutes a material breach of this license.
+
+4. INTELLECTUAL PROPERTY AND PATENT CLAIMS
+- The methods, systems, and algorithms implemented in this software, including but not limited to the local-first provider switching architecture and sandboxed desktop simulator window manager, are the intellectual property of Jan Steve Daniel.
+- Any unauthorized commercial exploitation of these systems may constitute patent and copyright infringement and will be subject to legal remedies.
+
+5. TERMINATION
+This license terminates automatically if you violate any of its terms. Upon termination, you must immediately cease all use of the software and destroy all copies of the software in your possession.
+
+6. NO WARRANTY
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

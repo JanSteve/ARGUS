@@ -86,8 +86,11 @@ Contributions are welcome once the project reaches Phase 1. See [DEVELOPMENT.md]
 
 ## License
 
-MIT
+Proprietary & Source-Available License. Copyright (c) 2026 Jan Steve Daniel. All rights reserved. 
+
+This software is for personal evaluation, educational, and non-commercial development use only. Commercial redistribution, hosting as a service, or unauthorized resale of the software or its modifications is strictly prohibited. See the [LICENSE](LICENSE) file for the full legal terms.
 
 ## Security
 
 If you discover a security vulnerability, please report it responsibly. Do not open a public issue. See [SECURITY.md](SECURITY.md) for details.
+
