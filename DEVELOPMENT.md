@@ -101,16 +101,30 @@ cp .env.example .env
 
 ## Local Development
 
-```bash
-# Install dependencies
-npm install
+To set up the development environment, check system prerequisites, install dependencies, and launch ARGUS, run the single-command setup script:
 
+**macOS/Linux:**
+```bash
+chmod +x setup.sh && ./setup.sh
+```
+
+**Windows:**
+```powershell
+.\setup.ps1
+```
+
+The script will validate your Node.js, Rust, and Ollama installation, guide you through any missing requirements, run `npm install`, and prepare the workspace.
+
+Once setup is complete, use the standard commands:
+
+```bash
 # Start development server (with hot-reload)
 npm run dev
 
 # Build for production
 npm run build
 ```
+
 
 ## CI/CD Expectations
 

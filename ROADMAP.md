@@ -31,7 +31,7 @@ Development is organized into clearly defined phases. Each phase has specific de
 
 ## Phase 1: Foundation
 
-**Objective:** Create a working desktop application shell with CI, testing, and a basic UI.
+**Objective:** Create a working desktop application shell with CI, testing, a basic UI, and one-command environment setup scripts.
 
 **Deliverables:**
 - Project scaffolded with chosen framework (Tauri or Electron)
@@ -42,6 +42,7 @@ Development is organized into clearly defined phases. Each phase has specific de
 - Vitest configured with happy-dom
 - CI pipeline (lint, test, build)
 - .env.example with documented variables
+- Native setup/bootstrap scripts (`setup.sh` for macOS/Linux, `setup.ps1` for Windows)
 
 **Dependencies:** Phase 0 approved
 
@@ -50,8 +51,10 @@ Development is organized into clearly defined phases. Each phase has specific de
 - `npm test` passes all tests
 - `npm run lint` passes
 - `npm run build` produces a runnable application
+- Running `setup.sh` or `setup.ps1` successfully validates the environment and bootstraps all dependencies
 - CI passes on push to main
 - Application renders the shell UI
+
 
 **Tests Required:**
 - Application renders without crashing

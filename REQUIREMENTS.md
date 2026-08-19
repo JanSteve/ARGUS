@@ -35,6 +35,13 @@
 - FR-5.3: The UI does not make absolute privacy guarantees (e.g. "100% private")
 - FR-5.4: The UI uses precise language (e.g. "Processed locally" or "Sent to Groq API")
 
+### FR-6: One-Command Setup & Installation
+- FR-6.1: Users can clone the repository and run a single command to validate their environment, install dependencies, and start the application
+- FR-6.2: Provide a native setup script for macOS/Linux (`setup.sh`) that checks for and helps install Node.js, Rust, and Ollama
+- FR-6.3: Provide a native setup script for Windows (`setup.ps1`) that performs the equivalent checks and installs
+- FR-6.4: The setup scripts run in a safe, non-destructive manner, prompting for confirmation before modifying the system or installing tools
+
+
 ## Non-Functional Requirements
 
 ### NFR-1: Performance
