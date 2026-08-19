@@ -41,6 +41,14 @@
 - FR-6.3: Provide a native setup script for Windows (`setup.ps1`) that performs the equivalent checks and installs
 - FR-6.4: The setup scripts run in a safe, non-destructive manner, prompting for confirmation before modifying the system or installing tools
 
+### FR-7: OS GUI / Desktop Shell Simulator
+- FR-7.1: The UI must present a simulated desktop environment with a customizable desktop wallpaper background
+- FR-7.2: Provide a taskbar at the bottom of the screen containing an App Launcher (Start Menu), a list of open application windows, and system status indicators (clock, connectivity)
+- FR-7.3: The App Launcher allows launching individual tools (Chat, Settings, File Explorer) inside separate window frames
+- FR-7.4: Each window frame must support dragging by its title bar, resizing from corners/edges, minimizing to the taskbar, maximizing, and closing
+- FR-7.5: Windows must stack correctly, with the active/focused window dynamically gaining the highest z-index
+
+
 
 ## Non-Functional Requirements
 

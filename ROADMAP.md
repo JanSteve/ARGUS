@@ -36,9 +36,10 @@ Development is organized into clearly defined phases. Each phase has specific de
 **Deliverables:**
 - Project scaffolded with chosen framework (Tauri or Electron)
 - Vite + React + TypeScript configured
-- Basic application window with sidebar navigation
-- Empty views: Chat, Settings
-- CSS design system (custom properties, dark theme)
+- OS-like Desktop Shell interface (wallpaper canvas, taskbar, start-menu launcher)
+- React Window Manager managing floating, draggable, resizable window frames
+- Floating application window shells: ChatView, SettingsView
+- CSS design system (custom properties, dark theme, window styles)
 - Vitest configured with happy-dom
 - CI pipeline (lint, test, build)
 - .env.example with documented variables
@@ -53,17 +54,18 @@ Development is organized into clearly defined phases. Each phase has specific de
 - `npm run build` produces a runnable application
 - Running `setup.sh` or `setup.ps1` successfully validates the environment and bootstraps all dependencies
 - CI passes on push to main
-- Application renders the shell UI
-
+- Application renders the Desktop Shell UI, and windows can be opened, dragged, and resized
 
 **Tests Required:**
 - Application renders without crashing
-- Navigation between views works
+- Window manager correctly opens, closes, drags, and focuses window elements
+- Navigation from taskbar and start menu works
 - All UI components render correctly
 
 **Documentation Required:**
 - Updated README with setup instructions
 - Updated DEVELOPMENT.md with actual commands
+
 
 ---
 

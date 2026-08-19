@@ -2,18 +2,22 @@
 
 ## What ARGUS Is
 
-ARGUS is a local-first, privacy-focused AI operating environment. It runs as a native desktop application on macOS, Linux, and Windows, providing a unified interface for interacting with AI models — both local and remote.
+ARGUS is a local-first, privacy-focused AI operating environment. It runs as a native desktop application on macOS, Linux, and Windows, presenting a unified **Desktop OS Simulator / Shell** interface. 
+
+Instead of a standard single-page website, the user interface mimics an operating system desktop environment (like Windows or Linux/GNOME) complete with a taskbar, a Start Menu-style app launcher, and overlapping, draggable, and resizable windows. Within this desktop environment, different apps run in windows (e.g. Chat, System Settings, File Explorer).
 
 ARGUS is not a cloud service. It is software that runs on the user's machine, keeps data under user control, and makes the distinction between local and remote AI processing explicit and transparent.
 
 ## Core Objective
 
-Provide a single, well-designed desktop environment where users can:
+Provide a single, well-designed AI desktop environment where users can:
 
-1. Chat with AI models (local or remote)
-2. Choose and switch between AI providers
-3. Understand exactly where their data is going
-4. Run AI inference entirely locally when desired
+1. Interact with AI apps inside a familiar Windows/Linux-like desktop GUI (taskbar, start menu, window manager)
+2. Chat with AI models (local or remote)
+3. Choose and switch between AI providers
+4. Understand exactly where their data is going
+5. Run AI inference entirely locally when desired
+
 
 ## Problem It Solves
 

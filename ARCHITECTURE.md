@@ -42,13 +42,30 @@ graph TB
 
 ### 2. React Frontend
 
-**Responsibility:** Render the user interface — chat view, settings, provider status, conversation list.
+**Responsibility:** Render the user interface, which behaves as a complete **OS Desktop Simulator & Window Manager**.
 
-**Key properties:**
-- Component-based architecture
-- CSS Modules for styling
-- No direct backend/network access (everything goes through the bridge)
-- Responsive to provider state changes
+**Key properties & Window Manager design:**
+- **Desktop Grid:** A wallpaper canvas where users can place shortcuts and launch application windows.
+- **Taskbar / Dock:** Positioned at the bottom, hosting the App Launcher (Start Menu), active window indicators, and system status widgets (connectivity, clock).
+- **Window Stack State:** Managed in global React context or state as an array of active window objects:
+  ```typescript
+  interface WindowInstance {
+    id: string;          // Unique window identifier
+    title: string;       // Application title
+    component: string;   // React component to render (e.g. ChatView, SettingsView)
+    x: number;           // Left position coordinate
+    y: number;           // Top position coordinate
+    width: number;       // Width in pixels
+    height: number;      // Height in pixels
+    isMinimized: boolean;
+    isMaximized: boolean;
+    zIndex: number;      // Determines stacking order (active window is on top)
+  }
+  ```
+- **Component-based architecture:** floating windows use custom React hooks for mouse event tracking to handle dragging and resizing.
+- **CSS Modules for styling:** style files are non-scoped or modular, enabling theme propagation and custom styles for desktop wallpapers and frames.
+- **No direct backend/network access:** all communication goes through the IPC bridge.
+
 
 ### 3. Native Bridge / IPC
 
