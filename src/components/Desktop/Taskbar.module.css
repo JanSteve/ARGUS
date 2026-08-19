@@ -1,0 +1,103 @@
+.taskbar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--taskbar-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  background: var(--taskbar-bg);
+  border-top: 1px solid var(--taskbar-border);
+  z-index: 9999; /* Ensure taskbar is always on top of windows */
+  user-select: none;
+}
+
+/* Start Button Launcher */
+.startButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 6px 14px;
+  border-radius: var(--radius-control);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.startButton:hover {
+  background: var(--taskbar-item-hover);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.startIcon {
+  font-size: 14px;
+  color: var(--accent-color);
+}
+
+/* Running apps section */
+.appsList {
+  flex: 1;
+  display: flex;
+  gap: 8px;
+  margin-left: 20px;
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+}
+
+.appsList::-webkit-scrollbar {
+  display: none; /* Safari/Chrome */
+}
+
+.appItem {
+  display: flex;
+  align-items: center;
+  max-width: 150px;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-control);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.appItem:hover {
+  background: var(--taskbar-item-hover);
+}
+
+.activeApp {
+  background: var(--taskbar-item-active);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 8px 0 rgba(59, 130, 246, 0.2);
+}
+
+.indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+/* System Tray */
+.tray {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.time {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--fg-default);
+  font-variant-numeric: tabular-nums; /* Monospace numbers for stability */
+}

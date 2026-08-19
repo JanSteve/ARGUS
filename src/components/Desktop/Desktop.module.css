@@ -1,0 +1,80 @@
+.desktop {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  /* Premium abstract dark gradient for desktop wallpaper */
+  background: radial-gradient(circle at 80% 20%, #1e1b4b 0%, #0f172a 50%, #020617 100%);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Wallpaper overlay for texture */
+.wallpaper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    radial-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-position: 0 0, 12px 12px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Grid of desktop icons/shortcuts */
+.iconGrid {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  bottom: calc(var(--taskbar-height) + 24px);
+  width: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  z-index: 2; /* Under open windows but above wallpaper */
+}
+
+.shortcut {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 80px;
+  padding: 10px;
+  border-radius: var(--radius-control);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.shortcut:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.shortcutIcon {
+  font-size: 28px;
+}
+
+.shortcutName {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--fg-default);
+  text-align: center;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  word-break: break-word;
+}
+
+/* Window Workspace Container */
+.workspace {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: var(--taskbar-height);
+  z-index: 3;
+}

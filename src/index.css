@@ -1,0 +1,117 @@
+/* ==============================================================================
+   ARGUS OS — Global Design System & CSS Variables
+   ============================================================================== */
+
+:root {
+  /* Colors */
+  --bg-desktop: #0a0b10;
+  --fg-default: #e2e8f0;
+  --fg-muted: #94a3b8;
+  
+  /* Glassmorphism Panel Colors */
+  --panel-bg: rgba(15, 23, 42, 0.45);
+  --panel-border: rgba(255, 255, 255, 0.08);
+  --panel-shadow: rgba(0, 0, 0, 0.35);
+  
+  /* Taskbar and Start Menu */
+  --taskbar-bg: rgba(10, 11, 16, 0.65);
+  --taskbar-border: rgba(255, 255, 255, 0.05);
+  --taskbar-item-hover: rgba(255, 255, 255, 0.08);
+  --taskbar-item-active: rgba(255, 255, 255, 0.12);
+  
+  /* Window Frame Active/Inactive States */
+  --win-active-bg: rgba(15, 23, 42, 0.65);
+  --win-active-border: rgba(255, 255, 255, 0.12);
+  --win-active-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.55);
+  
+  --win-inactive-bg: rgba(15, 23, 42, 0.5);
+  --win-inactive-border: rgba(255, 255, 255, 0.05);
+  --win-inactive-shadow: 0 8px 24px -10px rgba(0, 0, 0, 0.4);
+  
+  /* Controls and Accent Colors */
+  --accent-color: #3b82f6;
+  --accent-hover: #2563eb;
+  --accent-glow: rgba(59, 130, 246, 0.35);
+  
+  --danger-color: #ef4444;
+  --danger-hover: #dc2626;
+  
+  --success-color: #10b981;
+  
+  /* Typography */
+  --font-system: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  
+  /* Layout and Sizing */
+  --radius-window: 12px;
+  --radius-panel: 16px;
+  --radius-control: 8px;
+  --taskbar-height: 48px;
+}
+
+/* Global Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100vw;
+  height: 100vh;
+  font-family: var(--font-system);
+  background-color: var(--bg-desktop);
+  color: var(--fg-default);
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Glassmorphism Utilities */
+.glass-blur {
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+}
+
+.glass-panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 8px 32px 0 var(--panel-shadow);
+}
+
+/* Typography Utility */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+button, input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  outline: none;
+}
