@@ -1,4 +1,4 @@
-# ARGUS
+# ARGUS Sovereign OS
 
 **A local-first, privacy-focused AI Operating System simulator & desktop workspace.**
 
@@ -10,22 +10,22 @@
 
 ---
 
-## 🚀 What is ARGUS?
+## 🚀 What is ARGUS Sovereign OS?
 
-ARGUS is a cross-platform desktop application environment designed from the ground up to give developers and users a beautiful, responsive, and completely private space to run AI assistants. It runs local LLMs (via Ollama) and remote cloud intelligence (via Groq API) under an explicit, security-conscious privacy policy. 
+ARGUS Sovereign OS is a cross-platform desktop application environment designed from the ground up to give developers and users a beautiful, responsive, and completely private space to run AI assistants. It runs local LLMs (via Ollama) and remote cloud intelligence (via Groq API) under an explicit, security-conscious privacy policy. 
 
-Developed with a modular architecture and premium desktop simulation aesthetics, ARGUS acts as a sandboxed operating system environment within a native window wrapper.
+Developed with a modular architecture and premium desktop simulation aesthetics, ARGUS Sovereign OS acts as a sandboxed operating system environment within a native window wrapper. The term **Sovereign** highlights the core philosophy: **complete user ownership of data, models, and computational privacy**, bypassing big tech cloud telemetry.
 
 ---
 
 ## 🌟 Visual Features & UX Showcase
 
-ARGUS features a state-of-the-art Web-based OS Desktop environment tailored for a premium user experience:
+ARGUS Sovereign OS features a state-of-the-art Web-based OS Desktop environment tailored for a premium user experience:
 
 *   🪟 **Window Manager with Elastic Easing:** Windows animate with smooth spring-like physics (`cubic-bezier(0.34, 1.56, 0.64, 1)`) when spawned, minimized, maximized, or closed.
 *   📐 **8-Direction Resizing & Dragging:** Drag any window frame smoothly via its title bar, or resize from borders and corners with custom boundary constraints.
 *   ⚡ **Aero Snap (Snap Assist):** Drag a window to the top edge to preview full screen maximization, or drag to the left/right screen edges to snap them to 50% split-screen layouts.
-*   🖱️ **Desktop Context Menu:** Right-click anywhere on the desktop wallpaper background to access a context menu to "Refresh Desktop", "Cycle Wallpaper", or launch applications.
+*   鼠标 **Desktop Context Menu:** Right-click anywhere on the desktop wallpaper background to access a context menu to "Refresh Desktop", "Cycle Wallpaper", or launch applications.
 *   🎛️ **Quick Settings Control Panel (Action Center):** Click on the taskbar clock tray to launch a Quick Settings panel to toggle Wi-Fi and Bluetooth, adjust volume/brightness, and dynamically select desktop wallpapers.
 *   🌌 **Interactive Wallpapers:** Support for four premium dark themes (Deep Space, Aurora Borealis, Midnight Forest, and Crimson Nebula).
 
@@ -33,7 +33,7 @@ ARGUS features a state-of-the-art Web-based OS Desktop environment tailored for 
 
 ## ⚙️ One-Command Setup (Getting Started)
 
-ARGUS includes automated bootstrap scripts to validate your environment (Node.js, Git, Rust, Ollama), download dependencies, and boot the application in one command:
+ARGUS Sovereign OS includes automated bootstrap scripts to validate your environment (Node.js, Git, Rust, Ollama), download dependencies, and boot the application in one command:
 
 ### macOS / Linux
 ```bash

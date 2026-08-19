@@ -1,12 +1,12 @@
-# Installing ARGUS OS
+# Installing ARGUS Sovereign OS
 
-This guide provides step-by-step instructions to download, install, and run **ARGUS OS** on macOS, Windows, and Linux.
+This guide provides step-by-step instructions to download, install, and run **ARGUS Sovereign OS** on macOS, Windows, and Linux.
 
 ---
 
 ## 1. Quick One-Command Installation (Recommended)
 
-To install ARGUS OS automatically (including system prerequisites, dependencies, and environment setup), open your terminal and run the command for your platform:
+To install ARGUS Sovereign OS automatically (including system prerequisites, dependencies, and environment setup), open your terminal and run the command for your platform:
 
 ### macOS and Linux
 ```bash

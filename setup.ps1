@@ -1,10 +1,10 @@
 # ==============================================================================
-# ARGUS OS — Cross-Platform System Bootstrap & Setup Script
+# ARGUS Sovereign OS — Cross-Platform System Bootstrap & Setup Script
 # Supported Platforms: Windows (PowerShell)
 # ==============================================================================
 
 Write-Host "======================================================================" -ForegroundColor Blue
-Write-Host "               ARGUS OS — Windows Developer Setup                    " -ForegroundColor Blue
+Write-Host "               ARGUS Sovereign OS — Windows Developer Setup          " -ForegroundColor Blue
 Write-Host "======================================================================" -ForegroundColor Blue
 
 # 1. Check for Git

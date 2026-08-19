@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# ARGUS OS — Cross-Platform System Bootstrap & Setup Script
+# ARGUS AI OS — Cross-Platform System Bootstrap & Setup Script
 # Supported Platforms: macOS and Linux
 # ==============================================================================
 
@@ -31,7 +31,7 @@ log_error() {
 }
 
 echo -e "${BLUE}${BOLD}======================================================================${NC}"
-echo -e "${BLUE}${BOLD}               ARGUS OS — Developer Environment Setup                ${NC}"
+echo -e "${BLUE}${BOLD}               ARGUS Sovereign OS — Developer Environment Setup       ${NC}"
 echo -e "${BLUE}${BOLD}======================================================================${NC}"
 
 # 1. Detect OS

@@ -1,4 +1,4 @@
-name: ARGUS OS — Continuous Integration
+name: ARGUS Sovereign OS — Continuous Integration
 
 on:
   push:

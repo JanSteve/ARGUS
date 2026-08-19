@@ -49,7 +49,7 @@
 - FR-7.5: Windows must stack correctly, with the active/focused window dynamically gaining the highest z-index
 
 ### FR-8: System-wide Copyright & Trademark Display
-- FR-8.1: The desktop wallpaper area includes an immutable branding watermark overlay that displays: "ARGUS OS • © 2026 Jan Steve Daniel • All Rights Reserved"
+- FR-8.1: The desktop wallpaper area includes an immutable branding watermark overlay that displays: "ARGUS AI OS • © 2026 Jan Steve Daniel • All Rights Reserved"
 - FR-8.2: The App Launcher (Start Menu) must include a prominent "About ARGUS" utility
 - FR-8.3: The "About ARGUS" window displays the full copyright statement, proprietary license details, trademark assertions, and platform build version
 - FR-8.4: Trademark and copyright metadata are embedded in the compiled application bundle info (Tauri Info plist / Windows Version Resource) to secure host-level trademark visibility

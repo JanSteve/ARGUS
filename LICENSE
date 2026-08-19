@@ -2,7 +2,7 @@ Copyright (c) 2026 Jan Steve Daniel. All rights reserved.
 
 Source-Available & Proprietary License
 
-By downloading, copying, installing, or using this software ("ARGUS" or "ARGUS OS"), you agree to the terms of this License. If you do not agree, do not use the software.
+By downloading, copying, installing, or using this software ("ARGUS" or "ARGUS AI OS"), you agree to the terms of this License. If you do not agree, do not use the software.
 
 1. PERMITTED USE
 You are granted a non-exclusive, non-transferable, royalty-free license to download the source code, compile it, and run the software locally on your personal device(s) solely for personal evaluation, educational exploration, and non-commercial development.
@@ -13,7 +13,7 @@ You are granted a non-exclusive, non-transferable, royalty-free license to downl
 - Any fork of the repository made under the terms of GitHub hosting must remain non-commercial and must link back directly to the original repository (https://github.com/JanSteve/ARGUS).
 
 3. TRADEMARKS AND BRANDING
-- The names "ARGUS", "ARGUS OS", the ARGUS logos, and all related branding are exclusive trademarks of Jan Steve Daniel.
+- The names "ARGUS", "ARGUS AI OS", the ARGUS logos, and all related branding are exclusive trademarks of Jan Steve Daniel.
 - You may not use these trademarks to promote, distribute, or label any derivative works or modified versions of the software.
 - The "About ARGUS" interface and system-wide trademark watermarks embedded in the User Interface (UI) must remain fully intact and visible in all compiled versions of the software. Removing or obscuring these notices constitutes a material breach of this license.
 

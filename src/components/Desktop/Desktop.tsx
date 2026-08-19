@@ -434,7 +434,7 @@ const SettingsAppMock: React.FC = () => (
     <div>
       <h3 style={{ fontSize: "15px", marginBottom: "8px" }}>Branding & Licensing</h3>
       <div style={{ background: "rgba(255,255,255,0.02)", padding: "10px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
-        <p><strong>ARGUS OS</strong> v0.1.0</p>
+        <p><strong>ARGUS Sovereign OS</strong> v0.1.0</p>
         <p style={{ fontSize: "11px", color: "var(--fg-muted)", marginTop: "4px" }}>
           © 2026 Jan Steve Daniel. All rights reserved.
           Protected under Source-Available & Proprietary License.
