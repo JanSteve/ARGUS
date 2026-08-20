@@ -93,4 +93,223 @@ const Icons = {
   volume: (
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <polygon points="11,5 6,9 2,9 2,15 6,15 11,19" fill="currentColor" />
-      <path d="M15.54 8.46a5 5 0 0 1 0 7.07" fill="none" stroke="currentColo
+      <path d="M15.54 8.46a5 5 0 0 1 0 7.07" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M19.07 4.93a10 10 0 0 1 0 14.14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  ),
+  wifi: (
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M1.42 9a16 16 0 0 1 21.16 0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M5 13a10 10 0 0 1 14 0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M8.5 16.5a5 5 0 0 1 7 0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="12" cy="20" r="1.5" fill="currentColor" />
+    </svg>
+  ),
+  battery: (
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <rect x="1" y="7" width="18" height="10" rx="2" fill="none" stroke="currentColor" strokeWidth="2" />
+      <rect x="3.5" y="9.5" width="13" height="5" rx="1" fill="currentColor" opacity="0.8" />
+      <rect x="21" y="10" width="2" height="4" rx="0.5" fill="currentColor" />
+    </svg>
+  ),
+  bell: (
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" fill="none" stroke="currentColor" strokeWidth="2" />
+      <path d="M13.73 21a2 2 0 0 1-3.46 0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  ),
+};
+
+/* ─── Types ─── */
+interface WindowSummary {
+  id: string;
+  title: string;
+  isActive: boolean;
+  isMinimized: boolean;
+}
+
+interface TaskbarProps {
+  windows: WindowSummary[];
+  onToggleStartMenu: () => void;
+  onToggleWindowMin: (id: string) => void;
+  onToggleControlPanel: () => void;
+  onLaunchApp?: (appId: string, title: string) => void;
+}
+
+/* ─── Pinned Dock Configuration ─── */
+const PINNED_APPS = [
+  { id: "chat", title: "Chat Assistant", icon: Icons.chat, color: "#3b82f6" },
+  { id: "browser", title: "Browser", icon: Icons.browser, color: "#8b5cf6" },
+  { id: "terminal", title: "Terminal", icon: Icons.terminal, color: "#10b981" },
+  { id: "explorer", title: "File Explorer", icon: Icons.explorer, color: "#f59e0b" },
+  { id: "calculator", title: "Calculator", icon: Icons.calculator, color: "#6366f1" },
+  { id: "notes", title: "Notes", icon: Icons.notes, color: "#f97316" },
+  { id: "music", title: "Music Player", icon: Icons.music, color: "#ec4899" },
+  { id: "photos", title: "Photos", icon: Icons.photos, color: "#06b6d4" },
+  { id: "settings", title: "Settings", icon: Icons.settings, color: "#64748b" },
+];
+
+/* ─── Taskbar Component ─── */
+export const Taskbar: React.FC<TaskbarProps> = ({
+  windows,
+  onToggleStartMenu,
+  onToggleWindowMin,
+  onToggleControlPanel,
+  onLaunchApp,
+}) => {
+  const [timeStr, setTimeStr] = useState("");
+  const [dateStr, setDateStr] = useState("");
+
+  // Clock tick
+  useEffect(() => {
+    const tick = () => {
+      const now = new Date();
+      setTimeStr(
+        now.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        })
+      );
+      setDateStr(
+        now.toLocaleDateString([], {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+        })
+      );
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  // Resolve a pinned app to its running window (if any)
+  const getRunningWindow = (appId: string): WindowSummary | undefined => {
+    return windows.find((w) => w.id.startsWith(appId + "-") || w.title.toLowerCase().includes(appId));
+  };
+
+  // Handle dock item click: focus/toggle if running, else launch
+  const handleDockClick = (appId: string, title: string) => {
+    const running = getRunningWindow(appId);
+    if (running) {
+      onToggleWindowMin(running.id);
+    } else if (onLaunchApp) {
+      onLaunchApp(appId, title);
+    }
+  };
+
+  // Get active indicator class for a dock item
+  const getIndicatorClass = (appId: string): string => {
+    const win = getRunningWindow(appId);
+    if (!win) return "";
+    if (win.isMinimized) return `${styles.activeDot} ${styles.activeDotMinimized}`;
+    if (win.isActive) return `${styles.activeDot} ${styles.activeDotActive}`;
+    return styles.activeDot;
+  };
+
+  return (
+    <div
+      className={styles.taskbar}
+      onClick={(e) => e.stopPropagation()}
+      data-testid="taskbar-wrapper"
+    >
+      {/* ─── Left: Logo ─── */}
+      <div className={styles.leftSection}>
+        <div className={styles.showDesktop} title="Show Desktop" />
+        <span className={styles.logo}>ARGUS</span>
+      </div>
+
+      {/* ─── Center: Dock ─── */}
+      <div className={styles.centerDock}>
+        {/* Start Button */}
+        <div
+          className={styles.dockItem}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleStartMenu();
+          }}
+          data-testid="start-button"
+        >
+          <span className={styles.dockIcon} style={{ color: "#818cf8" }}>
+            {Icons.start}
+          </span>
+          <span className={styles.tooltip}>Start</span>
+        </div>
+
+        {/* Search Button */}
+        <div
+          className={styles.dockItem}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleStartMenu();
+          }}
+          data-testid="search-button"
+        >
+          <span className={styles.dockIcon}>
+            {Icons.search}
+          </span>
+          <span className={styles.tooltip}>Search</span>
+        </div>
+
+        {/* Separator */}
+        <div className={styles.dockSeparator} />
+
+        {/* Pinned Apps */}
+        {PINNED_APPS.map((app) => {
+          const indicatorClass = getIndicatorClass(app.id);
+          return (
+            <div
+              key={app.id}
+              className={styles.dockItem}
+              onClick={() => handleDockClick(app.id, app.title)}
+              data-testid={`taskbar-item-${app.id}`}
+            >
+              <span className={styles.dockIcon} style={{ color: app.color }}>
+                {app.icon}
+              </span>
+              {indicatorClass && <div className={indicatorClass} />}
+              <span className={styles.tooltip}>{app.title}</span>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* ─── Right: System Tray ─── */}
+      <div className={styles.rightSection}>
+        {/* Status Icons Group */}
+        <div className={styles.trayGroup} onClick={onToggleControlPanel}>
+          <span className={styles.trayIcon}>{Icons.wifi}</span>
+          <span className={styles.trayIcon}>{Icons.volume}</span>
+          <span className={styles.trayIcon}>{Icons.battery}</span>
+        </div>
+
+        {/* Clock */}
+        <div
+          className={styles.clockWidget}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleControlPanel();
+          }}
+          data-testid="taskbar-clock"
+        >
+          <span className={styles.time}>{timeStr}</span>
+          <span className={styles.date}>{dateStr}</span>
+        </div>
+
+        {/* Notification Center */}
+        <div
+          className={styles.notifButton}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleControlPanel();
+          }}
+          title="Notifications"
+        >
+          {Icons.bell}
+          <div className={styles.notifDot} />
+        </div>
+      </div>
+    </div>
+  );
+};

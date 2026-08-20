@@ -456,7 +456,7 @@ export const Desktop: React.FC = () => {
         ))}
       </div>
 
-      {/* Context Menu */}
+      {/* ctx */}
       {contextMenu && (
         <ContextMenu
           x={contextMenu.x}
