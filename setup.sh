@@ -120,10 +120,21 @@ else
     exit 1
 fi
 
+# 7. Register Global CLI Link
+log_info "Registering global 'argus' and 'argus-ai' terminal commands..."
+if npm link; then
+    log_success "Global command 'argus' registered! You can now launch the OS from anywhere by typing: argus"
+else
+    log_warn "Could not link CLI globally. You may need to run: sudo npm link"
+fi
+
 echo
 echo -e "${GREEN}${BOLD}======================================================================${NC}"
-echo -e "${GREEN}${BOLD}             Setup Complete! You are ready to develop ARGUS           ${NC}"
+echo -e "${GREEN}${BOLD}             Setup Complete! You are ready to launch ARGUS            ${NC}"
 echo -e "${GREEN}${BOLD}======================================================================${NC}"
-echo -e "To start the development server, run:"
-echo -e "  ${BOLD}npm run dev${NC}"
+echo -e "You can now run ARGUS OS from anywhere in your terminal by typing:"
+echo -e "  ${BOLD}argus${NC}"
+echo -e "Or for web-only mode:"
+echo -e "  ${BOLD}argus --web${NC}"
 echo
+

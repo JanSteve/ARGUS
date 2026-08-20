@@ -3,6 +3,10 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "bin": {
+    "argus": "./bin/cli.js",
+    "argus-ai": "./bin/cli.js"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

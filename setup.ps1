@@ -64,10 +64,18 @@ if (Test-Path package.json) {
     Exit 1
 }
 
+# 6. Register Global CLI Link
+Write-Host "[INFO] Registering global 'argus' and 'argus-ai' terminal commands..." -ForegroundColor Blue
+npm link
+Write-Host "[SUCCESS] Global command 'argus' registered! (Note: You may need to run in Administrator mode if it fails)." -ForegroundColor Green
+
 Write-Host ""
 Write-Host "======================================================================" -ForegroundColor Green
-Write-Host "             Setup Complete! You are ready to develop ARGUS           " -ForegroundColor Green
+Write-Host "             Setup Complete! You are ready to launch ARGUS            " -ForegroundColor Green
 Write-Host "======================================================================" -ForegroundColor Green
-Write-Host "To start the development server, run:" -ForegroundColor Green
-Write-Host "  npm run dev" -ForegroundColor Green
+Write-Host "You can now run ARGUS OS from anywhere in your PowerShell by typing:" -ForegroundColor Green
+Write-Host "  argus" -ForegroundColor Green
+Write-Host "Or for web-only mode:" -ForegroundColor Green
+Write-Host "  argus --web" -ForegroundColor Green
 Write-Host ""
+

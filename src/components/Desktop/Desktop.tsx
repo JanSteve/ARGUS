@@ -377,6 +377,12 @@ export const Desktop: React.FC = () => {
     }
   };
 
+  const isWindowActive = (winId: string) => {
+    if (windows.length === 0) return false;
+    const activeWin = windows.reduce((max, w) => (w.zIndex > max.zIndex ? w : max), windows[0]);
+    return activeWin.id === winId;
+  };
+
   return (
     <div
       className={`${styles.desktop} ${wallpaperClass}`}
@@ -433,10 +439,7 @@ export const Desktop: React.FC = () => {
             y={win.y}
             width={win.width}
             height={win.height}
-            isActive={
-              windows.length > 0 &&
-              windows.reduce((max, w) => (w.zIndex > max.zIndex ? w : max), windows[0]).id === win.id
-            }
+            isActive={isWindowActive(win.id)}
             isMinimized={win.isMinimized}
             isMaximized={win.isMaximized}
             zIndex={win.zIndex}
