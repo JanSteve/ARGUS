@@ -1,0 +1,49 @@
+.terminal {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(16px);
+  border-radius: var(--radius-window);
+  padding: 16px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  color: #10b981;
+  font-size: 14px;
+  overflow-y: auto;
+}
+.history {
+  display: flex;
+  flex-direction: column;
+}
+.line {
+  margin-bottom: 4px;
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+.promptLine {
+  display: flex;
+  align-items: center;
+}
+.prompt {
+  color: #3b82f6;
+  margin-right: 8px;
+}
+.inputWrapper {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+.input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  outline: none;
+}
+.neofetch {
+  color: #3b82f6;
+  white-space: pre;
+}

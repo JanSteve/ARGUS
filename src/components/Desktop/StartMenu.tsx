@@ -1,6 +1,73 @@
 import React, { useState } from "react";
 import styles from "./StartMenu.module.css";
 
+/* ─── SVG Icons for Start Menu ─── */
+const Icons = {
+  chat: (
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 3C6.48 3 2 6.58 2 11c0 2.52 1.64 4.77 4.2 6.24L5 21l4.32-2.16C10.2 18.94 11.08 19 12 19c5.52 0 10-3.58 10-8s-4.48-8-10-8z" />
+    </svg>
+  ),
+  browser: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <circle cx="12" cy="12" r="10" />
+      <ellipse cx="12" cy="12" rx="4" ry="10" strokeWidth="1.5" />
+      <line x1="2" y1="12" x2="22" y2="12" strokeWidth="1.5" />
+    </svg>
+  ),
+  terminal: (
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <rect x="2" y="3" width="20" height="18" rx="3" />
+      <polyline points="6,9 10,12 6,15" fill="none" stroke="#0a0b10" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <line x1="12" y1="15" x2="18" y2="15" stroke="#0a0b10" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  ),
+  explorer: (
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M2 6C2 4.9 2.9 4 4 4h5l2 2h9c1.1 0 2 .9 2 2v10c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6z" />
+    </svg>
+  ),
+  calculator: (
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <rect x="3" y="2" width="18" height="20" rx="3" />
+      <rect x="5.5" y="4.5" width="13" height="4" rx="1" fill="#0a0b10" />
+      <circle cx="7.5" cy="12" r="1.2" fill="#0a0b10" />
+      <circle cx="12" cy="12" r="1.2" fill="#0a0b10" />
+      <circle cx="16.5" cy="12" r="1.2" fill="#0a0b10" />
+      <circle cx="7.5" cy="16" r="1.2" fill="#0a0b10" />
+      <circle cx="12" cy="16" r="1.2" fill="#0a0b10" />
+      <circle cx="16.5" cy="16" r="1.2" fill="#0a0b10" />
+    </svg>
+  ),
+  notes: (
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M4 3h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" />
+      <line x1="6" y1="8" x2="18" y2="8" stroke="#0a0b10" strokeWidth="1.5" />
+      <line x1="6" y1="12" x2="18" y2="12" stroke="#0a0b10" strokeWidth="1.5" />
+    </svg>
+  ),
+  music: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M9 18V5l12-2v13" />
+      <circle cx="6" cy="18" r="3" fill="currentColor" />
+      <circle cx="18" cy="16" r="3" fill="currentColor" />
+    </svg>
+  ),
+  photos: (
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <rect x="2" y="4" width="20" height="16" rx="3" />
+      <circle cx="8" cy="10" r="2.5" fill="#0a0b10" />
+      <path d="M22 16l-5.5-6L12 15l-3-3-7 5v3a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-1z" opacity="0.7" />
+    </svg>
+  ),
+  settings: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+    </svg>
+  ),
+};
+
 interface StartMenuProps {
   onLaunchApp: (appId: string, title: string) => void;
   onClose: () => void;
@@ -10,27 +77,15 @@ export const StartMenu: React.FC<StartMenuProps> = ({ onLaunchApp, onClose }) =>
   const [searchQuery, setSearchQuery] = useState("");
 
   const apps = [
-    {
-      id: "chat",
-      name: "Chat Assistant",
-      desc: "Talk to local or remote AI models",
-      icon: "💬",
-      iconClass: "",
-    },
-    {
-      id: "settings",
-      name: "Settings",
-      desc: "Configure keys and Ollama models",
-      icon: "⚙️",
-      iconClass: styles.settingsIcon,
-    },
-    {
-      id: "explorer",
-      name: "File Explorer",
-      desc: "Manage workspaces and logs",
-      icon: "📁",
-      iconClass: styles.explorerIcon,
-    },
+    { id: "chat", name: "Chat Assistant", desc: "AI companion", icon: Icons.chat, color: "#3b82f6" },
+    { id: "browser", name: "Browser", desc: "Web browser", icon: Icons.browser, color: "#8b5cf6" },
+    { id: "terminal", name: "Terminal", desc: "Command prompt", icon: Icons.terminal, color: "#10b981" },
+    { id: "explorer", name: "File Explorer", desc: "Workspace files", icon: Icons.explorer, color: "#f59e0b" },
+    { id: "calculator", name: "Calculator", desc: "Math tool", icon: Icons.calculator, color: "#6366f1" },
+    { id: "notes", name: "Notes", desc: "Rich text editor", icon: Icons.notes, color: "#f97316" },
+    { id: "music", name: "Music Player", desc: "Play music", icon: Icons.music, color: "#ec4899" },
+    { id: "photos", name: "Photos", desc: "Image viewer", icon: Icons.photos, color: "#06b6d4" },
+    { id: "settings", name: "Settings", desc: "System control", icon: Icons.settings, color: "#64748b" },
   ];
 
   const filteredApps = apps.filter(
@@ -44,6 +99,12 @@ export const StartMenu: React.FC<StartMenuProps> = ({ onLaunchApp, onClose }) =>
     onClose();
   };
 
+  const recommendedItems = [
+    { title: "ARGUS Sovereign OS Whitepaper.pdf", type: "pdf", time: "2h ago" },
+    { title: "notes.txt", type: "text", time: "4h ago" },
+    { title: "vacation-2025.jpg", type: "image", time: "Yesterday" },
+  ];
+
   return (
     <div className={`${styles.menu} glass-blur glass-panel`} data-testid="start-menu">
       {/* Header Search */}
@@ -51,7 +112,7 @@ export const StartMenu: React.FC<StartMenuProps> = ({ onLaunchApp, onClose }) =>
         <input
           type="text"
           className={styles.search}
-          placeholder="Search apps..."
+          placeholder="Search apps, files, and settings..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           autoFocus
@@ -59,23 +120,72 @@ export const StartMenu: React.FC<StartMenuProps> = ({ onLaunchApp, onClose }) =>
         />
       </div>
 
-      {/* Applications List */}
+      {/* Main Content Area */}
       <div className={styles.content}>
-        <div className={styles.sectionTitle}>Applications</div>
-        {filteredApps.map((app) => (
-          <div
-            key={app.id}
-            className={styles.appItem}
-            onClick={() => handleAppClick(app.id, app.name)}
-            data-testid={`start-app-item-${app.id}`}
-          >
-            <div className={`${styles.icon} ${app.iconClass}`}>{app.icon}</div>
-            <div className={styles.appText}>
-              <span className={styles.appName}>{app.name}</span>
-              <span className={styles.appDesc}>{app.desc}</span>
-            </div>
+        {searchQuery ? (
+          /* Search Results View */
+          <div className={styles.searchResults}>
+            <div className={styles.sectionTitle}>Search Results</div>
+            {filteredApps.map((app) => (
+              <div
+                key={app.id}
+                className={styles.searchItem}
+                onClick={() => handleAppClick(app.id, app.name)}
+              >
+                <div className={styles.appIconContainer} style={{ color: app.color }}>
+                  {app.icon}
+                </div>
+                <div className={styles.appText}>
+                  <span className={styles.appName}>{app.name}</span>
+                  <span className={styles.appDesc}>{app.desc}</span>
+                </div>
+              </div>
+            ))}
+            {filteredApps.length === 0 && (
+              <div className={styles.noResults}>No applications matched "{searchQuery}"</div>
+            )}
           </div>
-        ))}
+        ) : (
+          /* Pinned Grid View (Windows 11 / macOS launchpad hybrid) */
+          <>
+            <div className={styles.sectionHeader}>
+              <span className={styles.sectionTitle}>Pinned</span>
+            </div>
+            <div className={styles.pinnedGrid}>
+              {apps.map((app) => (
+                <div
+                  key={app.id}
+                  className={styles.gridItem}
+                  onClick={() => handleAppClick(app.id, app.name)}
+                  data-testid={`start-app-item-${app.id}`}
+                >
+                  <div className={styles.gridIcon} style={{ color: app.color }}>
+                    {app.icon}
+                  </div>
+                  <span className={styles.gridLabel}>{app.name}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Recommended Section */}
+            <div className={styles.recommendedSection}>
+              <span className={styles.sectionTitle}>Recommended</span>
+              <div className={styles.recList}>
+                {recommendedItems.map((item, idx) => (
+                  <div key={idx} className={styles.recItem}>
+                    <div className={styles.recIcon}>
+                      {item.type === "pdf" ? "📄" : item.type === "image" ? "🖼️" : "📝"}
+                    </div>
+                    <div className={styles.recDetails}>
+                      <span className={styles.recTitle}>{item.title}</span>
+                      <span className={styles.recMeta}>{item.time}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* User profile footer */}

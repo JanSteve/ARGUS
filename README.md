@@ -1,96 +1,133 @@
-# ARGUS Sovereign OS
+<div align="center">
+  <h1>👁️ ARGUS Sovereign OS</h1>
+  <p><strong>The World's First AI-Native Desktop Operating System</strong></p>
 
-**A local-first, privacy-focused AI Operating System simulator & desktop workspace.**
+  <p>
+    <img src="https://img.shields.io/badge/version-v2.0.0-blue.svg?style=for-the-badge" alt="Version v2.0.0" />
+    <img src="https://img.shields.io/badge/license-Proprietary-red.svg?style=for-the-badge" alt="License: Proprietary" />
+    <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Windows-lightgrey.svg?style=for-the-badge" alt="Platform" />
+    <img src="https://img.shields.io/badge/build-passing-brightgreen.svg?style=for-the-badge" alt="Build passing" />
+    <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+    <img src="https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
+  </p>
+</div>
 
-[![CI Build Status](https://github.com/JanSteve/ARGUS/actions/workflows/ci.yml/badge.svg)](https://github.com/JanSteve/ARGUS/actions)
-[![License: Proprietary Source-Available](https://img.shields.io/badge/License-Proprietary%20Source--Available-blueviolet.svg)](LICENSE)
-[![Platform: Cross-Platform](https://img.shields.io/badge/Platform-macOS%20%7C%20Windows%20%7C%20Linux-blue.svg)](#getting-started)
-[![Tauri v2](https://img.shields.io/badge/Tauri-v2-orange.svg)](https://tauri.app)
-[![React 19](https://img.shields.io/badge/React-19.0-cyan.svg)](https://react.dev)
+<br />
 
----
+![ARGUS OS Desktop Screenshot](docs/placeholder_screenshot.png)
 
-## 🚀 What is ARGUS Sovereign OS?
+## ✨ Feature Highlights
 
-ARGUS Sovereign OS is a cross-platform desktop application environment designed from the ground up to give developers and users a beautiful, responsive, and completely private space to run AI assistants. It runs local LLMs (via Ollama) and remote cloud intelligence (via Groq API) under an explicit, security-conscious privacy policy. 
-
-Developed with a modular architecture and premium desktop simulation aesthetics, ARGUS Sovereign OS acts as a sandboxed operating system environment within a native window wrapper. The term **Sovereign** highlights the core philosophy: **complete user ownership of data, models, and computational privacy**, bypassing big tech cloud telemetry.
-
----
-
-## 🌟 Visual Features & UX Showcase
-
-ARGUS Sovereign OS features a state-of-the-art Web-based OS Desktop environment tailored for a premium user experience:
-
-*   🪟 **Window Manager with Elastic Easing:** Windows animate with smooth spring-like physics (`cubic-bezier(0.34, 1.56, 0.64, 1)`) when spawned, minimized, maximized, or closed.
-*   📐 **8-Direction Resizing & Dragging:** Drag any window frame smoothly via its title bar, or resize from borders and corners with custom boundary constraints.
-*   ⚡ **Aero Snap (Snap Assist):** Drag a window to the top edge to preview full screen maximization, or drag to the left/right screen edges to snap them to 50% split-screen layouts.
-*   鼠标 **Desktop Context Menu:** Right-click anywhere on the desktop wallpaper background to access a context menu to "Refresh Desktop", "Cycle Wallpaper", or launch applications.
-*   🎛️ **Quick Settings Control Panel (Action Center):** Click on the taskbar clock tray to launch a Quick Settings panel to toggle Wi-Fi and Bluetooth, adjust volume/brightness, and dynamically select desktop wallpapers.
-*   🌌 **Interactive Wallpapers:** Support for four premium dark themes (Deep Space, Aurora Borealis, Midnight Forest, and Crimson Nebula).
+✓ **Local-First AI Execution:** Powered entirely by Ollama for zero-latency, private AI inferences.  
+✓ **Deep OS Integration:** AI isn't an app; it's the foundation of the desktop environment.  
+✓ **Premium Glassmorphism UI:** A stunning, state-of-the-art interface blending macOS aesthetics with Windows 11 functionality.  
+✓ **Robust Window Management:** Full support for dragging, resizing, Aero-style snapping, and complex Z-index stacking.  
+✓ **Native Performance:** Built on Tauri 2 and Rust, keeping memory footprint remarkably low.  
+✓ **Fully Featured Suite:** Comes with a comprehensive set of default applications out of the box.  
 
 ---
 
-## ⚙️ One-Command Setup (Getting Started)
+## 🚀 Quick Start
 
-ARGUS Sovereign OS includes automated bootstrap scripts to validate your environment (Node.js, Git, Rust, Ollama), download dependencies, and boot the application in one command:
+Get ARGUS Sovereign OS up and running in three simple steps:
 
-### macOS / Linux
 ```bash
-git clone https://github.com/JanSteve/ARGUS.git && cd ARGUS && git checkout batman && chmod +x setup.sh && ./setup.sh
+# 1. Clone the repository
+git clone https://github.com/janstevedaniel/argus-os.git
+cd argus-os
+
+# 2. Install dependencies
+npm install
+
+# 3. Start the development server
+npm run tauri dev
 ```
 
-### Windows (PowerShell)
-```powershell
-git clone https://github.com/JanSteve/ARGUS.git; cd ARGUS; git checkout batman; .\setup.ps1
+## 🛠️ Build from Source
+
+To compile a native executable for your system:
+
+```bash
+# Ensure Rust and Tauri prerequisites are installed
+npm run build
+npm run tauri build
 ```
-
-> **Note:** The `git checkout batman` step is only required during the active planning phase. Once Phase 2 is completed and merged to main, this step can be omitted.
-
-For a detailed manual installation guide, please check out **[INSTALL.md](INSTALL.md)**.
+The compiled binaries will be available in the `src-tauri/target/release` directory.
 
 ---
 
-## 🗂️ Project Structure
+## 🏗️ Architecture
 
-```
-ARGUS/
-├── .github/workflows/      # GitHub Actions CI Configuration
-├── docs/                   # Extended design and architecture specifications
-├── src-tauri/              # Rust Native Tauri Desktop Backend
-├── src/                    # Frontend React + TypeScript Workspace
-│   ├── __tests__/          # Vitest Unit Tests
-│   ├── components/         # Desktop and Application Components
-│   │   └── Desktop/        # Window Manager, Taskbar, StartMenu, ControlPanel
-│   ├── hooks/              # custom mouse dragging and resizing hooks
-│   ├── assets/             # Logos and Static Media
-│   ├── index.css           # Styling Tokens (Glassmorphic Colors & Spring Physics)
-│   ├── main.tsx            # React Entry Point
-│   └── test/               # Vitest Testing Setup Configs
-├── INSTALL.md              # Installation details for MacOS, Windows, Linux
-├── LICENSE                 # Proprietary Source-Available License
-├── README.md               # Visual Features & Overview
-└── setup.sh / setup.ps1    # Cross-platform installation scripts
+ARGUS uses a modern, high-performance web-native stack bridged with native Rust backends.
+
+```mermaid
+graph TD
+    A[User] -->|Interacts| B(React 19 UI)
+    B --> C{Components}
+    C -->|Desktop Environment| D[Taskbar, Start Menu, Window Manager]
+    C -->|Native Apps| E[Built-in App Suite]
+    D --> F(React Hooks & State)
+    E --> F
+    F <-->|IPC Communication| G[Tauri 2 Bridge]
+    G <-->|Native FS & Process| H[Rust Backend]
+    H <-->|Local API Calls| I[(Ollama / Local LLM)]
 ```
 
 ---
 
-## 📊 Development Documentation
+## 📱 Built-in Application Suite
 
-| Specification Document | Purpose / Content |
-|:---|:---|
-| 📖 **[INSTALL.md](INSTALL.md)** | Step-by-step installation guides and troubleshooting tips |
-| 📋 **[REQUIREMENTS.md](REQUIREMENTS.md)** | Functional specifications and security criteria |
-| 🏛️ **[ARCHITECTURE.md](ARCHITECTURE.md)** | Stacking layers, drag-resize calculations, and provider interfaces |
-| 🗓️ **[ROADMAP.md](ROADMAP.md)** | Milestones (Phase 1 to Phase 4) |
-| 🛡️ **[SECURITY.md](SECURITY.md)** | Secret keys management and vulnerability reporting instructions |
-| 📝 **[DECISIONS.md](DECISIONS.md)** | Architecture Decision Records (ADRs) |
-| 📈 **[PROJECT_STATUS.md](PROJECT_STATUS.md)** | Current release milestones status tracking |
+ARGUS comes pre-loaded with a suite of essential, fully functional applications built for the AI era:
+
+*   **💬 Chat Assistant:** Your deeply integrated copilot that sees your desktop context.
+*   **🌐 Browser:** A lightweight web renderer with tab management and AI summarization.
+*   **💻 Terminal:** A simulated UNIX-like filesystem terminal featuring AI command autocomplete.
+*   **🧮 Calculator:** A responsive, multi-function calculator with extensive keyboard support.
+*   **📝 Notes:** An auto-saving markdown notebook directly connected to your local knowledge graph.
+*   **🎵 Music Player:** A sleek audio client tailored for local media libraries.
+*   **🖼️ Photos:** A responsive gallery viewer for organizing visual assets.
+*   **📂 File Explorer:** A smart filesystem navigator with AI metadata extraction.
+*   **⚙️ Settings:** Complete control over your OS environment, appearance, and AI models.
 
 ---
 
-## 🔒 License & Copyright
+## 💻 Technology Stack
 
-Proprietary & Source-Available License. Copyright (c) 2026 **Jan Steve Daniel**. All rights reserved.
+| Technology | Version | Purpose |
+| :--- | :--- | :--- |
+| **React** | 19.x | Core UI Framework |
+| **TypeScript** | 5.8 | Type-safe application logic |
+| **Vite** | 7.x | Ultra-fast build tooling and HMR |
+| **Tauri** | 2.x | Native OS bridging & app packaging |
+| **Rust** | 2024 Edition | High-performance backend systems |
+| **Ollama** | Local | Inference engine for AI components |
 
-This software is for personal evaluation, educational, and non-commercial development use only. Commercial redistribution, hosting as a service, or unauthorized resale of the software or its modifications is strictly prohibited. See the **[LICENSE](LICENSE)** file for full legal terms.
+---
+
+## 📅 Version History
+
+*   **v2.0.0 (Current):** Full app suite deployment, premium glassmorphism UI, advanced window manager, and local AI integration.
+*   **v1.0.0:** First functional Desktop Environment (window dragging, basic taskbar, single apps).
+*   **v0.1.0:** Initial conceptual prototype and architectural foundation.
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions to the ecosystem! Whether it's adding new built-in apps, optimizing the window manager, or expanding the Tauri Rust bridge, your help is appreciated. 
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 📜 License & Credits
+
+**Source-Available & Proprietary**
+© 2026 R Jan Steve Daniel. All Rights Reserved.
+This project's source is available for inspection and educational purposes but remains proprietary. 
+
+**Creator:** [R Jan Steve Daniel](https://github.com/janstevedaniel)

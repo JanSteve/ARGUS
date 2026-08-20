@@ -1,0 +1,9 @@
+.appContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background: var(--bg-desktop);
+  color: var(--fg-default);
+  font-family: var(--font-system);
+}

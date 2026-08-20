@@ -1,6 +1,4 @@
-/* ==============================================================================
-   ARGUS Sovereign OS — Global Design System & CSS Variables
-   ============================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
   /* Colors */
@@ -39,7 +37,7 @@
   --success-color: #10b981;
   
   /* Typography */
-  --font-system: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-system: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   
   /* Layout and Sizing */
   --radius-window: 12px;

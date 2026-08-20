@@ -57,3 +57,6 @@ Cargo.lock
 tmp/
 temp/
 *.tmp
+
+# Nested Repositories
+argus-website/

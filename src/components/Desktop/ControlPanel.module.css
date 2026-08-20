@@ -1,13 +1,25 @@
 .panel {
   position: absolute;
   bottom: calc(var(--taskbar-height) + 8px);
-  right: 16px;
-  width: 290px;
+  right: 12px;
+  width: 320px;
   border-radius: var(--radius-panel);
   display: flex;
   flex-direction: column;
   padding: 16px;
   z-index: 99999;
+  
+  /* Frosted Glass */
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%),
+    rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow:
+    0 10px 40px -10px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
+  
   animation: slideUp 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
@@ -22,38 +34,45 @@
   }
 }
 
-/* Grid of quick setting toggle buttons */
+/* Quick Setting Toggles */
 .toggles {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin-bottom: 16px;
+  gap: 8px;
+  margin-bottom: 14px;
 }
 
 .toggleBtn {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 12px;
-  background: rgba(255, 255, 255, 0.04);
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: var(--radius-control);
   cursor: pointer;
+  color: var(--fg-default);
   transition: all 0.15s ease;
 }
 
 .toggleBtn:hover {
-  background: var(--taskbar-item-hover);
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .activeToggle {
-  background: var(--accent-color) !important;
-  color: white;
-  border-color: transparent;
+  background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%) !important;
+  color: white !important;
+  border-color: transparent !important;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
 .toggleIcon {
-  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
 }
 
 .toggleLabel {
@@ -61,27 +80,29 @@
   font-weight: 500;
 }
 
-/* Sliders section */
+/* Sliders Section */
 .sliders {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 16px;
-  padding-bottom: 16px;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding-bottom: 14px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .sliderRow {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .sliderIcon {
-  font-size: 14px;
   color: var(--fg-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 18px;
-  text-align: center;
+  height: 18px;
 }
 
 .slider {
@@ -98,62 +119,153 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: var(--accent-color);
+  background: #3b82f6;
   cursor: pointer;
-  transition: transform 0.1s ease;
+  transition: transform 0.1s ease, background-color 0.1s ease;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
 }
 
 .slider::-webkit-slider-thumb:hover {
   transform: scale(1.2);
+  background: #60a5fa;
 }
 
-/* Wallpapers selection */
+.sliderValue {
+  font-size: 10px;
+  color: var(--fg-muted);
+  width: 28px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Mini Calendar Widget */
+.calendar {
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-control);
+  padding: 10px;
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.calendarHeader {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--fg-default);
+  padding-left: 2px;
+}
+
+.calendarWeekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  text-align: center;
+}
+
+.weekday {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--fg-muted);
+}
+
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.calDay {
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+  border-radius: 4px;
+  color: var(--fg-default);
+  font-variant-numeric: tabular-nums;
+}
+
+.calToday {
+  background: var(--accent-color);
+  color: white;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+}
+
+.calEmpty {
+  visibility: hidden;
+}
+
+/* Wallpapers Selection (6 items) */
 .wallpaperSection {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .sectionTitle {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   color: var(--fg-muted);
   text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .wallpaperGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
 }
 
 .thumb {
-  height: 38px;
+  height: 32px;
   border-radius: 6px;
   cursor: pointer;
-  border: 2px solid transparent;
+  border: 1.5px solid transparent;
   transition: all 0.15s ease;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
 }
 
 .thumb:hover {
-  transform: scale(1.05);
+  transform: scale(1.08) translateY(-1px);
 }
 
 .activeThumb {
-  border-color: var(--accent-color);
-  box-shadow: 0 0 6px 0 var(--accent-color);
+  border-color: var(--accent-color) !important;
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
 }
 
-.wSpace { background: radial-gradient(circle, #1e1b4b 0%, #020617 100%); }
-.wAurora { background: linear-gradient(135deg, #115e59 0%, #022c22 100%); }
-.wForest { background: linear-gradient(135deg, #334155 0%, #0f172a 100%); }
-.wCrimson { background: radial-gradient(circle, #581c87 0%, #020617 100%); }
+.wSpace {
+  background: radial-gradient(circle, #1e1b4b 0%, #020617 100%);
+}
+.wAurora {
+  background: linear-gradient(135deg, #115e59 0%, #022c22 100%);
+}
+.wForest {
+  background: linear-gradient(135deg, #1e293b 0%, #020617 100%);
+}
+.wCrimson {
+  background: radial-gradient(circle, #581c87 0%, #020617 100%);
+}
+.wOcean {
+  background: linear-gradient(180deg, #0c4a6e 0%, #020617 100%);
+}
+.wSunset {
+  background: linear-gradient(135deg, #431407 0%, #1e1b4b 100%);
+}
 
 /* Footer status info */
 .footer {
-  margin-top: 12px;
+  margin-top: 10px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-size: 10px;
   color: var(--fg-muted);
+  font-weight: 500;
 }
+
