@@ -6,13 +6,15 @@ import { StartMenu } from "./StartMenu";
 import { ContextMenu } from "./ContextMenu";
 import { ControlPanel, WallpaperTheme } from "./ControlPanel";
 
-/* ─── Lazy-loaded App Components ─── */
+/* ─── App Components ─── */
 import { BrowserApp } from "../Apps/BrowserApp";
 import { TerminalApp } from "../Apps/TerminalApp";
 import { CalculatorApp } from "../Apps/CalculatorApp";
 import { NotesApp } from "../Apps/NotesApp";
 import { MusicPlayerApp } from "../Apps/MusicPlayerApp";
 import { PhotosApp } from "../Apps/PhotosApp";
+import { ChatApp } from "../Apps/ChatApp";
+import { SettingsApp } from "../Apps/SettingsApp";
 
 /* ─── Types ─── */
 export type AppComponent =
@@ -351,6 +353,28 @@ export const Desktop: React.FC = () => {
     { label: "Terminal", icon: "terminal", onClick: () => launchApp("terminal", "Terminal") },
   ];
 
+  // Wire slash command event bus → launchApp
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<{ app: string }>).detail;
+      if (detail?.app) {
+        const titleMap: Record<string, string> = {
+          notes: "Notes",
+          browser: "Browser",
+          music: "Music Player",
+          terminal: "Terminal",
+          calculator: "Calculator",
+          photos: "Photos",
+          explorer: "File Explorer",
+          settings: "Settings",
+        };
+        launchApp(detail.app, titleMap[detail.app] ?? detail.app);
+      }
+    };
+    window.addEventListener("argus:launch", handler);
+    return () => window.removeEventListener("argus:launch", handler);
+  }, [launchApp]);
+
   // Render app content inside window frame
   const renderAppContent = (component: AppComponent) => {
     switch (component) {
@@ -503,240 +527,11 @@ export const Desktop: React.FC = () => {
 };
 
 /* ═══════════════════════════════════════════════════════════════════════
-   Built-in App Components (Chat, Settings, File Explorer)
-   These are inline to Desktop.tsx — the other apps are in ../Apps/
+   Built-in App Components
+   Chat → src/components/Apps/ChatApp.tsx (real Ollama streaming)
+   Settings → src/components/Apps/SettingsApp.tsx (real AI config)
+   File Explorer → below (simulated in-memory filesystem — DOCUMENTED)
    ═══════════════════════════════════════════════════════════════════════ */
-
-/* ─── Chat App ─── */
-const ChatApp: React.FC = () => {
-  const [messages, setMessages] = useState<Array<{role: string; text: string}>>([]);
-  const [input, setInput] = useState("");
-
-  const sendMessage = () => {
-    if (!input.trim()) return;
-    const userMsg = { role: "user", text: input };
-    setMessages(prev => [...prev, userMsg]);
-    setInput("");
-    // Simulated AI response
-    setTimeout(() => {
-      setMessages(prev => [...prev, {
-        role: "assistant",
-        text: "I'm running locally via Ollama. Configure your provider in Settings to enable full AI capabilities."
-      }]);
-    }, 800);
-  };
-
-  return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%", gap: "12px" }}>
-      {/* Status Badge */}
-      <div style={{
-        background: "linear-gradient(135deg, rgba(59,130,246,0.12), rgba(139,92,246,0.08))",
-        border: "1px solid rgba(59,130,246,0.2)",
-        padding: "10px 14px",
-        borderRadius: "10px",
-        fontSize: "12px",
-        display: "flex",
-        alignItems: "center",
-        gap: "8px"
-      }}>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="#3b82f6"/>
-        </svg>
-        <div>
-          <strong style={{ color: "#93c5fd" }}>OLLAMA (LOCAL)</strong>
-          <span style={{ color: "var(--fg-muted)", marginLeft: "8px", fontSize: "11px" }}>llama3.2</span>
-        </div>
-      </div>
-
-      {/* Messages */}
-      <div style={{
-        flex: 1,
-        borderRadius: "10px",
-        background: "rgba(0,0,0,0.2)",
-        border: "1px solid rgba(255,255,255,0.04)",
-        padding: "14px",
-        display: "flex",
-        flexDirection: "column",
-        gap: "10px",
-        overflow: "auto"
-      }}>
-        {messages.length === 0 ? (
-          <div style={{ fontSize: "13px", color: "var(--fg-muted)", textAlign: "center", marginTop: "40px" }}>
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" style={{ margin: "0 auto 8px", display: "block", opacity: 0.3 }}>
-              <path d="M12 3C6.48 3 2 6.58 2 11c0 2.52 1.64 4.77 4.2 6.24L5 21l4.32-2.16C10.2 18.94 11.08 19 12 19c5.52 0 10-3.58 10-8s-4.48-8-10-8z" fill="currentColor"/>
-            </svg>
-            Start a conversation with your local AI
-          </div>
-        ) : (
-          messages.map((msg, i) => (
-            <div key={i} style={{
-              alignSelf: msg.role === "user" ? "flex-end" : "flex-start",
-              background: msg.role === "user"
-                ? "linear-gradient(135deg, #3b82f6, #6366f1)"
-                : "rgba(255,255,255,0.05)",
-              padding: "8px 14px",
-              borderRadius: msg.role === "user" ? "14px 14px 4px 14px" : "14px 14px 14px 4px",
-              maxWidth: "80%",
-              fontSize: "13px",
-              lineHeight: "1.5",
-              border: msg.role === "user" ? "none" : "1px solid rgba(255,255,255,0.06)"
-            }}>
-              {msg.text}
-            </div>
-          ))
-        )}
-      </div>
-
-      {/* Input */}
-      <div style={{ display: "flex", gap: "8px" }}>
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          placeholder="Type a message..."
-          style={{
-            flex: 1,
-            padding: "10px 14px",
-            background: "rgba(255,255,255,0.03)",
-            border: "1px solid rgba(255,255,255,0.08)",
-            borderRadius: "10px",
-            fontSize: "13px",
-            color: "var(--fg-default)",
-            transition: "border-color 0.15s ease",
-          }}
-        />
-        <button
-          onClick={sendMessage}
-          style={{
-            padding: "10px 20px",
-            background: "linear-gradient(135deg, #3b82f6, #6366f1)",
-            border: "none",
-            borderRadius: "10px",
-            fontWeight: 600,
-            fontSize: "13px",
-            color: "white",
-            cursor: "pointer",
-            transition: "opacity 0.15s ease",
-          }}
-        >
-          Send
-        </button>
-      </div>
-    </div>
-  );
-};
-
-/* ─── Settings App ─── */
-const SettingsApp: React.FC = () => {
-  const [activeSection, setActiveSection] = useState("ai");
-
-  const sections = [
-    { id: "ai", label: "AI Providers", icon: "M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" },
-    { id: "display", label: "Display", icon: "M2 3h20v14H2zM8 21h8M12 17v4" },
-    { id: "about", label: "About", icon: "M12 2a10 10 0 100 20 10 10 0 000-20zM12 16v-4M12 8h.01" },
-  ];
-
-  return (
-    <div style={{ display: "flex", height: "100%", gap: "0" }}>
-      {/* Sidebar */}
-      <div style={{
-        width: "180px",
-        borderRight: "1px solid rgba(255,255,255,0.06)",
-        padding: "8px",
-        display: "flex",
-        flexDirection: "column",
-        gap: "2px",
-      }}>
-        {sections.map((s) => (
-          <div
-            key={s.id}
-            onClick={() => setActiveSection(s.id)}
-            style={{
-              padding: "8px 12px",
-              borderRadius: "8px",
-              cursor: "pointer",
-              fontSize: "13px",
-              fontWeight: activeSection === s.id ? 600 : 400,
-              background: activeSection === s.id ? "rgba(99,102,241,0.15)" : "transparent",
-              color: activeSection === s.id ? "#a5b4fc" : "var(--fg-muted)",
-              transition: "all 0.15s ease",
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-            }}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d={s.icon} />
-            </svg>
-            {s.label}
-          </div>
-        ))}
-      </div>
-
-      {/* Content */}
-      <div style={{ flex: 1, padding: "16px", overflow: "auto" }}>
-        {activeSection === "ai" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            <h3 style={{ fontSize: "16px", fontWeight: 600, marginBottom: "4px" }}>AI Provider Configuration</h3>
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-              {[
-                { name: "Ollama (Local)", desc: "Run models locally — zero cloud dependency", default: true },
-                { name: "Groq", desc: "Ultra-fast cloud inference" },
-                { name: "Google Gemini", desc: "Multimodal AI by Google DeepMind" },
-                { name: "DeepSeek", desc: "Open-source reasoning models" },
-                { name: "NVIDIA NIM", desc: "GPU-accelerated inference" },
-              ].map((provider) => (
-                <div key={provider.name} style={{
-                  padding: "12px 14px",
-                  background: "rgba(255,255,255,0.02)",
-                  border: provider.default ? "1px solid rgba(59,130,246,0.3)" : "1px solid rgba(255,255,255,0.06)",
-                  borderRadius: "10px",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center"
-                }}>
-                  <div>
-                    <div style={{ fontSize: "13px", fontWeight: 500 }}>{provider.name}</div>
-                    <div style={{ fontSize: "11px", color: "var(--fg-muted)", marginTop: "2px" }}>{provider.desc}</div>
-                  </div>
-                  {provider.default ? (
-                    <span style={{ fontSize: "10px", fontWeight: 700, color: "#10b981", background: "rgba(16,185,129,0.1)", padding: "3px 8px", borderRadius: "6px" }}>ACTIVE</span>
-                  ) : (
-                    <button style={{ fontSize: "11px", padding: "4px 10px", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px", color: "var(--fg-muted)", cursor: "pointer" }}>Configure</button>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-        {activeSection === "display" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            <h3 style={{ fontSize: "16px", fontWeight: 600 }}>Display Settings</h3>
-            <p style={{ fontSize: "13px", color: "var(--fg-muted)" }}>Use the Control Panel (click clock/tray) to change wallpapers, brightness, and volume.</p>
-          </div>
-        )}
-        {activeSection === "about" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            <h3 style={{ fontSize: "16px", fontWeight: 600 }}>About ARGUS Sovereign OS</h3>
-            <div style={{ background: "rgba(255,255,255,0.02)", padding: "14px", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.05)" }}>
-              <p style={{ fontSize: "14px", fontWeight: 600 }}>ARGUS Sovereign OS</p>
-              <p style={{ fontSize: "12px", color: "var(--fg-muted)", marginTop: "4px" }}>Version 2.0.0</p>
-              <p style={{ fontSize: "11px", color: "var(--fg-muted)", marginTop: "8px" }}>
-                The world's first AI-native desktop operating system.
-                <br />Built with React, TypeScript, Tauri, and Rust.
-              </p>
-              <p style={{ fontSize: "11px", color: "var(--fg-muted)", marginTop: "12px" }}>
-                © 2026 R Jan Steve Daniel. All rights reserved.
-                <br />Source-Available & Proprietary License.
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
 
 /* ─── File Explorer App ─── */
 const FileExplorerApp: React.FC = () => {
