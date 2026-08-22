@@ -10,7 +10,7 @@ export type ExecutionMode = "local" | "remote";
 // ─── Provider IDs ─────────────────────────────────────────────────────────────
 
 export type LocalProviderID = "ollama";
-export type RemoteProviderID = "groq";
+export type RemoteProviderID = "groq" | "openrouter";
 export type ProviderID = LocalProviderID | RemoteProviderID;
 
 // ─── Performance Profile ──────────────────────────────────────────────────────
@@ -49,16 +49,20 @@ export interface AIConfig {
   model: string;
   ollamaEndpoint: string;
   groqApiKey: string; // stored in localStorage only — NOT committed
+  openrouterApiKey: string; // stored in localStorage only — NOT committed
+  openrouterModel: string; // default OpenRouter model
   profile: PerformanceProfile;
 }
 
 export const DEFAULT_AI_CONFIG: AIConfig = {
   mode: "local",
   localProvider: "ollama",
-  remoteProvider: "groq",
+  remoteProvider: "openrouter",
   model: "llama3.2",
   ollamaEndpoint: "http://localhost:11434",
   groqApiKey: "",
+  openrouterApiKey: "",
+  openrouterModel: "google/gemini-2.5-flash",
   profile: "balanced",
 };
 

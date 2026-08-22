@@ -689,4 +689,33 @@ const FileExplorerApp: React.FC = () => {
                 borderRadius: "6px",
                 cursor: "pointer",
                 background: selectedItem === item.name ? "rgba(99,102,241,0.15)" : "transparent",
-                border: selectedItem === item.name ? "1px solid rgba(99,102,241,0.2)" : "1px 
+                border: selectedItem === item.name ? "1px solid rgba(99,102,241,0.2)" : "1px solid transparent",
+                transition: "all 0.1s ease",
+              }}
+            >
+              {item.type === "folder" ? folderIcon : fileIcon}
+              <span style={{ flex: 1, fontSize: "13px" }}>{item.name}</span>
+              {item.size && <span style={{ fontSize: "11px", color: "var(--fg-muted)" }}>{item.size}</span>}
+            </div>
+          ))}
+          {items.length === 0 && (
+            <div style={{ fontSize: "13px", color: "var(--fg-muted)", textAlign: "center", paddingTop: "40px" }}>
+              This folder is empty
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Status Bar */}
+      <div style={{
+        borderTop: "1px solid rgba(255,255,255,0.06)",
+        paddingTop: "6px",
+        marginTop: "8px",
+        fontSize: "11px",
+        color: "var(--fg-muted)"
+      }}>
+        {items.length} items{selectedItem ? ` · ${selectedItem} selected` : ""}
+      </div>
+    </div>
+  );
+};

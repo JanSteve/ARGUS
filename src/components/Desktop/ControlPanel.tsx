@@ -216,4 +216,14 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
       <div className={styles.footer}>
         <span>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: "4px", verticalAlign: "middle" }}>
-            <rect x="1" y="7" width="18" height="10" rx
+            <rect x="1" y="7" width="18" height="10" rx="2" fill="none" stroke="currentColor" strokeWidth="2" />
+            <rect x="3.5" y="9.5" width="13" height="5" rx="1" fill="currentColor" />
+            <rect x="21" y="10" width="2" height="4" rx="0.5" fill="currentColor" />
+          </svg>
+          100%
+        </span>
+        <span style={{ opacity: 0.6 }}>v2.0.0</span>
+      </div>
+    </div>
+  );
+};

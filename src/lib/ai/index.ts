@@ -6,6 +6,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { ollamaProvider } from "./ollamaProvider";
+import { openrouterProvider } from "./openrouterProvider";
 import type {
   AIConfig,
   AIProvider,
@@ -19,6 +20,7 @@ import { DEFAULT_AI_CONFIG, AI_CONFIG_KEY } from "./types";
 
 export * from "./types";
 export { ollamaProvider } from "./ollamaProvider";
+export { openrouterProvider } from "./openrouterProvider";
 
 // ─── Config Persistence ───────────────────────────────────────────────────────
 
@@ -50,14 +52,11 @@ export function getActiveProvider(config: AIConfig): AIProvider {
   if (config.mode === "local") {
     return ollamaProvider;
   }
-  // Remote mode: Groq not yet implemented — return ollama as safe fallback
-  // and log a clear warning so the developer knows.
-  console.warn(
-    "[ARGUS AI] Remote mode is not yet implemented. " +
-      "Falling back to local Ollama. This is NOT a silent cloud fallback — " +
-      "prompts stay local until remote provider is implemented."
-  );
-  return ollamaProvider;
+  if (config.remoteProvider === "openrouter") {
+    return openrouterProvider;
+  }
+  // Default fallback
+  return openrouterProvider;
 }
 
 // ─── useAIConfig Hook ─────────────────────────────────────────────────────────

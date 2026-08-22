@@ -296,4 +296,48 @@ export const Taskbar: React.FC<TaskbarProps> = ({
           {state.bluetoothActive && (
             <span className={styles.trayIcon} title="Bluetooth Active">{Icons.bluetooth}</span>
           )}
-          <sp
+          <span
+            className={styles.trayIcon}
+            style={{ opacity: state.wifiActive ? 1 : 0.35 }}
+            title={state.wifiActive ? "Wi-Fi Connected" : "Wi-Fi Disconnected"}
+          >
+            {Icons.wifi}
+          </span>
+          <span
+            className={styles.trayIcon}
+            title={`Volume: ${state.volume}%`}
+          >
+            {state.volume === 0 ? Icons.volumeMuted : Icons.volume}
+          </span>
+          <span className={styles.trayIcon} title="Battery: 100%">{Icons.battery}</span>
+        </div>
+
+        {/* Clock */}
+        <div
+          className={styles.clockWidget}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleControlPanel();
+          }}
+          data-testid="taskbar-clock"
+        >
+          <span className={styles.time}>{timeStr}</span>
+          <span className={styles.date}>{dateStr}</span>
+        </div>
+
+        {/* Notification Center */}
+        <div
+          className={styles.notifButton}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleControlPanel();
+          }}
+          title="Notifications"
+        >
+          {Icons.bell}
+          <div className={styles.notifDot} />
+        </div>
+      </div>
+    </div>
+  );
+};
