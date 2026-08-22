@@ -337,6 +337,25 @@ export const Desktop: React.FC = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Global Keyboard Shortcuts (Windows style)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Escape key closes menus
+      if (e.key === "Escape") {
+        setStartMenuOpen(false);
+        setControlPanelOpen(false);
+        setContextMenu(null);
+      }
+      // Alt + D toggles Show Desktop (minimizes all open windows)
+      if (e.altKey && e.key.toLowerCase() === "d") {
+        e.preventDefault();
+        setWindows((prev) => prev.map((w) => ({ ...w, isMinimized: true })));
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   const wallpaperClass =
     wallpaper === "space" ? styles.wSpace :
     wallpaper === "aurora" ? styles.wAurora :
@@ -374,6 +393,13 @@ export const Desktop: React.FC = () => {
     window.addEventListener("argus:launch", handler);
     return () => window.removeEventListener("argus:launch", handler);
   }, [launchApp]);
+
+  // Wire event bus → open Control Panel (Action Center)
+  useEffect(() => {
+    const handler = () => setControlPanelOpen(true);
+    window.addEventListener("argus:open-action-center", handler);
+    return () => window.removeEventListener("argus:open-action-center", handler);
+  }, []);
 
   // Render app content inside window frame
   const renderAppContent = (component: AppComponent) => {
@@ -663,33 +689,4 @@ const FileExplorerApp: React.FC = () => {
                 borderRadius: "6px",
                 cursor: "pointer",
                 background: selectedItem === item.name ? "rgba(99,102,241,0.15)" : "transparent",
-                border: selectedItem === item.name ? "1px solid rgba(99,102,241,0.2)" : "1px solid transparent",
-                transition: "all 0.1s ease",
-              }}
-            >
-              {item.type === "folder" ? folderIcon : fileIcon}
-              <span style={{ flex: 1, fontSize: "13px" }}>{item.name}</span>
-              {item.size && <span style={{ fontSize: "11px", color: "var(--fg-muted)" }}>{item.size}</span>}
-            </div>
-          ))}
-          {items.length === 0 && (
-            <div style={{ fontSize: "13px", color: "var(--fg-muted)", textAlign: "center", paddingTop: "40px" }}>
-              This folder is empty
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Status Bar */}
-      <div style={{
-        borderTop: "1px solid rgba(255,255,255,0.06)",
-        paddingTop: "6px",
-        marginTop: "8px",
-        fontSize: "11px",
-        color: "var(--fg-muted)"
-      }}>
-        {items.length} items{selectedItem ? ` · ${selectedItem} selected` : ""}
-      </div>
-    </div>
-  );
-};
+                border: selectedItem === item.name ? "1px solid rgba(99,102,241,0.2)" : "1px 

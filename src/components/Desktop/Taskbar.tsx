@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Taskbar.module.css";
+import { useSystemState } from "../../hooks/useSystemState";
 
 /* ─── SVG Icon Library ─── */
 const Icons = {
@@ -112,6 +113,18 @@ const Icons = {
       <rect x="21" y="10" width="2" height="4" rx="0.5" fill="currentColor" />
     </svg>
   ),
+  bluetooth: (
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="6.5,6.5 17.5,17.5 12,22 12,2 17.5,6.5 6.5,17.5" />
+    </svg>
+  ),
+  volumeMuted: (
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="11,5 6,9 2,9 2,15 6,15 11,19" fill="currentColor" />
+      <line x1="23" y1="9" x2="17" y2="15" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
+      <line x1="17" y1="9" x2="23" y2="15" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
+    </svg>
+  ),
   bell: (
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" fill="none" stroke="currentColor" strokeWidth="2" />
@@ -157,6 +170,7 @@ export const Taskbar: React.FC<TaskbarProps> = ({
   onToggleControlPanel,
   onLaunchApp,
 }) => {
+  const { state } = useSystemState();
   const [timeStr, setTimeStr] = useState("");
   const [dateStr, setDateStr] = useState("");
 
@@ -279,37 +293,7 @@ export const Taskbar: React.FC<TaskbarProps> = ({
       <div className={styles.rightSection}>
         {/* Status Icons Group */}
         <div className={styles.trayGroup} onClick={onToggleControlPanel}>
-          <span className={styles.trayIcon}>{Icons.wifi}</span>
-          <span className={styles.trayIcon}>{Icons.volume}</span>
-          <span className={styles.trayIcon}>{Icons.battery}</span>
-        </div>
-
-        {/* Clock */}
-        <div
-          className={styles.clockWidget}
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleControlPanel();
-          }}
-          data-testid="taskbar-clock"
-        >
-          <span className={styles.time}>{timeStr}</span>
-          <span className={styles.date}>{dateStr}</span>
-        </div>
-
-        {/* Notification Center */}
-        <div
-          className={styles.notifButton}
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleControlPanel();
-          }}
-          title="Notifications"
-        >
-          {Icons.bell}
-          <div className={styles.notifDot} />
-        </div>
-      </div>
-    </div>
-  );
-};
+          {state.bluetoothActive && (
+            <span className={styles.trayIcon} title="Bluetooth Active">{Icons.bluetooth}</span>
+          )}
+          <sp

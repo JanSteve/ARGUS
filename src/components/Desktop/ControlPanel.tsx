@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./ControlPanel.module.css";
 
+import { useSystemState } from "../../hooks/useSystemState";
+
 export type WallpaperTheme = "space" | "aurora" | "forest" | "crimson" | "ocean" | "sunset";
 
 interface ControlPanelProps {
@@ -71,12 +73,19 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   onClose,
 }) => {
   const panelRef = useRef<HTMLDivElement>(null);
-  const [wifiActive, setWifiActive] = useState(true);
-  const [bluetoothActive, setBluetoothActive] = useState(false);
+  const { state, updateState } = useSystemState();
   const [nightLight, setNightLight] = useState(false);
   const [dndActive, setDndActive] = useState(false);
-  const [volume, setVolume] = useState(70);
-  const [brightness, setBrightness] = useState(85);
+
+  const wifiActive = state.wifiActive;
+  const bluetoothActive = state.bluetoothActive;
+  const volume = state.volume;
+  const brightness = state.brightness;
+
+  const setWifiActive = (val: boolean) => updateState({ wifiActive: val });
+  const setBluetoothActive = (val: boolean) => updateState({ bluetoothActive: val });
+  const setVolume = (val: number) => updateState({ volume: val });
+  const setBrightness = (val: number) => updateState({ brightness: val });
 
   // Close on outside click
   useEffect(() => {
@@ -207,14 +216,4 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
       <div className={styles.footer}>
         <span>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: "4px", verticalAlign: "middle" }}>
-            <rect x="1" y="7" width="18" height="10" rx="2" fill="none" stroke="currentColor" strokeWidth="2" />
-            <rect x="3.5" y="9.5" width="13" height="5" rx="1" fill="currentColor" />
-            <rect x="21" y="10" width="2" height="4" rx="0.5" fill="currentColor" />
-          </svg>
-          100%
-        </span>
-        <span style={{ opacity: 0.6 }}>v2.0.0</span>
-      </div>
-    </div>
-  );
-};
+            <rect x="1" y="7" width="18" height="10" rx
