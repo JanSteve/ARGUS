@@ -241,9 +241,10 @@ export const SettingsApp: React.FC = () => {
               <div
                 style={{
                   background: "rgba(0,0,0,0.2)",
-                  border: config.openrouterApiKey.trim()
-                    ? "1px solid rgba(16,185,129,0.25)"
-                    : "1px solid rgba(245,158,11,0.25)",
+                  border:
+                    config.remoteProvider === "duckchat" || config.openrouterApiKey.trim()
+                      ? "1px solid rgba(16,185,129,0.25)"
+                      : "1px solid rgba(245,158,11,0.25)",
                   borderRadius: "10px",
                   padding: "12px 14px",
                   display: "flex",
@@ -257,11 +258,15 @@ export const SettingsApp: React.FC = () => {
                     width: "10px",
                     height: "10px",
                     borderRadius: "50%",
-                    background: config.openrouterApiKey.trim() ? "#10b981" : "#f59e0b",
+                    background:
+                      config.remoteProvider === "duckchat" || config.openrouterApiKey.trim()
+                        ? "#10b981"
+                        : "#f59e0b",
                     flexShrink: 0,
-                    boxShadow: config.openrouterApiKey.trim()
-                      ? "0 0 8px #10b981"
-                      : "none",
+                    boxShadow:
+                      config.remoteProvider === "duckchat" || config.openrouterApiKey.trim()
+                        ? "0 0 8px #10b981"
+                        : "none",
                   }}
                 />
                 <div>
@@ -269,15 +274,24 @@ export const SettingsApp: React.FC = () => {
                     style={{
                       fontSize: "12px",
                       fontWeight: 700,
-                      color: config.openrouterApiKey.trim() ? "#10b981" : "#f59e0b",
+                      color:
+                        config.remoteProvider === "duckchat" || config.openrouterApiKey.trim()
+                          ? "#10b981"
+                          : "#f59e0b",
                       letterSpacing: "0.05em",
                     }}
                   >
-                    {config.openrouterApiKey.trim() ? "OPENROUTER ACTIVE" : "API KEY REQUIRED"}
+                    {config.remoteProvider === "duckchat"
+                      ? "FREE CLOUD ACTIVE"
+                      : config.openrouterApiKey.trim()
+                      ? "OPENROUTER ACTIVE"
+                      : "API KEY REQUIRED"}
                   </div>
                   <div style={{ fontSize: "11px", color: "var(--fg-muted)", marginTop: "4px" }}>
-                    {config.openrouterApiKey.trim()
-                      ? "Prompts routed securely to OpenRouter cloud APIs."
+                    {config.remoteProvider === "duckchat"
+                      ? "Prompts routed instantly through keyless DuckChat. Zero setup required."
+                      : config.openrouterApiKey.trim()
+                      ? "Prompts routed securely to your OpenRouter account."
                       : "Please insert your OpenRouter API key below to connect."}
                   </div>
                 </div>
@@ -368,8 +382,34 @@ export const SettingsApp: React.FC = () => {
               </div>
             )}
 
-            {/* OpenRouter API Key input */}
+            {/* Remote Provider select */}
             {config.mode === "remote" && (
+              <div style={baseRowStyle}>
+                <div>
+                  <div style={labelStyle}>Remote Provider</div>
+                  <div style={subLabelStyle}>Choose keyless or custom OpenRouter</div>
+                </div>
+                <select
+                  value={config.remoteProvider}
+                  onChange={(e) => updateConfig({ remoteProvider: e.target.value as any })}
+                  style={{
+                    background: "rgba(255,255,255,0.06)",
+                    border: "1px solid rgba(255,255,255,0.12)",
+                    borderRadius: "6px",
+                    padding: "4px 8px",
+                    fontSize: "12px",
+                    color: "var(--fg-default)",
+                    maxWidth: "200px",
+                  }}
+                >
+                  <option value="duckchat">Free Cloud (No Key Needed)</option>
+                  <option value="openrouter">OpenRouter (API Key Required)</option>
+                </select>
+              </div>
+            )}
+
+            {/* OpenRouter API Key input */}
+            {config.mode === "remote" && config.remoteProvider === "openrouter" && (
               <div style={baseRowStyle}>
                 <div>
                   <div style={labelStyle}>OpenRouter API Key</div>
@@ -433,7 +473,11 @@ export const SettingsApp: React.FC = () => {
                 <>
                   <div>
                     <div style={labelStyle}>Active Cloud Model</div>
-                    <div style={subLabelStyle}>OpenRouter model routing</div>
+                    <div style={subLabelStyle}>
+                      {config.remoteProvider === "duckchat"
+                        ? "Keyless Cloud model routing"
+                        : "OpenRouter model routing"}
+                    </div>
                   </div>
                   <select
                     value={config.openrouterModel}
@@ -448,11 +492,22 @@ export const SettingsApp: React.FC = () => {
                       maxWidth: "240px",
                     }}
                   >
-                    <option value="google/gemini-2.5-flash">Gemini 2.5 Flash</option>
-                    <option value="meta-llama/llama-3.3-70b-instruct">Llama 3.3 70B</option>
-                    <option value="deepseek/deepseek-chat">DeepSeek Chat V3</option>
-                    <option value="qwen/qwen-2.5-72b-instruct">Qwen 2.5 72B</option>
-                    <option value="microsoft/phi-4">Microsoft Phi-4</option>
+                    {config.remoteProvider === "duckchat" ? (
+                      <>
+                        <option value="gpt-4o-mini">GPT-4o Mini (Default)</option>
+                        <option value="claude-3-haiku">Claude 3 Haiku</option>
+                        <option value="meta-llama/Llama-3-70b-instruct">Llama 3 70B</option>
+                        <option value="mistralai/Mixtral-8x7B-Instruct-v0.1">Mixtral 8x7B</option>
+                      </>
+                    ) : (
+                      <>
+                        <option value="google/gemini-2.5-flash">Gemini 2.5 Flash</option>
+                        <option value="meta-llama/llama-3.3-70b-instruct">Llama 3.3 70B</option>
+                        <option value="deepseek/deepseek-chat">DeepSeek Chat V3</option>
+                        <option value="qwen/qwen-2.5-72b-instruct">Qwen 2.5 72B</option>
+                        <option value="microsoft/phi-4">Microsoft Phi-4</option>
+                      </>
+                    )}
                   </select>
                 </>
               )}

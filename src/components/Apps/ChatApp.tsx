@@ -319,7 +319,8 @@ export const ChatApp: React.FC = () => {
 
   // Dynamic remote config status details
   const remoteActive = config.mode === "remote";
-  const remoteReady = config.openrouterApiKey.trim() !== "";
+  const isDuckChat = config.remoteProvider === "duckchat";
+  const remoteReady = isDuckChat || config.openrouterApiKey.trim() !== "";
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", gap: "10px" }}>
@@ -357,11 +358,17 @@ export const ChatApp: React.FC = () => {
               letterSpacing: "0.05em",
             }}
           >
-            {remoteActive ? (remoteReady ? "OPENROUTER READY" : "API KEY REQUIRED") : OLLAMA_STATUS_LABELS[status]}
+            {remoteActive
+              ? isDuckChat
+                ? "FREE CLOUD READY"
+                : remoteReady
+                ? "OPENROUTER READY"
+                : "API KEY REQUIRED"
+              : OLLAMA_STATUS_LABELS[status]}
           </span>
           {remoteActive ? (
             <span style={{ color: "var(--fg-muted)", marginLeft: "8px", fontSize: "11px" }}>
-              {config.openrouterModel}
+              {isDuckChat ? "gpt-4o-mini" : config.openrouterModel}
             </span>
           ) : (
             status === "ready" && (
@@ -379,11 +386,25 @@ export const ChatApp: React.FC = () => {
             fontWeight: 600,
             padding: "2px 8px",
             borderRadius: "6px",
-            background: config.mode === "local" ? "rgba(16,185,129,0.12)" : "rgba(139,92,246,0.12)",
-            color: config.mode === "local" ? "#10b981" : "#8b5cf6",
+            background:
+              config.mode === "local"
+                ? "rgba(16,185,129,0.12)"
+                : isDuckChat
+                ? "rgba(52,211,153,0.12)"
+                : "rgba(139,92,246,0.12)",
+            color:
+              config.mode === "local"
+                ? "#10b981"
+                : isDuckChat
+                ? "#34d399"
+                : "#8b5cf6",
           }}
         >
-          {config.mode === "local" ? "LOCAL · PRIVATE" : "CLOUD · OPENROUTER"}
+          {config.mode === "local"
+            ? "LOCAL · PRIVATE"
+            : isDuckChat
+            ? "CLOUD · FREE KEYLESS"
+            : "CLOUD · OPENROUTER"}
         </div>
 
         {!remoteActive && (
@@ -516,8 +537,14 @@ export const ChatApp: React.FC = () => {
           disabled={isStreaming || (config.mode === "remote" && !remoteReady)}
           placeholder={
             config.mode === "remote"
-              ? (remoteReady ? "Message OpenRouter cloud AI... or type commands like 'open browser'" : "API key required — configure OpenRouter in Settings")
-              : (status === "ready" ? "Message local AI... or type commands like 'connect wifi'" : "Ollama offline — pull models or switch to remote mode")
+              ? isDuckChat
+                ? "Message keyless Free Cloud AI... or type commands like 'open browser'"
+                : remoteReady
+                ? "Message OpenRouter cloud AI... or type commands like 'open browser'"
+                : "API key required — configure OpenRouter in Settings"
+              : status === "ready"
+              ? "Message local AI... or type commands like 'connect wifi'"
+              : "Ollama offline — pull models or switch to remote mode"
           }
           rows={1}
           style={{

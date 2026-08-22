@@ -10,7 +10,7 @@ export type ExecutionMode = "local" | "remote";
 // ─── Provider IDs ─────────────────────────────────────────────────────────────
 
 export type LocalProviderID = "ollama";
-export type RemoteProviderID = "groq" | "openrouter";
+export type RemoteProviderID = "groq" | "openrouter" | "duckchat";
 export type ProviderID = LocalProviderID | RemoteProviderID;
 
 // ─── Performance Profile ──────────────────────────────────────────────────────
@@ -57,7 +57,7 @@ export interface AIConfig {
 export const DEFAULT_AI_CONFIG: AIConfig = {
   mode: "local",
   localProvider: "ollama",
-  remoteProvider: "openrouter",
+  remoteProvider: "duckchat",
   model: "llama3.2",
   ollamaEndpoint: "http://localhost:11434",
   groqApiKey: "",

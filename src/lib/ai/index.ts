@@ -7,6 +7,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { ollamaProvider } from "./ollamaProvider";
 import { openrouterProvider } from "./openrouterProvider";
+import { duckchatProvider } from "./duckchatProvider";
 import type {
   AIConfig,
   AIProvider,
@@ -21,6 +22,7 @@ import { DEFAULT_AI_CONFIG, AI_CONFIG_KEY } from "./types";
 export * from "./types";
 export { ollamaProvider } from "./ollamaProvider";
 export { openrouterProvider } from "./openrouterProvider";
+export { duckchatProvider } from "./duckchatProvider";
 
 // ─── Config Persistence ───────────────────────────────────────────────────────
 
@@ -55,8 +57,11 @@ export function getActiveProvider(config: AIConfig): AIProvider {
   if (config.remoteProvider === "openrouter") {
     return openrouterProvider;
   }
+  if (config.remoteProvider === "duckchat") {
+    return duckchatProvider;
+  }
   // Default fallback
-  return openrouterProvider;
+  return duckchatProvider;
 }
 
 // ─── useAIConfig Hook ─────────────────────────────────────────────────────────

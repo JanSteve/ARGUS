@@ -1,5 +1,16 @@
 import { useState, useEffect, useCallback } from "react";
 
+let tauriInvoke: any = null;
+try {
+  import("@tauri-apps/api/core").then((mod) => {
+    tauriInvoke = mod.invoke;
+  }).catch(() => {
+    // Ignore
+  });
+} catch {
+  // Ignore
+}
+
 export interface SystemState {
   wifiActive: boolean;
   bluetoothActive: boolean;
@@ -33,8 +44,10 @@ export function useSystemState() {
     setStateState((prev) => {
       const next = { ...prev, ...updates };
       localStorage.setItem(SYSTEM_STATE_KEY, JSON.stringify(next));
-      // Dispatch event to sync state across other components in real-time
       window.dispatchEvent(new CustomEvent("argus:system-state-changed", { detail: next }));
+      if (updates.wifiActive !== undefined && tauriInvoke) {
+        tauriInvoke("set_wifi_state", { enabled: updates.wifiActive }).catch(() => {});
+      }
       return next;
     });
   }, []);
@@ -47,17 +60,31 @@ export function useSystemState() {
       }
     };
     window.addEventListener("argus:system-state-changed", handleSync);
-    return () => window.removeEventListener("argus:system-state-changed", handleSync);
+    return () => {
+      window.removeEventListener("argus:system-state-changed", handleSync);
+    };
   }, []);
 
-  // Listen to navigator network status
+  useEffect(() => {
+    const queryHardware = async () => {
+      if (tauriInvoke) {
+        try {
+          const hwActive = await tauriInvoke("get_wifi_state");
+          if (typeof hwActive === "boolean" && hwActive !== state.wifiActive) {
+            updateState({ wifiActive: hwActive });
+          }
+        } catch {}
+      }
+    };
+    const timer = setTimeout(queryHardware, 300);
+    return () => clearTimeout(timer);
+  }, [updateState, state.wifiActive]);
+
   useEffect(() => {
     const handleOnline = () => updateState({ wifiActive: true });
     const handleOffline = () => updateState({ wifiActive: false });
-
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
-
     return () => {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);

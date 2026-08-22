@@ -2,23 +2,27 @@ import React, { useState, useEffect } from "react";
 import styles from "./BrowserApp.module.css";
 import { useSystemState } from "../../hooks/useSystemState";
 
-// Attempt to load tauri opener plugin for native host browser activation
 let tauriOpen: ((url: string) => Promise<void>) | null = null;
 try {
-  // Dynamically import to prevent test-runner or node build breakage
   import("@tauri-apps/plugin-opener").then((mod) => {
     tauriOpen = mod.open;
-  }).catch(() => {
-    // Ignore, fallback will be used
-  });
-} catch {
-  // Ignore
-}
+  }).catch(() => {});
+} catch {}
 
 interface Tab {
   id: string;
   title: string;
   url: string;
+  isSearch?: boolean;
+  searchQuery?: string;
+  searchResults?: SearchResult[];
+  searchLoading?: boolean;
+}
+
+interface SearchResult {
+  title: string;
+  url: string;
+  snippet: string;
 }
 
 export const BrowserApp: React.FC = () => {
@@ -36,19 +40,26 @@ export const BrowserApp: React.FC = () => {
       const detail = (e as CustomEvent<{ url: string }>).detail;
       if (detail?.url) {
         let target = detail.url;
-        if (!/^https?:\/\//i.test(target)) {
-          target = "https://" + target;
-        }
-        setTabs((prev) => {
-          const active = prev.find((t) => t.id === activeTabId);
-          if (active) {
-            return prev.map((t) =>
-              t.id === activeTabId ? { ...t, url: target, title: detail.url } : t
-            );
+        const isUrl = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/\S*)?$/.test(target);
+        
+        if (isUrl) {
+          if (!/^https?:\/\//i.test(target)) {
+            target = "https://" + target;
           }
-          return [...prev, { id: Date.now().toString(), title: detail.url, url: target }];
-        });
-        setUrlInput(target);
+          setTabs((prev) => {
+            const active = prev.find((t) => t.id === activeTabId);
+            if (active) {
+              return prev.map((t) =>
+                t.id === activeTabId ? { ...t, url: target, title: detail.url, isSearch: false } : t
+              );
+            }
+            return [...prev, { id: Date.now().toString(), title: detail.url, url: target }];
+          });
+          setUrlInput(target);
+        } else {
+          // Perform search
+          handleSearch(target);
+        }
       }
     };
     window.addEventListener("argus:browser-navigate", handleRemoteNavigate);
@@ -70,7 +81,92 @@ export const BrowserApp: React.FC = () => {
     if (activeTabId === id) {
       const newActive = newTabs[newTabs.length - 1];
       setActiveTabId(newActive.id);
-      setUrlInput(newActive.url);
+      setUrlInput(newActive.url || (newActive.isSearch ? newActive.searchQuery || "" : ""));
+    }
+  };
+
+  const handleSearch = async (query: string) => {
+    if (!query.trim()) return;
+
+    // Set tab to loading search state
+    setTabs((prev) =>
+      prev.map((t) =>
+        t.id === activeTabId
+          ? { ...t, isSearch: true, searchQuery: query, searchLoading: true, title: `Search: ${query}`, url: "" }
+          : t
+      )
+    );
+    setUrlInput(query);
+
+    try {
+      const response = await fetch(
+        `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&skip_disambig=1`
+      );
+      if (!response.ok) throw new Error("Search failed");
+      const data = await response.json();
+
+      const results: SearchResult[] = [];
+
+      // 1. Extract official / primary abstract topic
+      if (data.Heading && data.AbstractText) {
+        results.push({
+          title: data.Heading,
+          url: data.AbstractURL || `https://duckduckgo.com/?q=${encodeURIComponent(query)}`,
+          snippet: data.AbstractText,
+        });
+      }
+
+      // 2. Extract related topics
+      if (data.RelatedTopics) {
+        data.RelatedTopics.forEach((t: any) => {
+          if (t.FirstURL && t.Text) {
+            const parts = t.Text.split(" - ");
+            const title = parts[0] || "Search Result";
+            const snippet = parts.slice(1).join(" - ") || t.Text;
+            
+            // Skip duplicating the primary abstract heading
+            if (title.toLowerCase() !== data.Heading?.toLowerCase()) {
+              results.push({ title, url: t.FirstURL, snippet });
+            }
+          }
+        });
+      }
+
+      // Fallback if no structured answer was found
+      if (results.length === 0) {
+        results.push({
+          title: `Search DuckDuckGo: "${query}"`,
+          url: `https://duckduckgo.com/?q=${encodeURIComponent(query)}`,
+          snippet: `Find search listings, answers, and web content for your query: "${query}" natively.`,
+        });
+      }
+
+      setTabs((prev) =>
+        prev.map((t) =>
+          t.id === activeTabId
+            ? { ...t, searchResults: results, searchLoading: false }
+            : t
+        )
+      );
+    } catch (err) {
+      console.error(err);
+      setTabs((prev) =>
+        prev.map((t) =>
+          t.id === activeTabId
+            ? {
+                ...t,
+                searchLoading: false,
+                searchResults: [
+                  {
+                    title: `Search: ${query}`,
+                    url: `https://duckduckgo.com/?q=${encodeURIComponent(query)}`,
+                    snippet: "Offline search fallback. Open links to see results in default browser.",
+                  },
+                ],
+              }
+            : t
+        )
+      );
     }
   };
 
@@ -78,35 +174,41 @@ export const BrowserApp: React.FC = () => {
     e.preventDefault();
     if (!urlInput.trim()) return;
 
-    let finalUrl = urlInput;
-    if (!/^https?:\/\//i.test(finalUrl) && finalUrl !== "") {
-      finalUrl = "https://" + finalUrl;
-    }
+    // Detect if urlInput is a search query or a direct URL
+    const isUrl = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/\S*)?$/.test(urlInput);
 
-    setTabs(
-      tabs.map((t) =>
-        t.id === activeTabId ? { ...t, url: finalUrl, title: urlInput } : t
-      )
-    );
-    setUrlInput(finalUrl);
+    if (isUrl) {
+      let finalUrl = urlInput;
+      if (!/^https?:\/\//i.test(finalUrl)) {
+        finalUrl = "https://" + finalUrl;
+      }
+      setTabs(
+        tabs.map((t) =>
+          t.id === activeTabId ? { ...t, url: finalUrl, title: urlInput, isSearch: false } : t
+        )
+      );
+      setUrlInput(finalUrl);
+    } else {
+      handleSearch(urlInput);
+    }
   };
 
   const handleTabClick = (tab: Tab) => {
     setActiveTabId(tab.id);
-    setUrlInput(tab.url);
+    setUrlInput(tab.url || (tab.isSearch ? tab.searchQuery || "" : ""));
   };
 
-  // Open active URL in the host's actual browser (Chrome, Safari, etc.)
-  const handleOpenExternal = async () => {
-    if (!activeTab?.url) return;
+  const handleOpenExternal = async (targetUrl?: string) => {
+    const url = targetUrl || activeTab?.url;
+    if (!url) return;
     try {
       if (tauriOpen) {
-        await tauriOpen(activeTab.url);
+        await tauriOpen(url);
       } else {
-        window.open(activeTab.url, "_blank");
+        window.open(url, "_blank");
       }
     } catch {
-      window.open(activeTab.url, "_blank");
+      window.open(url, "_blank");
     }
   };
 
@@ -166,7 +268,7 @@ export const BrowserApp: React.FC = () => {
               setUrlInput("");
               setTabs(
                 tabs.map((t) =>
-                  t.id === activeTabId ? { ...t, url: "", title: "Welcome" } : t
+                  t.id === activeTabId ? { ...t, url: "", title: "Welcome", isSearch: false } : t
                 )
               );
             }}
@@ -183,7 +285,7 @@ export const BrowserApp: React.FC = () => {
               className={styles.addressInput}
               value={urlInput}
               onChange={(e) => setUrlInput(e.target.value)}
-              placeholder="Search or enter web address (e.g. example.com)"
+              placeholder="Search Google/DuckDuckGo or enter web address"
             />
           </form>
 
@@ -191,7 +293,7 @@ export const BrowserApp: React.FC = () => {
             <button
               className={styles.iconButton}
               title="Open in System Browser (Bypasses Sandbox Embed Restrictions)"
-              onClick={handleOpenExternal}
+              onClick={() => handleOpenExternal()}
               style={{
                 marginLeft: "4px",
                 background: "rgba(99, 102, 241, 0.15)",
@@ -241,6 +343,87 @@ export const BrowserApp: React.FC = () => {
               Configure Connection
             </button>
           </div>
+        ) : activeTab?.isSearch ? (
+          // ─── Search Results Renderer ───
+          <div
+            style={{
+              padding: "24px",
+              overflowY: "auto",
+              height: "100%",
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              gap: "16px",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <div style={{ color: "#a5b4fc", fontWeight: 700, fontSize: "16px" }}>
+                ARGUS Connected Search
+              </div>
+              <span style={{ fontSize: "12px", color: "var(--fg-muted)" }}>
+                powered by DuckDuckGo Answers API
+              </span>
+            </div>
+
+            {activeTab.searchLoading ? (
+              <div style={{ textAlign: "center", padding: "40px 0", color: "var(--fg-muted)" }}>
+                Retrieving search results...
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: "16px", maxWidth: "680px" }}>
+                {activeTab.searchResults?.map((res, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      background: "rgba(255, 255, 255, 0.03)",
+                      border: "1px solid rgba(255, 255, 255, 0.05)",
+                      borderRadius: "10px",
+                      padding: "16px",
+                      transition: "background 0.15s ease",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "6px",
+                    }}
+                  >
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "12px" }}>
+                      <div
+                        style={{
+                          color: "#60a5fa",
+                          fontSize: "15px",
+                          fontWeight: 600,
+                          cursor: "pointer",
+                          textDecoration: "underline",
+                        }}
+                        onClick={() => handleOpenExternal(res.url)}
+                      >
+                        {res.title}
+                      </div>
+                      <button
+                        onClick={() => handleOpenExternal(res.url)}
+                        style={{
+                          background: "rgba(99, 102, 241, 0.1)",
+                          border: "1px solid rgba(99, 102, 241, 0.2)",
+                          color: "#a5b4fc",
+                          borderRadius: "4px",
+                          fontSize: "11px",
+                          padding: "2px 8px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Open Real Website
+                      </button>
+                    </div>
+                    <div style={{ color: "#34d399", fontSize: "11.5px", wordBreak: "break-all" }}>
+                      {res.url}
+                    </div>
+                    <div style={{ color: "var(--fg-muted)", fontSize: "12.5px", lineHeight: "1.4" }}>
+                      {res.snippet}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         ) : activeTab?.url ? (
           <div style={{ width: "100%", height: "100%", position: "relative" }}>
             <iframe
@@ -249,7 +432,6 @@ export const BrowserApp: React.FC = () => {
               title={activeTab.title}
               sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
             />
-            {/* Overlay Notice for site headers */}
             <div
               style={{
                 position: "absolute",
@@ -270,7 +452,7 @@ export const BrowserApp: React.FC = () => {
             >
               <span>Site blocking embed?</span>
               <button
-                onClick={handleOpenExternal}
+                onClick={() => handleOpenExternal()}
                 style={{
                   background: "rgba(255, 255, 255, 0.08)",
                   border: "1px solid rgba(255, 255, 255, 0.15)",
@@ -295,7 +477,7 @@ export const BrowserApp: React.FC = () => {
                 className={styles.linkCard}
                 onClick={() => {
                   setUrlInput("https://example.com");
-                  setTabs(tabs.map((t) => t.id === activeTabId ? { ...t, url: "https://example.com", title: "Example Domain" } : t));
+                  setTabs(tabs.map((t) => t.id === activeTabId ? { ...t, url: "https://example.com", title: "Example Domain", isSearch: false } : t));
                 }}
               >
                 <h3>Example Domain</h3>
@@ -305,7 +487,7 @@ export const BrowserApp: React.FC = () => {
                 className={styles.linkCard}
                 onClick={() => {
                   setUrlInput("https://en.wikipedia.org");
-                  setTabs(tabs.map((t) => t.id === activeTabId ? { ...t, url: "https://en.wikipedia.org", title: "Wikipedia" } : t));
+                  setTabs(tabs.map((t) => t.id === activeTabId ? { ...t, url: "https://en.wikipedia.org", title: "Wikipedia", isSearch: false } : t));
                 }}
               >
                 <h3>Wikipedia</h3>

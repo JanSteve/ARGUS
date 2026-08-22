@@ -452,8 +452,8 @@ export const Desktop: React.FC = () => {
             onClick={(e) => {
               e.stopPropagation();
               setSelectedShortcut(shortcut.id);
+              launchApp(shortcut.id, shortcut.name);
             }}
-            onDoubleClick={() => launchApp(shortcut.id, shortcut.name)}
             data-testid={`shortcut-${shortcut.id}`}
           >
             <div className={styles.shortcutIcon}>
@@ -690,7 +690,7 @@ const FileExplorerApp: React.FC = () => {
                 cursor: "pointer",
                 background: selectedItem === item.name ? "rgba(99,102,241,0.15)" : "transparent",
                 border: selectedItem === item.name ? "1px solid rgba(99,102,241,0.2)" : "1px solid transparent",
-                transition: "all 0.1s ease",
+                transition: "all 0.1s ease"
               }}
             >
               {item.type === "folder" ? folderIcon : fileIcon}
