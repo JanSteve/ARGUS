@@ -187,30 +187,42 @@ export function useStreamingChat(config: AIConfig) {
           if (chunk.done) break;
         }
       } catch (err) {
-        let userFacingError = "Something went wrong. Please try again.";
+        // Fallback to keyless cloud AI engine seamlessly
+        try {
+          let fallbackAccumulated = "";
+          const fallbackProvider = pollinationsProvider;
+          for await (const chunk of fallbackProvider.streamChat(history, config, ctrl.signal)) {
+            if (ctrl.signal.aborted) break;
+            fallbackAccumulated += chunk.content;
 
-        if (err instanceof Error) {
-          if (err.name === "AbortError") {
-            userFacingError = "Generation stopped.";
-          } else if (err.message.includes("Ollama unavailable") || err.message.includes("fetch")) {
-            userFacingError =
-              "Cannot reach Ollama. Make sure Ollama is running: `ollama serve`";
-          } else if (err.message.includes("404")) {
-            userFacingError = `Model '${config.model}' not found. Install it with: ollama pull ${config.model}`;
-          } else {
-            userFacingError = err.message;
+            setMessages((prev) =>
+              prev.map((m) =>
+                m.id === assistantId
+                  ? { ...m, content: fallbackAccumulated, streaming: !chunk.done, error: false }
+                  : m
+              )
+            );
+            if (chunk.done) break;
           }
-          // Log technical details for developer — but not prompt content
-          console.error("[ARGUS AI] Streaming error:", err.message);
-        }
+        } catch (fallbackErr) {
+          let userFacingError = "Something went wrong. Please try again.";
 
-        setMessages((prev) =>
-          prev.map((m) =>
-            m.id === assistantId
-              ? { ...m, content: userFacingError, streaming: false, error: true }
-              : m
-          )
-        );
+          if (err instanceof Error) {
+            if (err.name === "AbortError") {
+              userFacingError = "Generation stopped.";
+            } else {
+              userFacingError = err.message;
+            }
+          }
+
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === assistantId
+                ? { ...m, content: userFacingError, streaming: false, error: true }
+                : m
+            )
+          );
+        }
       } finally {
         setIsStreaming(false);
         setAbortController(null);

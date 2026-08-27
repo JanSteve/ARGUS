@@ -379,8 +379,8 @@ export const ChatApp: React.FC = () => {
 
   // Dynamic remote config status details
   const remoteActive = config.mode === "remote";
-  const isDuckChat = config.remoteProvider === "duckchat";
-  const remoteReady = isDuckChat || config.openrouterApiKey.trim() !== "";
+  const isKeyless = config.remoteProvider === "duckchat" || config.remoteProvider === "pollinations";
+  const remoteReady = isKeyless || config.openrouterApiKey.trim() !== "";
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", gap: "10px" }}>
@@ -419,16 +419,22 @@ export const ChatApp: React.FC = () => {
             }}
           >
             {remoteActive
-              ? isDuckChat
-                ? "FREE CLOUD READY"
+              ? config.remoteProvider === "pollinations"
+                ? "KEYLESS AI READY (DEEPSEEK / OPENAI)"
+                : config.remoteProvider === "duckchat"
+                ? "FREE CLOUD READY (GPT-4O)"
                 : remoteReady
                 ? "OPENROUTER READY"
-                : "API KEY REQUIRED"
+                : "KEYLESS ENGINE ACTIVE"
               : OLLAMA_STATUS_LABELS[status]}
           </span>
           {remoteActive ? (
             <span style={{ color: "var(--fg-muted)", marginLeft: "8px", fontSize: "11px" }}>
-              {isDuckChat ? "gpt-4o-mini" : config.openrouterModel}
+              {config.remoteProvider === "pollinations"
+                ? "Zero-Signup Keyless"
+                : config.remoteProvider === "duckchat"
+                ? "gpt-4o-mini"
+                : config.openrouterModel}
             </span>
           ) : (
             status === "ready" && (
@@ -448,23 +454,13 @@ export const ChatApp: React.FC = () => {
             borderRadius: "6px",
             background:
               config.mode === "local"
-                ? "rgba(16,185,129,0.12)"
-                : isDuckChat
-                ? "rgba(52,211,153,0.12)"
-                : "rgba(139,92,246,0.12)",
-            color:
-              config.mode === "local"
-                ? "#10b981"
-                : isDuckChat
-                ? "#34d399"
-                : "#8b5cf6",
+                ? "rgba(59, 130, 246, 0.15)"
+                : "rgba(16, 185, 129, 0.15)",
+            color: config.mode === "local" ? "#60a5fa" : "#34d399",
+            border: `1px solid ${config.mode === "local" ? "rgba(59, 130, 246, 0.3)" : "rgba(16, 185, 129, 0.3)"}`,
           }}
         >
-          {config.mode === "local"
-            ? "LOCAL · PRIVATE"
-            : isDuckChat
-            ? "CLOUD · FREE KEYLESS"
-            : "CLOUD · OPENROUTER"}
+          {config.mode === "local" ? "LOCAL FIRST" : "KEYLESS CLOUD"}
         </div>
 
         {/* TTS Read Aloud Toggle */}
@@ -546,23 +542,45 @@ export const ChatApp: React.FC = () => {
         }}
       >
         {displayMessages.length === 0 ? (
-          <div style={{ fontSize: "13px", color: "var(--fg-muted)", textAlign: "center", marginTop: "40px" }}>
-            <div style={{ marginBottom: "8px", opacity: 0.4 }}>
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" style={{ margin: "0 auto", display: "block" }}>
+          <div style={{ fontSize: "13px", color: "var(--fg-muted)", textAlign: "center", marginTop: "30px" }}>
+            <div style={{ marginBottom: "8px", opacity: 0.8, color: "#60a5fa" }}>
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" style={{ margin: "0 auto", display: "block" }}>
                 <path d="M12 3C6.48 3 2 6.58 2 11c0 2.52 1.64 4.77 4.2 6.24L5 21l4.32-2.16C10.2 18.94 11.08 19 12 19c5.52 0 10-3.58 10-8s-4.48-8-10-8z" fill="currentColor" />
               </svg>
             </div>
-            {config.mode === "remote"
-              ? "Start chatting with your OpenRouter cloud assistant."
-              : status === "ready"
-              ? "Start a conversation with your local AI"
-              : status === "checking"
-              ? "Checking Ollama..."
-              : "Start ARGUS with Ollama running for local AI"}
-            <div style={{ marginTop: "12px", fontSize: "11px", opacity: 0.7 }}>
-              Try: <code style={{ background: "rgba(255,255,255,0.06)", padding: "1px 5px", borderRadius: "3px" }}>connect to wifi</code>{" "}
-              <code style={{ background: "rgba(255,255,255,0.06)", padding: "1px 5px", borderRadius: "3px" }}>open youtube</code>{" "}
-              <code style={{ background: "rgba(255,255,255,0.06)", padding: "1px 5px", borderRadius: "3px" }}>open notes and write shopping list</code>
+            <div style={{ fontWeight: 600, color: "#f8fafc", fontSize: "14px", marginBottom: "4px" }}>
+              ARGUS Sovereign AI Copilot
+            </div>
+            <div style={{ fontSize: "12px", color: "#94a3b8", marginBottom: "16px" }}>
+              Direct OS natural language control & zero-signup intelligence engine.
+            </div>
+
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", justifyContent: "center", maxWidth: "480px", margin: "0 auto" }}>
+              {[
+                "turn off wifi",
+                "open weather in Tokyo",
+                "open task manager",
+                "write a note Product Roadmap Q3",
+                "open youtube",
+                "check for updates",
+              ].map((chip) => (
+                <button
+                  key={chip}
+                  onClick={() => setInput(chip)}
+                  style={{
+                    background: "rgba(255, 255, 255, 0.05)",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    color: "#cbd5e1",
+                    padding: "6px 12px",
+                    borderRadius: "16px",
+                    fontSize: "11px",
+                    cursor: "pointer",
+                    transition: "all 0.2s",
+                  }}
+                >
+                  ⚡ {chip}
+                </button>
+              ))}
             </div>
           </div>
         ) : (

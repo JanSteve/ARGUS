@@ -55,9 +55,9 @@ export interface AIConfig {
 }
 
 export const DEFAULT_AI_CONFIG: AIConfig = {
-  mode: "local",
+  mode: "remote",
   localProvider: "ollama",
-  remoteProvider: "duckchat",
+  remoteProvider: "pollinations",
   model: "llama3.2",
   ollamaEndpoint: "http://localhost:11434",
   groqApiKey: "",
