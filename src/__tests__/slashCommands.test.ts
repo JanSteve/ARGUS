@@ -92,7 +92,7 @@ describe("ARGUS slash commands", () => {
       // sanitized will be empty or produce error
       expect(result?.type).toBe("calc");
       const r = result as { type: "calc"; result: string };
-      expect(r.result).toMatch(/invalid|error|NaN/i);
+      expect(r.result).toMatch(/invalid|error|NaN|could not evaluate/i);
     });
 
     it("handles empty /calc gracefully", () => {

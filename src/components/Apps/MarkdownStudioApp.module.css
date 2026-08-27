@@ -1,0 +1,142 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #0f172a;
+  color: #f8fafc;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow: hidden;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.toolGroup {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.toolBtn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #cbd5e1;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s;
+}
+
+.toolBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.aiBtn {
+  background: linear-gradient(135deg, #8b5cf6, #ec4899);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+}
+
+.aiBtn:hover {
+  opacity: 0.9;
+}
+
+.mainArea {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.editorPane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.textarea {
+  flex: 1;
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  padding: 18px 20px;
+  color: #f1f5f9;
+  font-family: "JetBrains Mono", "Fira Code", Menlo, monospace;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.previewPane {
+  flex: 1;
+  padding: 20px 24px;
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.15);
+  line-height: 1.7;
+}
+
+.previewPane h1 {
+  font-size: 1.5rem;
+  margin: 0 0 12px;
+  color: #60a5fa;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 8px;
+}
+
+.previewPane h2 {
+  font-size: 1.25rem;
+  margin: 16px 0 8px;
+  color: #a78bfa;
+}
+
+.previewPane p {
+  margin: 0 0 12px;
+  color: #cbd5e1;
+}
+
+.previewPane code {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  color: #f472b6;
+}
+
+.previewPane pre {
+  background: #090d16;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 14px;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.previewPane blockquote {
+  border-left: 3px solid #3b82f6;
+  margin: 12px 0;
+  padding-left: 12px;
+  color: #94a3b8;
+}
+
+.statusBar {
+  padding: 8px 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: #64748b;
+}

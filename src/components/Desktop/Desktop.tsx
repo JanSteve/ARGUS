@@ -15,6 +15,16 @@ import { MusicPlayerApp } from "../Apps/MusicPlayerApp";
 import { PhotosApp } from "../Apps/PhotosApp";
 import { ChatApp } from "../Apps/ChatApp";
 import { SettingsApp } from "../Apps/SettingsApp";
+import { WeatherApp } from "../Apps/WeatherApp";
+import { AppStoreApp } from "../Apps/AppStoreApp";
+import { TaskManagerApp } from "../Apps/TaskManagerApp";
+import { MarkdownStudioApp } from "../Apps/MarkdownStudioApp";
+import { UpdateCenterApp } from "../Apps/UpdateCenterApp";
+import {
+  playWindowOpenSound,
+  playWindowCloseSound,
+  playSnapSound,
+} from "../../lib/soundEffects";
 
 /* ─── Types ─── */
 export type AppComponent =
@@ -26,7 +36,12 @@ export type AppComponent =
   | "calculator"
   | "notes"
   | "music"
-  | "photos";
+  | "photos"
+  | "weather"
+  | "appstore"
+  | "taskmanager"
+  | "markdown"
+  | "updater";
 
 export interface WindowInstance {
   id: string;
@@ -59,6 +74,11 @@ const APP_DEFAULTS: Record<AppComponent, { width: number; height: number }> = {
   music: { width: 780, height: 520 },
   photos: { width: 800, height: 560 },
   settings: { width: 500, height: 400 },
+  weather: { width: 820, height: 540 },
+  appstore: { width: 880, height: 580 },
+  taskmanager: { width: 760, height: 500 },
+  markdown: { width: 860, height: 560 },
+  updater: { width: 700, height: 480 },
 };
 
 /* ─── Desktop Shortcuts Configuration ─── */
@@ -66,6 +86,11 @@ const DESKTOP_SHORTCUTS = [
   { id: "chat", name: "Chat Assistant", icon: "chat" },
   { id: "browser", name: "Browser", icon: "browser" },
   { id: "terminal", name: "Terminal", icon: "terminal" },
+  { id: "weather", name: "Weather", icon: "weather" },
+  { id: "appstore", name: "App Store", icon: "appstore" },
+  { id: "markdown", name: "Markdown Studio", icon: "markdown" },
+  { id: "taskmanager", name: "Task Manager", icon: "taskmanager" },
+  { id: "updater", name: "Update Center", icon: "updater" },
   { id: "explorer", name: "Files", icon: "explorer" },
   { id: "notes", name: "Notes", icon: "notes" },
   { id: "settings", name: "Settings", icon: "settings" },
@@ -110,6 +135,69 @@ const ShortcutIcons: Record<string, React.ReactNode> = {
       <rect width="48" height="48" rx="12" fill="url(#ic-term)" />
       <polyline points="16,18 22,24 16,30" fill="none" stroke="rgba(255,255,255,0.95)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
       <line x1="24" y1="30" x2="34" y2="30" stroke="rgba(255,255,255,0.7)" strokeWidth="2.5" strokeLinecap="round" />
+    </svg>
+  ),
+  weather: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="ic-weather" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#38bdf8" />
+          <stop offset="100%" stopColor="#0284c7" />
+        </linearGradient>
+      </defs>
+      <rect width="48" height="48" rx="12" fill="url(#ic-weather)" />
+      <circle cx="21" cy="21" r="7" fill="#fbbf24" />
+      <path d="M22 28a7 7 0 0 1 12-4 5 5 0 0 1 2 9.9H20a6 6 0 0 1 2-5.9z" fill="rgba(255,255,255,0.9)" />
+    </svg>
+  ),
+  appstore: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="ic-appstore" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#ec4899" />
+          <stop offset="100%" stopColor="#be185d" />
+        </linearGradient>
+      </defs>
+      <rect width="48" height="48" rx="12" fill="url(#ic-appstore)" />
+      <path d="M16 16h16v18a4 4 0 0 1-4 4H20a4 4 0 0 1-4-4V16z" fill="rgba(255,255,255,0.9)" />
+      <path d="M20 16V13a4 4 0 0 1 8 0v3" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="2.5" />
+    </svg>
+  ),
+  markdown: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="ic-markdown" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#8b5cf6" />
+          <stop offset="100%" stopColor="#4f46e5" />
+        </linearGradient>
+      </defs>
+      <rect width="48" height="48" rx="12" fill="url(#ic-markdown)" />
+      <rect x="11" y="14" width="26" height="20" rx="3" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="2" />
+      <path d="M16 28V20l4 5 4-5v8M31 23l3 3m0 0l3-3m-3 3V20" fill="none" stroke="rgba(255,255,255,0.95)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  ),
+  taskmanager: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="ic-taskman" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#06b6d4" />
+          <stop offset="100%" stopColor="#0891b2" />
+        </linearGradient>
+      </defs>
+      <rect width="48" height="48" rx="12" fill="url(#ic-taskman)" />
+      <path d="M14 26l5-8 5 12 5-6h5" fill="none" stroke="rgba(255,255,255,0.95)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  ),
+  updater: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="ic-updater" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#3b82f6" />
+          <stop offset="100%" stopColor="#1d4ed8" />
+        </linearGradient>
+      </defs>
+      <rect width="48" height="48" rx="12" fill="url(#ic-updater)" />
+      <path d="M24 14v14m-5-5l5 5 5-5M15 32h18" fill="none" stroke="rgba(255,255,255,0.95)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
   explorer: (
@@ -211,12 +299,18 @@ export const Desktop: React.FC = () => {
       setTopZIndex((prev) => prev + 1);
       setWindows((prev) => [...prev, newWin]);
       setStartMenuOpen(false);
+      try {
+        playWindowOpenSound();
+      } catch {}
     },
     [windows, topZIndex, focusWindow]
   );
 
   const closeWindow = useCallback((id: string) => {
     setWindows((prev) => prev.filter((w) => w.id !== id));
+    try {
+      playWindowCloseSound();
+    } catch {}
   }, []);
 
   const minimizeWindow = useCallback((id: string) => {
@@ -261,6 +355,9 @@ export const Desktop: React.FC = () => {
         setWindows((prev) =>
           prev.map((w) => (w.id === id ? { ...w, isMaximized: true, x: 0, y: 0 } : w))
         );
+        try {
+          playSnapSound();
+        } catch {}
       } else if (x < 15) {
         setWindows((prev) =>
           prev.map((w) =>
@@ -269,6 +366,9 @@ export const Desktop: React.FC = () => {
               : w
           )
         );
+        try {
+          playSnapSound();
+        } catch {}
       } else if (x > screenWidth - 100) {
         setWindows((prev) =>
           prev.map((w) =>
@@ -277,6 +377,9 @@ export const Desktop: React.FC = () => {
               : w
           )
         );
+        try {
+          playSnapSound();
+        } catch {}
       }
 
       setSnapPreview(null);
@@ -368,6 +471,8 @@ export const Desktop: React.FC = () => {
     { label: "Refresh Desktop", icon: "refresh", onClick: () => { /* no-op */ } },
     { label: "Cycle Wallpaper", icon: "wallpaper", onClick: cycleWallpaper },
     { label: "System Settings", icon: "settings", onClick: () => launchApp("settings", "Settings"), dividerBefore: true },
+    { label: "Task Manager", icon: "taskmanager", onClick: () => launchApp("taskmanager", "Task Manager") },
+    { label: "Check for Updates", icon: "updater", onClick: () => launchApp("updater", "Update Center") },
     { label: "File Explorer", icon: "explorer", onClick: () => launchApp("explorer", "File Explorer") },
     { label: "Terminal", icon: "terminal", onClick: () => launchApp("terminal", "Terminal") },
   ];
@@ -386,6 +491,11 @@ export const Desktop: React.FC = () => {
           photos: "Photos",
           explorer: "File Explorer",
           settings: "Settings",
+          weather: "Weather",
+          appstore: "App Store",
+          taskmanager: "Task Manager",
+          markdown: "Markdown Studio",
+          updater: "Update Center",
         };
         launchApp(detail.app, titleMap[detail.app] ?? detail.app);
       }
@@ -422,6 +532,16 @@ export const Desktop: React.FC = () => {
         return <MusicPlayerApp />;
       case "photos":
         return <PhotosApp />;
+      case "weather":
+        return <WeatherApp />;
+      case "appstore":
+        return <AppStoreApp />;
+      case "taskmanager":
+        return <TaskManagerApp />;
+      case "markdown":
+        return <MarkdownStudioApp />;
+      case "updater":
+        return <UpdateCenterApp />;
       default:
         return <div>Unknown App</div>;
     }

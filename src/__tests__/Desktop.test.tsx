@@ -36,11 +36,11 @@ describe("ARGUS Desktop Window Manager UI", () => {
     expect(screen.queryByTestId("start-menu")).not.toBeInTheDocument();
   });
 
-  it("launches app window when double-clicking desktop shortcuts", () => {
+  it("launches app window when clicking desktop shortcuts", () => {
     render(<Desktop />);
     
-    // Double click Chat shortcut
-    fireEvent.doubleClick(screen.getByTestId("shortcut-chat"));
+    // Click Chat shortcut
+    fireEvent.click(screen.getByTestId("shortcut-chat"));
     
     // Check that chat window frame exists on desktop
     expect(screen.getByTestId(/^window-frame-chat/)).toBeInTheDocument();
@@ -50,7 +50,7 @@ describe("ARGUS Desktop Window Manager UI", () => {
     render(<Desktop />);
     
     // Launch Chat
-    fireEvent.doubleClick(screen.getByTestId("shortcut-chat"));
+    fireEvent.click(screen.getByTestId("shortcut-chat"));
     
     // Window should be visible
     expect(screen.getByTestId(/^window-frame-chat/)).toBeInTheDocument();
@@ -72,7 +72,7 @@ describe("ARGUS Desktop Window Manager UI", () => {
     render(<Desktop />);
     
     // Launch Chat
-    fireEvent.doubleClick(screen.getByTestId("shortcut-chat"));
+    fireEvent.click(screen.getByTestId("shortcut-chat"));
     expect(screen.getByTestId(/^window-frame-chat/)).toBeInTheDocument();
     
     // Click Close Button

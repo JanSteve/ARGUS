@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   useStreamingChat,
   useOllamaStatus,
@@ -7,6 +7,7 @@ import {
   OllamaStatus,
 } from "../../lib/ai";
 import type { PerformanceProfile } from "../../lib/ai";
+import { playNotificationSound } from "../../lib/soundEffects";
 
 // ─── Slash Command Types ──────────────────────────────────────────────────────
 
@@ -204,19 +205,23 @@ function executeCopilotCommand(text: string): { animatedReply: string } | null {
 
   // 5. General App launchers
   const apps = [
-    { name: "terminal", keywords: ["terminal", "shell", "bash", "command prompt"] },
-    { name: "calculator", keywords: ["calculator", "calc", "math"] },
-    { name: "music", keywords: ["music", "player", "spotify", "song"] },
-    { name: "photos", keywords: ["photos", "gallery", "images", "pictures"] },
-    { name: "settings", keywords: ["settings", "control panel", "config"] }
+    { name: "terminal", label: "Terminal", keywords: ["terminal", "shell", "bash", "command prompt"] },
+    { name: "calculator", label: "Calculator", keywords: ["calculator", "calc", "math"] },
+    { name: "music", label: "Music Player", keywords: ["music", "player", "spotify", "song"] },
+    { name: "photos", label: "Photos", keywords: ["photos", "gallery", "images", "pictures"] },
+    { name: "weather", label: "Weather", keywords: ["weather", "forecast", "climate", "temperature"] },
+    { name: "appstore", label: "App Store", keywords: ["app store", "store", "plugins", "skills", "marketplace", "hub"] },
+    { name: "taskmanager", label: "Task Manager", keywords: ["task manager", "processes", "activity monitor", "cpu usage", "memory usage"] },
+    { name: "markdown", label: "Markdown Studio", keywords: ["markdown", "code editor", "markdown studio", "editor"] },
+    { name: "updater", label: "Update Center", keywords: ["update", "updates", "upgrade", "check update", "system update"] },
+    { name: "settings", label: "Settings", keywords: ["settings", "control panel", "config"] }
   ];
 
   for (const app of apps) {
     if (app.keywords.some(keyword => normalized.includes(keyword))) {
-      if (normalized.includes("open") || normalized.includes("launch")) {
+      if (normalized.includes("open") || normalized.includes("launch") || normalized.includes("show") || normalized.includes("check")) {
         window.dispatchEvent(new CustomEvent("argus:launch", { detail: { app: app.name } }));
-        const label = app.name.charAt(0).toUpperCase() + app.name.slice(1);
-        return { animatedReply: `✓ **Action Executed:** Opened **${label === "Music" ? "Music Player" : label}**.` };
+        return { animatedReply: `✓ **Action Executed:** Opened **${app.label}**.` };
       }
     }
   }
@@ -245,13 +250,68 @@ export const ChatApp: React.FC = () => {
   const [slashResults, setSlashResults] = useState<
     Array<{ id: string; role: "slash"; content: string }>
   >([]);
+  const [isListening, setIsListening] = useState(false);
+  const [ttsEnabled, setTtsEnabled] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const wasStreamingRef = useRef(isStreaming);
 
   const allMessages = [...messages].map((m) => ({ ...m, isSlash: false }));
+  const lastMsg = messages[messages.length - 1];
 
+  // Auto-scroll on new message
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, slashResults]);
+
+  // Voice synthesis & audio chime upon completion
+  useEffect(() => {
+    if (wasStreamingRef.current && !isStreaming && lastMsg && lastMsg.role === "assistant") {
+      playNotificationSound();
+      if (ttsEnabled && typeof window !== "undefined" && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+        const cleanText = lastMsg.content.replace(/[*_`#]/g, "");
+        const utterance = new SpeechSynthesisUtterance(cleanText);
+        utterance.rate = 1.05;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+    wasStreamingRef.current = isStreaming;
+  }, [isStreaming, lastMsg, ttsEnabled]);
+
+  // Speech-to-Text Dictation
+  const toggleVoiceDictation = useCallback(() => {
+    if (isListening) {
+      setIsListening(false);
+      return;
+    }
+    const SpeechRec =
+      (window as unknown as { SpeechRecognition?: any; webkitSpeechRecognition?: any }).SpeechRecognition ||
+      (window as unknown as { SpeechRecognition?: any; webkitSpeechRecognition?: any }).webkitSpeechRecognition;
+
+    if (!SpeechRec) {
+      alert("Speech recognition is not supported in this browser environment.");
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRec();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = "en-US";
+      recognition.onstart = () => setIsListening(true);
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        if (transcript) {
+          setInput((prev) => (prev ? `${prev} ${transcript}` : transcript));
+        }
+      };
+      recognition.onerror = () => setIsListening(false);
+      recognition.onend = () => setIsListening(false);
+      recognition.start();
+    } catch {
+      setIsListening(false);
+    }
+  }, [isListening]);
 
   const handleSend = () => {
     const trimmed = input.trim();
@@ -406,6 +466,35 @@ export const ChatApp: React.FC = () => {
             ? "CLOUD · FREE KEYLESS"
             : "CLOUD · OPENROUTER"}
         </div>
+
+        {/* TTS Read Aloud Toggle */}
+        <button
+          type="button"
+          onClick={() => setTtsEnabled(!ttsEnabled)}
+          title={ttsEnabled ? "Voice Read Aloud: Enabled" : "Voice Read Aloud: Disabled"}
+          style={{
+            background: ttsEnabled ? "rgba(99, 102, 241, 0.2)" : "transparent",
+            border: ttsEnabled ? "1px solid rgba(99, 102, 241, 0.4)" : "none",
+            borderRadius: "6px",
+            color: ttsEnabled ? "#a5b4fc" : "var(--fg-muted)",
+            cursor: "pointer",
+            padding: "3px 6px",
+            display: "flex",
+            alignItems: "center",
+            gap: "4px",
+            fontSize: "11px",
+          }}
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            {ttsEnabled ? (
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            ) : (
+              <line x1="23" y1="9" x2="17" y2="15"></line>
+            )}
+          </svg>
+          <span>{ttsEnabled ? "Voice ON" : "Voice OFF"}</span>
+        </button>
 
         {!remoteActive && (
           <button
@@ -563,6 +652,35 @@ export const ChatApp: React.FC = () => {
             overflow: "auto",
           }}
         />
+
+        {/* Voice Dictation Button */}
+        <button
+          type="button"
+          onClick={toggleVoiceDictation}
+          title={isListening ? "Listening... (click to stop)" : "Voice Dictation (Speech to Text)"}
+          style={{
+            padding: "10px",
+            background: isListening ? "rgba(239, 68, 68, 0.25)" : "rgba(255, 255, 255, 0.04)",
+            border: isListening ? "1px solid rgba(239, 68, 68, 0.5)" : "1px solid rgba(255, 255, 255, 0.08)",
+            borderRadius: "10px",
+            color: isListening ? "#f87171" : "var(--fg-muted)",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            transition: "all 0.15s ease",
+            height: "42px",
+            width: "42px",
+            flexShrink: 0,
+          }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="23"/>
+            <line x1="8" y1="23" x2="16" y2="23"/>
+          </svg>
+        </button>
 
         {isStreaming ? (
           <button

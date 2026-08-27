@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, beforeEach } from "vitest";
-import { loadAIConfig, saveAIConfig, DEFAULT_AI_CONFIG } from "../../lib/ai/index";
+import { loadAIConfig, saveAIConfig, DEFAULT_AI_CONFIG } from "../lib/ai/index";
 
 describe("AI Config persistence", () => {
   beforeEach(() => {

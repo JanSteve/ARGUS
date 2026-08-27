@@ -2,33 +2,35 @@ import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import { execSync } from "child_process";
 
-// Auto-cleanup port 1420 to prevent blank white screens from zombie processes
-try {
-  if (process.platform !== "win32") {
-    const pids = execSync("lsof -t -i :1420", { encoding: "utf8" }).trim();
-    if (pids) {
-      const pidList = pids.split("\n");
-      for (const pid of pidList) {
-        if (pid) {
+// Auto-cleanup port 1420 to prevent blank white screens from zombie processes (dev mode only)
+if (!process.env.VITEST && process.env.NODE_ENV !== "test") {
+  try {
+    if (process.platform !== "win32") {
+      const pids = execSync("lsof -t -i :1420", { encoding: "utf8" }).trim();
+      if (pids) {
+        const pidList = pids.split("\n");
+        for (const pid of pidList) {
+          if (pid) {
+            console.log(`Port 1420 is in use by PID ${pid}. Cleaning up...`);
+            execSync(`kill -9 ${pid}`);
+          }
+        }
+      }
+    } else {
+      const output = execSync('netstat -ano | findstr :1420', { encoding: "utf8" });
+      const lines = output.split("\n");
+      for (const line of lines) {
+        const parts = line.trim().split(/\s+/);
+        const pid = parts[parts.length - 1];
+        if (pid && pid !== "0" && !isNaN(pid)) {
           console.log(`Port 1420 is in use by PID ${pid}. Cleaning up...`);
-          execSync(`kill -9 ${pid}`);
+          execSync(`taskkill /F /PID ${pid}`);
         }
       }
     }
-  } else {
-    const output = execSync('netstat -ano | findstr :1420', { encoding: "utf8" });
-    const lines = output.split("\n");
-    for (const line of lines) {
-      const parts = line.trim().split(/\s+/);
-      const pid = parts[parts.length - 1];
-      if (pid && pid !== "0" && !isNaN(pid)) {
-        console.log(`Port 1420 is in use by PID ${pid}. Cleaning up...`);
-        execSync(`taskkill /F /PID ${pid}`);
-      }
-    }
+  } catch (e) {
+    // Ignore if port is free or commands fail
   }
-} catch (e) {
-  // Ignore if port is free or commands fail
 }
 
 // @ts-expect-error process is a nodejs global
@@ -63,5 +65,7 @@ export default defineConfig(async () => ({
     globals: true,
     environment: "happy-dom",
     setupFiles: "./src/test/setup.ts",
+    isolate: false,
+    fileParallelism: false,
   },
 }));

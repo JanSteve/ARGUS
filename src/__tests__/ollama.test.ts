@@ -4,9 +4,9 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { ollamaProvider } from "../../lib/ai/ollamaProvider";
-import { DEFAULT_AI_CONFIG } from "../../lib/ai/types";
-import type { AIConfig } from "../../lib/ai/types";
+import { ollamaProvider } from "../lib/ai/ollamaProvider";
+import { DEFAULT_AI_CONFIG } from "../lib/ai/types";
+import type { AIConfig } from "../lib/ai/types";
 
 const config: AIConfig = {
   ...DEFAULT_AI_CONFIG,

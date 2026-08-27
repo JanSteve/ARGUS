@@ -8,6 +8,7 @@ import { useState, useEffect, useCallback } from "react";
 import { ollamaProvider } from "./ollamaProvider";
 import { openrouterProvider } from "./openrouterProvider";
 import { duckchatProvider } from "./duckchatProvider";
+import { pollinationsProvider } from "./pollinationsProvider";
 import type {
   AIConfig,
   AIProvider,
@@ -23,6 +24,7 @@ export * from "./types";
 export { ollamaProvider } from "./ollamaProvider";
 export { openrouterProvider } from "./openrouterProvider";
 export { duckchatProvider } from "./duckchatProvider";
+export { pollinationsProvider } from "./pollinationsProvider";
 
 // ─── Config Persistence ───────────────────────────────────────────────────────
 
@@ -47,8 +49,7 @@ export function saveAIConfig(config: AIConfig): void {
 
 /**
  * Returns the active provider based on current config.
- * Currently supports: ollama (local).
- * Future: groq (remote).
+ * Supports: ollama (local), openrouter, duckchat (keyless), pollinations (keyless).
  */
 export function getActiveProvider(config: AIConfig): AIProvider {
   if (config.mode === "local") {
@@ -57,10 +58,13 @@ export function getActiveProvider(config: AIConfig): AIProvider {
   if (config.remoteProvider === "openrouter") {
     return openrouterProvider;
   }
+  if (config.remoteProvider === "pollinations") {
+    return pollinationsProvider;
+  }
   if (config.remoteProvider === "duckchat") {
     return duckchatProvider;
   }
-  // Default fallback
+  // Default keyless fallback
   return duckchatProvider;
 }
 

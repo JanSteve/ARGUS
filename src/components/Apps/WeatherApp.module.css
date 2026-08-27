@@ -1,0 +1,268 @@
+.weatherApp {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  padding: 18px;
+  background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.15), transparent 70%),
+              radial-gradient(circle at bottom left, rgba(147, 51, 234, 0.1), transparent 70%),
+              rgba(10, 12, 20, 0.75);
+  color: var(--fg-default, #f3f4f6);
+  overflow-y: auto;
+  gap: 16px;
+  box-sizing: border-box;
+}
+
+.searchBar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  position: relative;
+}
+
+.searchInput {
+  flex: 1;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 13px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.searchInput:focus {
+  border-color: rgba(99, 102, 241, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 12px rgba(99, 102, 241, 0.2);
+}
+
+.unitToggle {
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #a5b4fc;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.unitToggle:hover {
+  background: rgba(99, 102, 241, 0.2);
+}
+
+.searchResults {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 60px;
+  background: rgba(20, 22, 35, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  margin-top: 4px;
+  z-index: 50;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  backdrop-filter: blur(16px);
+  overflow: hidden;
+}
+
+.searchResultItem {
+  padding: 8px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  transition: background 0.15s ease;
+}
+
+.searchResultItem:hover {
+  background: rgba(99, 102, 241, 0.25);
+  color: #fff;
+}
+
+.mainCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+}
+
+.cityName {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.countryName {
+  font-size: 12px;
+  color: var(--fg-muted, #9ca3af);
+  margin-top: 2px;
+}
+
+.conditionText {
+  font-size: 14px;
+  color: #93c5fd;
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+.tempDisplay {
+  font-size: 52px;
+  font-weight: 900;
+  line-height: 1;
+  background: linear-gradient(135deg, #fff, #93c5fd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.feelsLike {
+  font-size: 11.5px;
+  color: var(--fg-muted, #9ca3af);
+  margin-top: 6px;
+  text-align: right;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.metricCard {
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metricLabel {
+  font-size: 11px;
+  color: var(--fg-muted, #9ca3af);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.metricValue {
+  font-size: 15px;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+.hourlySection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sectionTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--fg-muted, #9ca3af);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.hourlyList {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.hourlyCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 65px;
+}
+
+.hourlyTime {
+  font-size: 11px;
+  color: var(--fg-muted, #9ca3af);
+}
+
+.hourlyTemp {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.dailyList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dailyRow {
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dailyDay {
+  font-size: 13px;
+  font-weight: 600;
+  width: 90px;
+}
+
+.dailyCondition {
+  font-size: 12px;
+  color: var(--fg-muted, #9ca3af);
+  flex: 1;
+  text-align: center;
+}
+
+.dailyTemps {
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  gap: 8px;
+}
+
+.dailyMin {
+  color: var(--fg-muted, #9ca3af);
+  font-weight: 500;
+}
+
+.quickCities {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.quickCityBtn {
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  color: var(--fg-muted, #9ca3af);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.quickCityBtn:hover, .quickCityBtn.active {
+  background: rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.4);
+  color: #a5b4fc;
+}

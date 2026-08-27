@@ -85,6 +85,34 @@ const Icons = {
       <path d="M22 16l-5.5-6L12 15l-3-3-7 5v3a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-1z" fill="currentColor" opacity="0.7" />
     </svg>
   ),
+  weather: (
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+      <circle cx="10" cy="10" r="4" fill="#fbbf24" />
+      <path d="M12 14a4 4 0 0 1 7-2 3 3 0 0 1 1 5.9H9a3.5 3.5 0 0 1 3-3.9z" opacity="0.85" />
+    </svg>
+  ),
+  appstore: (
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+      <path d="M4 6h16v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6z" />
+      <path d="M9 6V4a3 3 0 0 1 6 0v2" fill="none" stroke="var(--bg-desktop, #0a0b10)" strokeWidth="2" />
+    </svg>
+  ),
+  taskmanager: (
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 13l4-4 4 6 4-3 6 5" />
+    </svg>
+  ),
+  markdown: (
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+      <rect x="2" y="4" width="20" height="16" rx="3" />
+      <path d="M6 15V9l3 3 3-3v6M18 12l2 2m0 0l2-2m-2 2V9" stroke="var(--bg-desktop, #0a0b10)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  ),
+  updater: (
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 14h-2v-4H8l4-4 4 4h-3v4z" />
+    </svg>
+  ),
   settings: (
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="3" />
@@ -154,11 +182,14 @@ const PINNED_APPS = [
   { id: "chat", title: "Chat Assistant", icon: Icons.chat, color: "#3b82f6" },
   { id: "browser", title: "Browser", icon: Icons.browser, color: "#8b5cf6" },
   { id: "terminal", title: "Terminal", icon: Icons.terminal, color: "#10b981" },
+  { id: "weather", title: "Weather", icon: Icons.weather, color: "#38bdf8" },
+  { id: "appstore", title: "App Store", icon: Icons.appstore, color: "#ec4899" },
+  { id: "markdown", title: "Markdown Studio", icon: Icons.markdown, color: "#a855f7" },
+  { id: "taskmanager", title: "Task Manager", icon: Icons.taskmanager, color: "#06b6d4" },
+  { id: "updater", title: "Update Center", icon: Icons.updater, color: "#3b82f6" },
   { id: "explorer", title: "File Explorer", icon: Icons.explorer, color: "#f59e0b" },
   { id: "calculator", title: "Calculator", icon: Icons.calculator, color: "#6366f1" },
   { id: "notes", title: "Notes", icon: Icons.notes, color: "#f97316" },
-  { id: "music", title: "Music Player", icon: Icons.music, color: "#ec4899" },
-  { id: "photos", title: "Photos", icon: Icons.photos, color: "#06b6d4" },
   { id: "settings", title: "Settings", icon: Icons.settings, color: "#64748b" },
 ];
 

@@ -10,7 +10,7 @@ export type ExecutionMode = "local" | "remote";
 // ─── Provider IDs ─────────────────────────────────────────────────────────────
 
 export type LocalProviderID = "ollama";
-export type RemoteProviderID = "groq" | "openrouter" | "duckchat";
+export type RemoteProviderID = "groq" | "openrouter" | "duckchat" | "pollinations";
 export type ProviderID = LocalProviderID | RemoteProviderID;
 
 // ─── Performance Profile ──────────────────────────────────────────────────────
