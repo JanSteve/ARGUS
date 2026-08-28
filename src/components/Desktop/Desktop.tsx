@@ -35,8 +35,10 @@ import { CyberGlobeApp } from "../Apps/CyberGlobeApp";
 import { SpotlightBar } from "./SpotlightBar";
 import { ArcMatrixHUD } from "./ArcMatrixHUD";
 import { ProUpgradeModal } from "./ProUpgradeModal";
+import { AuthModal } from "./AuthModal";
 import { DesktopWidgets } from "./DesktopWidgets";
 import { UpdateNotifier } from "./UpdateNotifier";
+import { initializeStartupCloudInfrastructure } from "../../lib/cloud";
 import {
   playWindowOpenSound,
   playWindowCloseSound,
@@ -436,11 +438,24 @@ export const Desktop: React.FC = () => {
   const [controlPanelOpen, setControlPanelOpen] = useState(false);
   const [spotlightOpen, setSpotlightOpen] = useState(false);
   const [proModalOpen, setProModalOpen] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
   const [topZIndex, setTopZIndex] = useState(10);
   const [wallpaper, setWallpaper] = useState<WallpaperTheme>("space");
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
   const [snapPreview, setSnapPreview] = useState<SnapPreview | null>(null);
   const [selectedShortcut, setSelectedShortcut] = useState<string | null>(null);
+
+  // Initialize Startup Cloud Infrastructure on Desktop Load
+  useEffect(() => {
+    initializeStartupCloudInfrastructure();
+  }, []);
+
+  // Wire Auth Modal Event Listener
+  useEffect(() => {
+    const handleOpenAuth = () => setAuthModalOpen(true);
+    window.addEventListener("argus:open-auth-modal", handleOpenAuth);
+    return () => window.removeEventListener("argus:open-auth-modal", handleOpenAuth);
+  }, []);
 
   // Global Cmd+K / Ctrl+K Spotlight Shortcut
   useEffect(() => {
@@ -917,6 +932,12 @@ export const Desktop: React.FC = () => {
         isOpen={proModalOpen}
         onClose={() => setProModalOpen(false)}
         onOpenSaaSStore={() => launchApp("saas", "SaaS Pro Store")}
+      />
+
+      {/* Clerk Sovereign Authentication Modal */}
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
       />
 
       {/* Hyper-Advanced VisionOS Desktop Holographic Widgets */}

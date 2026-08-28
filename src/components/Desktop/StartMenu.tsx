@@ -257,9 +257,20 @@ export const StartMenu: React.FC<StartMenuProps> = ({ onLaunchApp, onClose }) =>
 
       {/* User profile footer */}
       <div className={styles.footer}>
-        <div className={styles.userProfile}>
+        <div
+          className={styles.userProfile}
+          style={{ cursor: "pointer" }}
+          onClick={() => {
+            window.dispatchEvent(new CustomEvent("argus:open-auth-modal"));
+            onClose();
+          }}
+          title="Manage Clerk Sovereign Account"
+        >
           <div className={styles.avatar}>JS</div>
-          <span className={styles.userName}>Jan Steve Daniel</span>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <span className={styles.userName}>Jan Steve Daniel</span>
+            <span style={{ fontSize: "10px", color: "#38bdf8" }}>🔒 Clerk Verified</span>
+          </div>
         </div>
         <button
           className={styles.shutdownBtn}
