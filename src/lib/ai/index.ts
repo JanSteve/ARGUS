@@ -25,6 +25,7 @@ export { ollamaProvider } from "./ollamaProvider";
 export { openrouterProvider } from "./openrouterProvider";
 export { duckchatProvider } from "./duckchatProvider";
 export { pollinationsProvider } from "./pollinationsProvider";
+export * from "./minimaxVoice";
 
 // ─── Config Persistence ───────────────────────────────────────────────────────
 

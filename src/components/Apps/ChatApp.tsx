@@ -5,6 +5,9 @@ import {
   useAIConfig,
   OLLAMA_STATUS_LABELS,
   OllamaStatus,
+  speakVoice,
+  stopSpeaking,
+  loadVoiceConfig,
 } from "../../lib/ai";
 import { playNotificationSound } from "../../lib/soundEffects";
 
@@ -266,12 +269,8 @@ export const ChatApp: React.FC = () => {
   useEffect(() => {
     if (wasStreamingRef.current && !isStreaming && lastMsg && lastMsg.role === "assistant") {
       playNotificationSound();
-      if (ttsEnabled && typeof window !== "undefined" && "speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-        const cleanText = lastMsg.content.replace(/[*_`#]/g, "");
-        const utterance = new SpeechSynthesisUtterance(cleanText);
-        utterance.rate = 1.05;
-        window.speechSynthesis.speak(utterance);
+      if (ttsEnabled) {
+        speakVoice(lastMsg.content);
       }
     }
     wasStreamingRef.current = isStreaming;

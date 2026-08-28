@@ -35,19 +35,50 @@ const PROFILE_DESCRIPTIONS: Record<PerformanceProfile, string> = {
   turbo: "No token limit — model decides. Maximises response quality on capable hardware.",
 };
 
-type Section = "ai" | "profile" | "display" | "about";
+import {
+  loadVoiceConfig,
+  saveVoiceConfig,
+  speakVoice,
+  PERSONA_SETTINGS,
+  type VoicePersona,
+  type VoiceConfig,
+} from "../../lib/ai";
+
+type Section = "ai" | "voice" | "profile" | "display" | "about";
 
 export const SettingsApp: React.FC = () => {
   const [activeSection, setActiveSection] = React.useState<Section>("ai");
   const { config, updateConfig } = useAIConfig();
   const { status, models, recheck } = useOllamaStatus(config);
+  const [voiceConfig, setVoiceConfig] = React.useState<VoiceConfig>(loadVoiceConfig);
+  const [testPlaying, setTestPlaying] = React.useState(false);
   const endpointRef = useRef<HTMLInputElement>(null);
+
+  const updateVoice = (partial: Partial<VoiceConfig>) => {
+    const updated = { ...voiceConfig, ...partial };
+    setVoiceConfig(updated);
+    saveVoiceConfig(updated);
+  };
+
+  const handleTestVoice = async () => {
+    setTestPlaying(true);
+    await speakVoice(
+      `ARGUS Sovereign OS voice synthesis verified. Persona ${PERSONA_SETTINGS[voiceConfig.persona].label} online.`,
+      voiceConfig
+    );
+    setTimeout(() => setTestPlaying(false), 2000);
+  };
 
   const sections: Array<{ id: Section; label: string; icon: string }> = [
     {
       id: "ai",
       label: "AI Engine",
       icon: "M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5",
+    },
+    {
+      id: "voice",
+      label: "Voice & Persona",
+      icon: "M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z M19 10v2a7 7 0 0 1-14 0v-2 M12 19v4 M8 23h8",
     },
     {
       id: "profile",
@@ -511,6 +542,133 @@ export const SettingsApp: React.FC = () => {
                   </select>
                 </>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* ─── VOICE & PERSONA ─── */}
+        {activeSection === "voice" && (
+          <div style={sectionStyle}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+              <h3 style={{ fontSize: "16px", fontWeight: 600, margin: 0 }}>
+                Voice Persona & Neural Synthesis
+              </h3>
+              <button
+                onClick={handleTestVoice}
+                disabled={testPlaying}
+                style={{
+                  background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+                  border: "none",
+                  borderRadius: "6px",
+                  color: "#fff",
+                  padding: "6px 14px",
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                }}
+              >
+                {testPlaying ? "🔊 Testing Voice..." : "🔊 Test Persona"}
+              </button>
+            </div>
+
+            <div style={{ fontSize: "12px", color: "var(--fg-muted)", marginBottom: "16px" }}>
+              Select ARGUS's personal voice identity. Powered by MiniMax Speech-01-HD neural engine with acoustic baritone modulation and zero-latency Web Speech fallback.
+            </div>
+
+            {/* Persona Cards */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "20px" }}>
+              {(["jarvis", "ultron", "sovereign"] as VoicePersona[]).map((p) => {
+                const setting = PERSONA_SETTINGS[p];
+                const isSelected = voiceConfig.persona === p;
+                return (
+                  <div
+                    key={p}
+                    onClick={() => updateVoice({ persona: p })}
+                    style={{
+                      padding: "12px 14px",
+                      background: isSelected ? "rgba(99, 102, 241, 0.12)" : "rgba(255, 255, 255, 0.02)",
+                      border: isSelected ? "1px solid rgba(99, 102, 241, 0.4)" : "1px solid rgba(255, 255, 255, 0.06)",
+                      borderRadius: "10px",
+                      cursor: "pointer",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontWeight: 600, fontSize: "13px", color: isSelected ? "#818cf8" : "inherit" }}>
+                        {setting.label}
+                      </div>
+                      <div style={{ fontSize: "11px", color: "var(--fg-muted)", marginTop: "2px" }}>
+                        {setting.description}
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        width: "14px",
+                        height: "14px",
+                        borderRadius: "50%",
+                        border: isSelected ? "4px solid #6366f1" : "2px solid rgba(255,255,255,0.2)",
+                        background: isSelected ? "#fff" : "transparent",
+                      }}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* MiniMax API Settings */}
+            <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "14px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+                <span style={labelStyle}>MiniMax Neural Cloud Voice (Speech-01-HD)</span>
+                <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
+                  <input
+                    type="checkbox"
+                    checked={voiceConfig.minimaxEnabled}
+                    onChange={(e) => updateVoice({ minimaxEnabled: e.target.checked })}
+                  />
+                  <span style={{ fontSize: "12px" }}>Enable MiniMax</span>
+                </label>
+              </div>
+
+              {/* Notice & Credits */}
+              <div
+                style={{
+                  background: "rgba(245, 158, 11, 0.08)",
+                  border: "1px solid rgba(245, 158, 11, 0.2)",
+                  borderRadius: "8px",
+                  padding: "10px 12px",
+                  fontSize: "11px",
+                  color: "#fbbf24",
+                  marginBottom: "12px",
+                  lineHeight: "1.45",
+                }}
+              >
+                ⚡ <strong>10,000 monthly credits quota</strong>. If your API key returns <em>1008 (insufficient balance)</em>, ARGUS automatically synthesizes through the built-in JARVIS acoustic neural profile so speech never fails. You can paste a new key below anytime.
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                <label style={{ fontSize: "11.5px", color: "var(--fg-muted)" }}>MiniMax API Token (JWT Key):</label>
+                <input
+                  type="password"
+                  value={voiceConfig.apiKey}
+                  onChange={(e) => updateVoice({ apiKey: e.target.value })}
+                  placeholder="Paste MiniMax JWT Token..."
+                  style={{
+                    width: "100%",
+                    padding: "8px 12px",
+                    background: "rgba(255,255,255,0.04)",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    borderRadius: "6px",
+                    color: "#fff",
+                    fontSize: "12px",
+                    fontFamily: "monospace",
+                  }}
+                />
+              </div>
             </div>
           </div>
         )}
