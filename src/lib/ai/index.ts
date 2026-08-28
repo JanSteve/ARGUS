@@ -226,4 +226,23 @@ export function useStreamingChat(config: AIConfig) {
 
           setMessages((prev) =>
             prev.map((m) =>
-           
+              m.id === assistantId
+                ? { ...m, content: userFacingError, streaming: false, error: true }
+                : m
+            )
+          );
+        }
+      } finally {
+        setIsStreaming(false);
+        setAbortController(null);
+      }
+    },
+    [messages, config, isStreaming]
+  );
+
+  const clearMessages = useCallback(() => {
+    setMessages([]);
+  }, []);
+
+  return { messages, isStreaming, send, stop, clearMessages };
+}

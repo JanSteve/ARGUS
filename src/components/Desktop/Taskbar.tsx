@@ -282,19 +282,19 @@ export const Taskbar: React.FC<TaskbarProps> = ({
           <span className={styles.tooltip}>Start</span>
         </div>
 
-        {/* Search Button */}
+        {/* Search Button (Spotlight Cmd+K) */}
         <div
           className={styles.dockItem}
           onClick={(e) => {
             e.stopPropagation();
-            onToggleStartMenu();
+            window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true, bubbles: true }));
           }}
           data-testid="search-button"
         >
           <span className={styles.dockIcon}>
             {Icons.search}
           </span>
-          <span className={styles.tooltip}>Search</span>
+          <span className={styles.tooltip}>Spotlight (Cmd+K)</span>
         </div>
 
         {/* Separator */}

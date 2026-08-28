@@ -100,6 +100,19 @@ const Icons = {
       <line x1="12" y1="18" x2="12.01" y2="18" />
     </svg>
   ),
+  growth: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 20V10M12 20V4M6 20v-6" />
+    </svg>
+  ),
+  workspaces: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="7" height="7" rx="1" />
+      <rect x="14" y="3" width="7" height="7" rx="1" />
+      <rect x="3" y="14" width="7" height="7" rx="1" />
+      <rect x="14" y="14" width="7" height="7" rx="1" />
+    </svg>
+  ),
 };
 
 interface StartMenuProps {
@@ -112,6 +125,8 @@ export const StartMenu: React.FC<StartMenuProps> = ({ onLaunchApp, onClose }) =>
 
   const apps = [
     { id: "chat", name: "Chat Assistant", desc: "AI companion", icon: Icons.chat, color: "#3b82f6" },
+    { id: "growth", name: "Growth Command Center", desc: "Autonomous marketing agents", icon: Icons.growth, color: "#ec4899" },
+    { id: "workspaces", name: "AI Workspaces", desc: "Startup tasks & milestones", icon: Icons.workspaces, color: "#a855f7" },
     { id: "phone", name: "Phone Connect", desc: "Mobile smartphone bridge", icon: Icons.phone, color: "#06b6d4" },
     { id: "browser", name: "Browser", desc: "Web browser", icon: Icons.browser, color: "#8b5cf6" },
     { id: "terminal", name: "Terminal", desc: "Command prompt", icon: Icons.terminal, color: "#10b981" },

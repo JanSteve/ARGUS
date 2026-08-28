@@ -22,6 +22,9 @@ import { TaskManagerApp } from "../Apps/TaskManagerApp";
 import { MarkdownStudioApp } from "../Apps/MarkdownStudioApp";
 import { UpdateCenterApp } from "../Apps/UpdateCenterApp";
 import { PhoneAccessApp } from "../Apps/PhoneAccessApp";
+import { GrowthAgentApp } from "../Apps/GrowthAgentApp";
+import { WorkspacesApp } from "../Apps/WorkspacesApp";
+import { SpotlightBar } from "./SpotlightBar";
 import {
   playWindowOpenSound,
   playWindowCloseSound,
@@ -44,7 +47,9 @@ export type AppComponent =
   | "taskmanager"
   | "markdown"
   | "updater"
-  | "phone";
+  | "phone"
+  | "growth"
+  | "workspaces";
 
 export interface WindowInstance {
   id: string;
@@ -83,11 +88,15 @@ const APP_DEFAULTS: Record<AppComponent, { width: number; height: number }> = {
   markdown: { width: 860, height: 560 },
   updater: { width: 700, height: 480 },
   phone: { width: 720, height: 500 },
+  growth: { width: 880, height: 580 },
+  workspaces: { width: 880, height: 560 },
 };
 
 /* ─── Desktop Shortcuts Configuration ─── */
 const DESKTOP_SHORTCUTS = [
   { id: "chat", name: "Chat Assistant", icon: "chat" },
+  { id: "growth", name: "Growth Engine", icon: "growth" },
+  { id: "workspaces", name: "AI Workspaces", icon: "workspaces" },
   { id: "phone", name: "Phone Connect", icon: "phone" },
   { id: "browser", name: "Browser", icon: "browser" },
   { id: "terminal", name: "Terminal", icon: "terminal" },
@@ -259,6 +268,34 @@ const ShortcutIcons: Record<string, React.ReactNode> = {
       <line x1="21" y1="14" x2="27" y2="14" stroke="rgba(255,255,255,0.8)" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   ),
+  growth: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="ic-growth" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#ec4899" />
+          <stop offset="100%" stopColor="#8b5cf6" />
+        </linearGradient>
+      </defs>
+      <rect width="48" height="48" rx="12" fill="url(#ic-growth)" />
+      <path d="M12 34l8-8 6 6 12-14" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <polyline points="30 18 38 18 38 26" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  ),
+  workspaces: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="ic-workspaces" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#a855f7" />
+          <stop offset="100%" stopColor="#6366f1" />
+        </linearGradient>
+      </defs>
+      <rect width="48" height="48" rx="12" fill="url(#ic-workspaces)" />
+      <rect x="12" y="12" width="10" height="10" rx="2" fill="rgba(255,255,255,0.9)" />
+      <rect x="26" y="12" width="10" height="10" rx="2" fill="rgba(255,255,255,0.9)" />
+      <rect x="12" y="26" width="10" height="10" rx="2" fill="rgba(255,255,255,0.9)" />
+      <rect x="26" y="26" width="10" height="10" rx="2" fill="rgba(255,255,255,0.4)" />
+    </svg>
+  ),
 };
 
 /* ─── Desktop Component ─── */
@@ -266,11 +303,24 @@ export const Desktop: React.FC = () => {
   const [windows, setWindows] = useState<WindowInstance[]>([]);
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   const [controlPanelOpen, setControlPanelOpen] = useState(false);
+  const [spotlightOpen, setSpotlightOpen] = useState(false);
   const [topZIndex, setTopZIndex] = useState(10);
   const [wallpaper, setWallpaper] = useState<WallpaperTheme>("space");
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
   const [snapPreview, setSnapPreview] = useState<SnapPreview | null>(null);
   const [selectedShortcut, setSelectedShortcut] = useState<string | null>(null);
+
+  // Global Cmd+K / Ctrl+K Spotlight Shortcut
+  useEffect(() => {
+    const handleGlobalKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setSpotlightOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleGlobalKey);
+    return () => window.removeEventListener("keydown", handleGlobalKey);
+  }, []);
 
   // Focus window
   const focusWindow = useCallback((id: string) => {
@@ -516,6 +566,8 @@ export const Desktop: React.FC = () => {
           markdown: "Markdown Studio",
           updater: "Update Center",
           phone: "Phone Connect",
+          growth: "Growth Command Center",
+          workspaces: "AI Workspaces",
         };
         launchApp(detail.app, titleMap[detail.app] ?? detail.app);
       }
@@ -536,6 +588,10 @@ export const Desktop: React.FC = () => {
     switch (component) {
       case "chat":
         return <ChatApp />;
+      case "growth":
+        return <GrowthAgentApp />;
+      case "workspaces":
+        return <WorkspacesApp />;
       case "phone":
         return <PhoneAccessApp />;
       case "settings":
@@ -674,6 +730,13 @@ export const Desktop: React.FC = () => {
           onClose={() => setControlPanelOpen(false)}
         />
       )}
+
+      {/* Universal Command Spotlight (Cmd+K / Ctrl+K) */}
+      <SpotlightBar
+        isOpen={spotlightOpen}
+        onClose={() => setSpotlightOpen(false)}
+        onLaunchApp={launchApp}
+      />
 
       {/* ARGUS Holographic Voice HUD & Autonomous Wake-Word Engine */}
       <ArgusVoiceHUD onLaunchApp={launchApp} />

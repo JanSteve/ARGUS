@@ -241,4 +241,4 @@ export async function speakMiniMaxVoice(
   return { success: true, source: "webspeech" };
 }
 
-export { PERSONA_SE
+export { PERSONA_SETTINGS };
