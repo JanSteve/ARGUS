@@ -3,7 +3,7 @@
  * MiniMax Speech-01-HD Neural TTS with JARVIS / Ultron Persona & Resilient Web Speech Fallback
  */
 
-export type VoicePersona = "jarvis" | "ultron" | "sovereign";
+export type VoicePersona = "argus" | "ultron" | "sovereign";
 
 export interface VoiceConfig {
   apiKey: string;
@@ -19,7 +19,7 @@ export const DEFAULT_MINIMAX_KEY =
 export const DEFAULT_VOICE_CONFIG: VoiceConfig = {
   apiKey: DEFAULT_MINIMAX_KEY,
   groupId: "2002706633687311008",
-  persona: "jarvis",
+  persona: "argus",
   enabled: true,
   minimaxEnabled: true,
 };
@@ -31,26 +31,26 @@ const PERSONA_SETTINGS: Record<
   VoicePersona,
   { voiceId: string; speed: number; pitch: number; label: string; description: string }
 > = {
-  jarvis: {
+  argus: {
     voiceId: "male-qn-qingse",
     speed: 1.05,
     pitch: -2,
-    label: "J.A.R.V.I.S. (Sophisticated British Baritone)",
+    label: "ARGUS British Neural (Natural Sophisticated Male)",
     description: "Crisp, hyper-intelligent, calm baritone with British acoustic cadence",
   },
   ultron: {
     voiceId: "audiobook_male_2",
     speed: 0.92,
     pitch: -5,
-    label: "Ultron (Deep Resonant Cyber Titan)",
-    description: "Deep, powerful, resonant cybernetic acoustic authority",
+    label: "ARGUS Titan (Deep Resonant Cybernetic Authority)",
+    description: "Deep, powerful, resonant acoustic authority",
   },
   sovereign: {
     voiceId: "presenter_male",
     speed: 1.0,
     pitch: 0,
-    label: "Sovereign Neural (Natural Human Pro)",
-    description: "Balanced, friendly, modern AI desktop assistant",
+    label: "ARGUS Sovereign (Professional Broadcast Human)",
+    description: "Natural human professional speaking voice",
   },
 };
 
@@ -106,9 +106,9 @@ function hexToBytes(hex: string): Uint8Array {
 }
 
 /**
- * Fallback Web Speech Synthesis with Deep JARVIS / Ultron Acoustic Modulation
+ * Fallback Web Speech Synthesis with Deep ARGUS / Ultron Acoustic Modulation
  */
-function speakWebSpeechFallback(text: string, persona: VoicePersona = "jarvis") {
+function speakWebSpeechFallback(text: string, persona: VoicePersona = "argus") {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
 
   window.speechSynthesis.cancel();
@@ -130,7 +130,7 @@ function speakWebSpeechFallback(text: string, persona: VoicePersona = "jarvis") 
     utterance.voice = preferredVoice;
   }
 
-  if (persona === "jarvis") {
+  if (persona === "argus") {
     utterance.pitch = 0.85; // Deep sophisticated tone
     utterance.rate = 1.05;
   } else if (persona === "ultron") {
@@ -147,7 +147,7 @@ function speakWebSpeechFallback(text: string, persona: VoicePersona = "jarvis") 
 /**
  * Primary Voice Synthesis: Calls MiniMax Speech-01-HD API, falls back gracefully to Web Speech
  */
-export async function speakVoice(
+export async function speakMiniMaxVoice(
   rawText: string,
   overrideConfig?: Partial<VoiceConfig>
 ): Promise<{ success: boolean; source: "minimax" | "webspeech"; error?: string }> {
@@ -164,8 +164,8 @@ export async function speakVoice(
 
   if (!cleanText) return { success: false, source: "webspeech" };
 
-  const personaKey = config.persona || "jarvis";
-  const persona = PERSONA_SETTINGS[personaKey] || PERSONA_SETTINGS.jarvis;
+  const personaKey = config.persona || "argus";
+  const persona = PERSONA_SETTINGS[personaKey] || PERSONA_SETTINGS.argus;
 
   // If MiniMax is enabled and key is present, attempt high-fidelity neural synthesis
   if (config.minimaxEnabled && config.apiKey) {

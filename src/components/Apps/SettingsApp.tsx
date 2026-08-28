@@ -433,26 +433,26 @@ export const SettingsApp: React.FC = () => {
                     maxWidth: "240px",
                   }}
                 >
-                  <option value="gemini">Google Gemini 2.5 Flash (Default)</option>
-                  <option value="pollinations">Keyless DeepSeek R1 & OpenAI</option>
-                  <option value="duckchat">Free Cloud GPT-4o (Keyless)</option>
-                  <option value="openrouter">OpenRouter (Custom Key)</option>
+                  <option value="gemini">ARGUS Sovereign Intelligence (Direct Cloud)</option>
+                  <option value="pollinations">ARGUS Keyless Engine (Multi-Model)</option>
+                  <option value="duckchat">ARGUS Fast Cloud (Keyless)</option>
+                  <option value="openrouter">ARGUS Custom Model Router</option>
                 </select>
               </div>
             )}
 
-            {/* Gemini API Key input */}
+            {/* Cloud API Key input */}
             {config.mode === "remote" && config.remoteProvider === "gemini" && (
               <div style={baseRowStyle}>
                 <div>
-                  <div style={labelStyle}>Google Gemini API Key</div>
-                  <div style={subLabelStyle}>Default active key configured · free tier</div>
+                  <div style={labelStyle}>ARGUS Cloud Key</div>
+                  <div style={subLabelStyle}>Default active key configured · free zero-cost</div>
                 </div>
                 <input
                   type="password"
                   value={config.geminiApiKey}
                   onChange={(e) => updateConfig({ geminiApiKey: e.target.value })}
-                  placeholder="Paste Gemini API Key..."
+                  placeholder="Paste Cloud API Key..."
                   style={{
                     background: "rgba(255,255,255,0.04)",
                     border: "1px solid rgba(255,255,255,0.1)",
@@ -629,12 +629,12 @@ export const SettingsApp: React.FC = () => {
             </div>
 
             <div style={{ fontSize: "12px", color: "var(--fg-muted)", marginBottom: "16px" }}>
-              Select ARGUS's personal voice identity. Powered by MiniMax Speech-01-HD neural engine with acoustic baritone modulation and zero-latency Web Speech fallback.
+              Select ARGUS's personal voice identity. Powered by ElevenLabs British High-Definition Neural Engine with natural human cadence, MiniMax Speech-01-HD, and resilient Web Speech fallback.
             </div>
 
             {/* Persona Cards */}
             <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "20px" }}>
-              {(["jarvis", "ultron", "sovereign"] as VoicePersona[]).map((p) => {
+              {(["argus", "ultron", "sovereign"] as VoicePersona[]).map((p) => {
                 const setting = PERSONA_SETTINGS[p];
                 const isSelected = voiceConfig.persona === p;
                 return (
@@ -674,43 +674,36 @@ export const SettingsApp: React.FC = () => {
               })}
             </div>
 
-            {/* MiniMax API Settings */}
+            {/* ElevenLabs API Settings */}
             <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "14px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-                <span style={labelStyle}>MiniMax Neural Cloud Voice (Speech-01-HD)</span>
-                <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
-                  <input
-                    type="checkbox"
-                    checked={voiceConfig.minimaxEnabled}
-                    onChange={(e) => updateVoice({ minimaxEnabled: e.target.checked })}
-                  />
-                  <span style={{ fontSize: "12px" }}>Enable MiniMax</span>
-                </label>
+                <span style={labelStyle}>ElevenLabs High-Definition Voice (Primary)</span>
+                <span style={{ fontSize: "11px", color: "#10b981", fontWeight: 700 }}>● Active</span>
               </div>
 
               {/* Notice & Credits */}
               <div
                 style={{
-                  background: "rgba(245, 158, 11, 0.08)",
-                  border: "1px solid rgba(245, 158, 11, 0.2)",
+                  background: "rgba(6, 182, 212, 0.08)",
+                  border: "1px solid rgba(6, 182, 212, 0.25)",
                   borderRadius: "8px",
                   padding: "10px 12px",
                   fontSize: "11px",
-                  color: "#fbbf24",
+                  color: "#38bdf8",
                   marginBottom: "12px",
                   lineHeight: "1.45",
                 }}
               >
-                ⚡ <strong>10,000 monthly credits quota</strong>. If your API key returns <em>1008 (insufficient balance)</em>, ARGUS automatically synthesizes through the built-in JARVIS acoustic neural profile so speech never fails. You can paste a new key below anytime.
+                ⚡ <strong>10,000 monthly credits per ElevenLabs account</strong>. Uses human British natural voice for ARGUS. If credits reach the limit, ARGUS automatically alerts you and switches to the secondary neural voice engine so speech never stops. You can paste a new key anytime below.
               </div>
 
               <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                <label style={{ fontSize: "11.5px", color: "var(--fg-muted)" }}>MiniMax API Token (JWT Key):</label>
+                <label style={{ fontSize: "11.5px", color: "var(--fg-muted)" }}>ElevenLabs API Key:</label>
                 <input
                   type="password"
-                  value={voiceConfig.apiKey}
-                  onChange={(e) => updateVoice({ apiKey: e.target.value })}
-                  placeholder="Paste MiniMax JWT Token..."
+                  value={config.elevenlabsApiKey || ""}
+                  onChange={(e) => updateConfig({ elevenlabsApiKey: e.target.value })}
+                  placeholder="Paste ElevenLabs API Key (sk_...)..."
                   style={{
                     width: "100%",
                     padding: "8px 12px",

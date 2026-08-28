@@ -28,6 +28,8 @@ export { duckchatProvider } from "./duckchatProvider";
 export { pollinationsProvider } from "./pollinationsProvider";
 export { geminiProvider } from "./geminiProvider";
 export * from "./minimaxVoice";
+export * from "./elevenLabsVoice";
+export { speakElevenLabsVoice as speakVoice, stopElevenLabsPlayback as stopSpeaking } from "./elevenLabsVoice";
 
 // ─── Config Persistence ───────────────────────────────────────────────────────
 

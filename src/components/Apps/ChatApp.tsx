@@ -13,8 +13,8 @@ import {
 } from "../../lib/ai";
 import { playNotificationSound } from "../../lib/soundEffects";
 
-// Instant JARVIS Acknowledgments for 0-Delay Conversational Pacing
-const JARVIS_QUICK_ACKS = [
+// Instant ARGUS Acknowledgments for 0-Delay Conversational Pacing
+const ARGUS_QUICK_ACKS = [
   "Right away, sir. Let me do that for you.",
   "Working on it now. Coming right up.",
   "Understood. Accessing sovereign neural matrix.",
@@ -23,7 +23,7 @@ const JARVIS_QUICK_ACKS = [
 ];
 
 function getRandomAck(): string {
-  return JARVIS_QUICK_ACKS[Math.floor(Math.random() * JARVIS_QUICK_ACKS.length)];
+  return ARGUS_QUICK_ACKS[Math.floor(Math.random() * ARGUS_QUICK_ACKS.length)];
 }
 
 // ─── Workspace Automation Copilot Parser ──────────────────────────────────────
@@ -293,16 +293,12 @@ export const ChatApp: React.FC = () => {
         <div className={`${styles.statusDot} ${styles.statusDotReady}`} />
 
         <div className={styles.statusInfo}>
-          <span className={styles.statusTitle}>
-            {config.mode === "remote" ? "GOOGLE GEMINI 2.5 FLASH" : "OLLAMA LOCAL FIRST"}
-          </span>
-          <span className={styles.statusSub}>
-            {config.mode === "remote" ? "Sub-second Intelligence · Free Tier" : config.model}
-          </span>
+          <span className={styles.statusTitle}>ARGUS SOVEREIGN INTELLIGENCE</span>
+          <span className={styles.statusSub}>Neural Core Active · Zero-Latency Stream</span>
         </div>
 
         <div className={styles.modeBadge}>
-          {config.mode === "remote" ? "GEMINI CLOUD" : "SOVEREIGN LOCAL"}
+          {config.mode === "remote" ? "ARGUS NEURAL" : "SOVEREIGN LOCAL"}
         </div>
 
         <div className={styles.toolButtons}>
@@ -314,7 +310,7 @@ export const ChatApp: React.FC = () => {
             }}
             title={ttsEnabled ? "Voice Output Active (Click to Mute)" : "Voice Output Muted (Click to Enable)"}
           >
-            {ttsEnabled ? "🔊 JARVIS Voice ON" : "🔇 Voice Muted"}
+            {ttsEnabled ? "🔊 ARGUS Voice ON" : "🔇 Voice Muted"}
           </button>
 
           {displayItems.length > 0 && (
@@ -341,9 +337,9 @@ export const ChatApp: React.FC = () => {
                 <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
               </svg>
             </div>
-            <div className={styles.welcomeTitle}>J.A.R.V.I.S. Sovereign Copilot</div>
+            <div className={styles.welcomeTitle}>ARGUS Sovereign Copilot</div>
             <div className={styles.welcomeDesc}>
-              Ask anything with zero latency via Google Gemini 2.5 Flash, or speak natural commands to control your OS.
+              Ask anything with zero latency via ARGUS Sovereign Intelligence, or speak natural commands to control your OS.
             </div>
 
             <div className={styles.chipsGrid}>
@@ -408,7 +404,7 @@ export const ChatApp: React.FC = () => {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
           disabled={isStreaming}
-          placeholder="Ask Gemini 2.5 Flash anything... or say 'open weather', 'turn off wifi'"
+          placeholder="Ask ARGUS anything... or say 'open weather', 'turn off wifi'"
           rows={1}
           className={styles.textInput}
         />

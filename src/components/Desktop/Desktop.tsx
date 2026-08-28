@@ -5,7 +5,7 @@ import { Taskbar } from "./Taskbar";
 import { StartMenu } from "./StartMenu";
 import { ContextMenu } from "./ContextMenu";
 import { ControlPanel, WallpaperTheme } from "./ControlPanel";
-import { JarvisVoiceHUD } from "./JarvisVoiceHUD";
+import { ArgusVoiceHUD } from "./ArgusVoiceHUD";
 
 /* ─── App Components ─── */
 import { BrowserApp } from "../Apps/BrowserApp";
@@ -675,8 +675,8 @@ export const Desktop: React.FC = () => {
         />
       )}
 
-      {/* J.A.R.V.I.S. Holographic Voice HUD & Wake-Word Engine */}
-      <JarvisVoiceHUD onLaunchApp={launchApp} />
+      {/* ARGUS Holographic Voice HUD & Autonomous Wake-Word Engine */}
+      <ArgusVoiceHUD onLaunchApp={launchApp} />
 
       {/* Taskbar */}
       <Taskbar
