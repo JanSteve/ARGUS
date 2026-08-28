@@ -21,6 +21,7 @@ import { AppStoreApp } from "../Apps/AppStoreApp";
 import { TaskManagerApp } from "../Apps/TaskManagerApp";
 import { MarkdownStudioApp } from "../Apps/MarkdownStudioApp";
 import { UpdateCenterApp } from "../Apps/UpdateCenterApp";
+import { PhoneAccessApp } from "../Apps/PhoneAccessApp";
 import {
   playWindowOpenSound,
   playWindowCloseSound,
@@ -42,7 +43,8 @@ export type AppComponent =
   | "appstore"
   | "taskmanager"
   | "markdown"
-  | "updater";
+  | "updater"
+  | "phone";
 
 export interface WindowInstance {
   id: string;
@@ -80,11 +82,13 @@ const APP_DEFAULTS: Record<AppComponent, { width: number; height: number }> = {
   taskmanager: { width: 760, height: 500 },
   markdown: { width: 860, height: 560 },
   updater: { width: 700, height: 480 },
+  phone: { width: 720, height: 500 },
 };
 
 /* ─── Desktop Shortcuts Configuration ─── */
 const DESKTOP_SHORTCUTS = [
   { id: "chat", name: "Chat Assistant", icon: "chat" },
+  { id: "phone", name: "Phone Connect", icon: "phone" },
   { id: "browser", name: "Browser", icon: "browser" },
   { id: "terminal", name: "Terminal", icon: "terminal" },
   { id: "weather", name: "Weather", icon: "weather" },
@@ -239,6 +243,20 @@ const ShortcutIcons: Record<string, React.ReactNode> = {
       <rect width="48" height="48" rx="12" fill="url(#ic-settings)" />
       <circle cx="24" cy="24" r="5" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="2.5" />
       <path d="M24 14v-2M24 36v-2M14 24h-2M36 24h-2M17.8 17.8l-1.4-1.4M31.6 31.6l-1.4-1.4M17.8 30.2l-1.4 1.4M31.6 16.4l-1.4 1.4" stroke="rgba(255,255,255,0.7)" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  ),
+  phone: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="ic-phone" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#06b6d4" />
+          <stop offset="100%" stopColor="#3b82f6" />
+        </linearGradient>
+      </defs>
+      <rect width="48" height="48" rx="12" fill="url(#ic-phone)" />
+      <rect x="16" y="10" width="16" height="28" rx="3" fill="none" stroke="rgba(255,255,255,0.95)" strokeWidth="2" />
+      <circle cx="24" cy="33" r="1.5" fill="rgba(255,255,255,0.95)" />
+      <line x1="21" y1="14" x2="27" y2="14" stroke="rgba(255,255,255,0.8)" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   ),
 };
@@ -497,6 +515,7 @@ export const Desktop: React.FC = () => {
           taskmanager: "Task Manager",
           markdown: "Markdown Studio",
           updater: "Update Center",
+          phone: "Phone Connect",
         };
         launchApp(detail.app, titleMap[detail.app] ?? detail.app);
       }
@@ -517,6 +536,8 @@ export const Desktop: React.FC = () => {
     switch (component) {
       case "chat":
         return <ChatApp />;
+      case "phone":
+        return <PhoneAccessApp />;
       case "settings":
         return <SettingsApp />;
       case "explorer":
