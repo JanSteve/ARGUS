@@ -378,7 +378,8 @@ export const ChatApp: React.FC = () => {
   // Dynamic remote config status details
   const remoteActive = config.mode === "remote";
   const isKeyless = config.remoteProvider === "duckchat" || config.remoteProvider === "pollinations";
-  const remoteReady = isKeyless || config.openrouterApiKey.trim() !== "";
+  const isGemini = config.remoteProvider === "gemini";
+  const remoteReady = isGemini || isKeyless || config.openrouterApiKey.trim() !== "";
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", gap: "10px" }}>
@@ -417,7 +418,9 @@ export const ChatApp: React.FC = () => {
             }}
           >
             {remoteActive
-              ? config.remoteProvider === "pollinations"
+              ? isGemini
+                ? "GEMINI 2.5 FLASH ACTIVE"
+                : config.remoteProvider === "pollinations"
                 ? "KEYLESS AI READY (DEEPSEEK / OPENAI)"
                 : config.remoteProvider === "duckchat"
                 ? "FREE CLOUD READY (GPT-4O)"
@@ -428,7 +431,9 @@ export const ChatApp: React.FC = () => {
           </span>
           {remoteActive ? (
             <span style={{ color: "var(--fg-muted)", marginLeft: "8px", fontSize: "11px" }}>
-              {config.remoteProvider === "pollinations"
+              {isGemini
+                ? "Google Neural Cloud"
+                : config.remoteProvider === "pollinations"
                 ? "Zero-Signup Keyless"
                 : config.remoteProvider === "duckchat"
                 ? "gpt-4o-mini"
@@ -458,7 +463,7 @@ export const ChatApp: React.FC = () => {
             border: `1px solid ${config.mode === "local" ? "rgba(59, 130, 246, 0.3)" : "rgba(16, 185, 129, 0.3)"}`,
           }}
         >
-          {config.mode === "local" ? "LOCAL FIRST" : "KEYLESS CLOUD"}
+          {config.mode === "local" ? "LOCAL FIRST" : isGemini ? "GEMINI ENGINE" : "KEYLESS CLOUD"}
         </div>
 
         {/* TTS Read Aloud Toggle */}
@@ -642,11 +647,13 @@ export const ChatApp: React.FC = () => {
           disabled={isStreaming || (config.mode === "remote" && !remoteReady)}
           placeholder={
             config.mode === "remote"
-              ? isKeyless
+              ? isGemini
+                ? "Ask Gemini 2.5 Flash anything... or type OS commands like 'turn off wifi'"
+                : isKeyless
                 ? "Message keyless Free Cloud AI... or type commands like 'turn off wifi'"
                 : remoteReady
                 ? "Message OpenRouter cloud AI... or type commands like 'open browser'"
-                : "API key required — configure OpenRouter in Settings"
+                : "API key required — configure in Settings"
               : status === "ready"
               ? "Message local AI... or type commands like 'connect wifi'"
               : "Ollama offline — pull models or switch to remote mode"

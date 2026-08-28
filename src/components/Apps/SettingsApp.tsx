@@ -430,12 +430,39 @@ export const SettingsApp: React.FC = () => {
                     padding: "4px 8px",
                     fontSize: "12px",
                     color: "var(--fg-default)",
-                    maxWidth: "200px",
+                    maxWidth: "240px",
                   }}
                 >
-                  <option value="duckchat">Free Cloud (No Key Needed)</option>
-                  <option value="openrouter">OpenRouter (API Key Required)</option>
+                  <option value="gemini">Google Gemini 2.5 Flash (Default)</option>
+                  <option value="pollinations">Keyless DeepSeek R1 & OpenAI</option>
+                  <option value="duckchat">Free Cloud GPT-4o (Keyless)</option>
+                  <option value="openrouter">OpenRouter (Custom Key)</option>
                 </select>
+              </div>
+            )}
+
+            {/* Gemini API Key input */}
+            {config.mode === "remote" && config.remoteProvider === "gemini" && (
+              <div style={baseRowStyle}>
+                <div>
+                  <div style={labelStyle}>Google Gemini API Key</div>
+                  <div style={subLabelStyle}>Default active key configured · free tier</div>
+                </div>
+                <input
+                  type="password"
+                  value={config.geminiApiKey}
+                  onChange={(e) => updateConfig({ geminiApiKey: e.target.value })}
+                  placeholder="Paste Gemini API Key..."
+                  style={{
+                    background: "rgba(255,255,255,0.04)",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    borderRadius: "6px",
+                    padding: "4px 8px",
+                    fontSize: "11px",
+                    color: "var(--fg-default)",
+                    width: "240px",
+                  }}
+                />
               </div>
             )}
 
@@ -505,14 +532,28 @@ export const SettingsApp: React.FC = () => {
                   <div>
                     <div style={labelStyle}>Active Cloud Model</div>
                     <div style={subLabelStyle}>
-                      {config.remoteProvider === "duckchat"
+                      {config.remoteProvider === "gemini"
+                        ? "Google Gemini Direct Intelligence"
+                        : config.remoteProvider === "pollinations"
+                        ? "DeepSeek & OpenAI Keyless Routing"
+                        : config.remoteProvider === "duckchat"
                         ? "Keyless Cloud model routing"
                         : "OpenRouter model routing"}
                     </div>
                   </div>
                   <select
-                    value={config.openrouterModel}
-                    onChange={(e) => updateConfig({ openrouterModel: e.target.value })}
+                    value={
+                      config.remoteProvider === "gemini"
+                        ? config.model
+                        : config.openrouterModel
+                    }
+                    onChange={(e) => {
+                      if (config.remoteProvider === "gemini") {
+                        updateConfig({ model: e.target.value });
+                      } else {
+                        updateConfig({ openrouterModel: e.target.value });
+                      }
+                    }}
                     style={{
                       background: "rgba(255,255,255,0.06)",
                       border: "1px solid rgba(255,255,255,0.12)",
@@ -523,7 +564,20 @@ export const SettingsApp: React.FC = () => {
                       maxWidth: "240px",
                     }}
                   >
-                    {config.remoteProvider === "duckchat" ? (
+                    {config.remoteProvider === "gemini" ? (
+                      <>
+                        <option value="gemini-2.5-flash">Gemini 2.5 Flash (Fastest · Recommended)</option>
+                        <option value="gemini-2.5-pro">Gemini 2.5 Pro (Deep Reasoning)</option>
+                        <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+                      </>
+                    ) : config.remoteProvider === "pollinations" ? (
+                      <>
+                        <option value="openai">OpenAI GPT-4o (Keyless)</option>
+                        <option value="deepseek-reasoner">DeepSeek R1 (Keyless)</option>
+                        <option value="mistral">Mistral Large (Keyless)</option>
+                        <option value="qwen">Qwen 2.5 72B (Keyless)</option>
+                      </>
+                    ) : config.remoteProvider === "duckchat" ? (
                       <>
                         <option value="gpt-4o-mini">GPT-4o Mini (Default)</option>
                         <option value="claude-3-haiku">Claude 3 Haiku</option>

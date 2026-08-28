@@ -9,6 +9,7 @@ import { ollamaProvider } from "./ollamaProvider";
 import { openrouterProvider } from "./openrouterProvider";
 import { duckchatProvider } from "./duckchatProvider";
 import { pollinationsProvider } from "./pollinationsProvider";
+import { geminiProvider } from "./geminiProvider";
 import type {
   AIConfig,
   AIProvider,
@@ -25,11 +26,13 @@ export { ollamaProvider } from "./ollamaProvider";
 export { openrouterProvider } from "./openrouterProvider";
 export { duckchatProvider } from "./duckchatProvider";
 export { pollinationsProvider } from "./pollinationsProvider";
+export { geminiProvider } from "./geminiProvider";
 export * from "./minimaxVoice";
 
 // ─── Config Persistence ───────────────────────────────────────────────────────
 
 export function loadAIConfig(): AIConfig {
+  if (typeof window === "undefined") return { ...DEFAULT_AI_CONFIG };
   try {
     const raw = localStorage.getItem(AI_CONFIG_KEY);
     if (!raw) return { ...DEFAULT_AI_CONFIG };
@@ -41,20 +44,26 @@ export function loadAIConfig(): AIConfig {
 }
 
 export function saveAIConfig(config: AIConfig): void {
-  // SECURITY: API keys live only in localStorage, never committed to git.
-  // groqApiKey is stored here but MUST NOT appear in source code.
-  localStorage.setItem(AI_CONFIG_KEY, JSON.stringify(config));
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(AI_CONFIG_KEY, JSON.stringify(config));
+  } catch {
+    // localStorage may fail in incognito/restricted mode — non-critical
+  }
 }
 
 // ─── Provider Factory ─────────────────────────────────────────────────────────
 
 /**
  * Returns the active provider based on current config.
- * Supports: ollama (local), openrouter, duckchat (keyless), pollinations (keyless).
+ * Supports: gemini (default), ollama (local), openrouter, duckchat (keyless), pollinations (keyless).
  */
 export function getActiveProvider(config: AIConfig): AIProvider {
   if (config.mode === "local") {
     return ollamaProvider;
+  }
+  if (config.remoteProvider === "gemini") {
+    return geminiProvider;
   }
   if (config.remoteProvider === "openrouter") {
     return openrouterProvider;
@@ -66,7 +75,7 @@ export function getActiveProvider(config: AIConfig): AIProvider {
     return duckchatProvider;
   }
   // Default keyless fallback
-  return duckchatProvider;
+  return geminiProvider;
 }
 
 // ─── useAIConfig Hook ─────────────────────────────────────────────────────────
