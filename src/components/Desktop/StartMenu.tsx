@@ -130,6 +130,10 @@ export const StartMenu: React.FC<StartMenuProps> = ({ onLaunchApp, onClose }) =>
 
   const apps = [
     { id: "chat", name: "Chat Assistant", desc: "AI companion", icon: Icons.chat, color: "#3b82f6" },
+    { id: "canvas", name: "Neural Canvas", desc: "Spatial AI mind map & node chaining", icon: Icons.workspaces, color: "#8b5cf6" },
+    { id: "codestudio", name: "Code Studio", desc: "In-OS IDE & live sandbox execution", icon: Icons.markdown, color: "#06b6d4" },
+    { id: "swarm", name: "Agent Swarm", desc: "Autonomous 4-agent orchestrator", icon: Icons.growth, color: "#f59e0b" },
+    { id: "cyberglobe", name: "Cyber Globe", desc: "3D global edge telemetry radar", icon: Icons.browser, color: "#38bdf8" },
     { id: "focus", name: "Focus Matrix", desc: "Deep work Pomodoro & lo-fi", icon: Icons.chat, color: "#06b6d4" },
     { id: "game2048", name: "Cyber 2048", desc: "Neon tile puzzle game", icon: Icons.calculator, color: "#f59e0b" },
     { id: "growth", name: "Growth Command Center", desc: "Autonomous marketing agents", icon: Icons.growth, color: "#ec4899" },

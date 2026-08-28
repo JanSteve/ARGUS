@@ -32,6 +32,34 @@ export const SpotlightBar: React.FC<SpotlightBarProps> = ({
 
   const allItems: SpotlightItem[] = [
     {
+      id: "canvas",
+      title: "Neural Canvas (Spatial AI Mind Map & Node Chaining)",
+      category: "Tool",
+      icon: "🧠",
+      action: () => onLaunchApp("canvas", "Neural Canvas"),
+    },
+    {
+      id: "codestudio",
+      title: "Code Studio (In-OS IDE & Live Sandbox)",
+      category: "Tool",
+      icon: "⚡",
+      action: () => onLaunchApp("codestudio", "Code Studio"),
+    },
+    {
+      id: "swarm",
+      title: "Autonomous Multi-Agent Swarm Orchestrator",
+      category: "Tool",
+      icon: "🤖",
+      action: () => onLaunchApp("swarm", "Agent Swarm"),
+    },
+    {
+      id: "cyberglobe",
+      title: "Cyber Globe & 3D Global Telemetry Radar",
+      category: "Tool",
+      icon: "🌐",
+      action: () => onLaunchApp("cyberglobe", "Cyber Globe"),
+    },
+    {
       id: "growth",
       title: "Growth & Marketing Command Center",
       category: "Tool",

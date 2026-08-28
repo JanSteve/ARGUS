@@ -1,0 +1,309 @@
+/* ==============================================================================
+   ARGUS Sovereign OS — Neural Canvas Stylesheet
+   Infinite 2D Spatial AI Mind Map & Node Chaining
+   ============================================================================== */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background: #07090e;
+  color: var(--fg-default, #f1f5f9);
+  font-family: var(--font-system, sans-serif);
+  overflow: hidden;
+  user-select: none;
+}
+
+/* Toolbar Header */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: rgba(15, 23, 42, 0.85);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  gap: 12px;
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.toolbarGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toolBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  color: #e2e8f0;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.toolBtn:hover {
+  background: rgba(6, 182, 212, 0.15);
+  border-color: rgba(6, 182, 212, 0.4);
+  color: #38bdf8;
+}
+
+.toolBtnPrimary {
+  background: linear-gradient(135deg, #06b6d4, #3b82f6);
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
+}
+
+.toolBtnPrimary:hover {
+  box-shadow: 0 0 25px rgba(6, 182, 212, 0.6);
+  transform: translateY(-1px);
+}
+
+.toolSelect {
+  padding: 5px 10px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #38bdf8;
+  font-size: 12px;
+  font-family: inherit;
+  outline: none;
+  cursor: pointer;
+}
+
+/* Spatial Infinite Grid Canvas */
+.canvasArea {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #07090e;
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    radial-gradient(rgba(6, 182, 212, 0.02) 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-position: 0 0, 12px 12px;
+  cursor: grab;
+}
+
+.canvasArea:active {
+  cursor: grabbing;
+}
+
+.canvasContent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4000px;
+  height: 4000px;
+  transform-origin: 0 0;
+}
+
+/* SVG Connection Lines Layer */
+.connectionsLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Node Card */
+.nodeCard {
+  position: absolute;
+  width: 280px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+  z-index: 2;
+  cursor: default;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.nodeCard:hover {
+  border-color: rgba(6, 182, 212, 0.4);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7), 0 0 20px rgba(6, 182, 212, 0.15);
+}
+
+.nodeSelected {
+  border-color: #06b6d4 !important;
+  box-shadow: 0 0 25px rgba(6, 182, 212, 0.4) !important;
+}
+
+.nodeHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  cursor: grab;
+}
+
+.nodeHeader:active {
+  cursor: grabbing;
+}
+
+.nodeTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.nodeIcon {
+  font-size: 14px;
+}
+
+.nodeActions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nodeBtnSmall {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  transition: all 0.15s ease;
+}
+
+.nodeBtnSmall:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.nodeBtnDelete:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.15);
+}
+
+.nodeBody {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nodeTextarea {
+  width: 100%;
+  height: 80px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: #f1f5f9;
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 1.4;
+  resize: vertical;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.nodeTextarea:focus {
+  border-color: rgba(6, 182, 212, 0.5);
+}
+
+.nodeOutputBox {
+  background: rgba(6, 182, 212, 0.06);
+  border: 1px solid rgba(6, 182, 212, 0.2);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #e2e8f0;
+  max-height: 120px;
+  overflow-y: auto;
+  font-family: var(--font-mono, monospace);
+  white-space: pre-wrap;
+}
+
+.nodeExecuteBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 6px 12px;
+  background: rgba(6, 182, 212, 0.15);
+  border: 1px solid rgba(6, 182, 212, 0.35);
+  border-radius: 6px;
+  color: #38bdf8;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.nodeExecuteBtn:hover {
+  background: rgba(6, 182, 212, 0.3);
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
+}
+
+.nodeFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 14px;
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  font-size: 10px;
+  color: #64748b;
+}
+
+/* Connect Port Dots */
+.connectPort {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #06b6d4;
+  border: 2px solid #0f172a;
+  cursor: crosshair;
+  transition: transform 0.15s ease;
+}
+
+.connectPort:hover {
+  transform: scale(1.4);
+  box-shadow: 0 0 10px #06b6d4;
+}
+
+/* Status Bar */
+.statusBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 16px;
+  background: rgba(10, 11, 16, 0.95);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 11px;
+  color: #64748b;
+  flex-shrink: 0;
+}

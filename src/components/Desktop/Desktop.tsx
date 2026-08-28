@@ -28,6 +28,10 @@ import { WorkspacesApp } from "../Apps/WorkspacesApp";
 import { SaaSStoreApp } from "../Apps/SaaSStoreApp";
 import { Game2048App } from "../Apps/Game2048App";
 import { FocusMatrixApp } from "../Apps/FocusMatrixApp";
+import { NeuralCanvasApp } from "../Apps/NeuralCanvasApp";
+import { CodeStudioApp } from "../Apps/CodeStudioApp";
+import { AgentSwarmApp } from "../Apps/AgentSwarmApp";
+import { CyberGlobeApp } from "../Apps/CyberGlobeApp";
 import { SpotlightBar } from "./SpotlightBar";
 import { ArcMatrixHUD } from "./ArcMatrixHUD";
 import { ProUpgradeModal } from "./ProUpgradeModal";
@@ -60,7 +64,11 @@ export type AppComponent =
   | "workspaces"
   | "saas"
   | "game2048"
-  | "focus";
+  | "focus"
+  | "canvas"
+  | "codestudio"
+  | "swarm"
+  | "cyberglobe";
 
 export interface WindowInstance {
   id: string;
@@ -104,15 +112,23 @@ const APP_DEFAULTS: Record<AppComponent, { width: number; height: number }> = {
   saas: { width: 900, height: 580 },
   game2048: { width: 440, height: 560 },
   focus: { width: 480, height: 520 },
+  canvas: { width: 920, height: 600 },
+  codestudio: { width: 960, height: 620 },
+  swarm: { width: 900, height: 600 },
+  cyberglobe: { width: 880, height: 560 },
 };
 
 /* ─── Desktop Shortcuts Configuration ─── */
 const DESKTOP_SHORTCUTS = [
   { id: "chat", name: "Chat Assistant", icon: "chat" },
-  { id: "focus", name: "Focus Matrix", icon: "focus" },
-  { id: "game2048", name: "Cyber 2048", icon: "game2048" },
+  { id: "canvas", name: "Neural Canvas", icon: "canvas" },
+  { id: "codestudio", name: "Code Studio", icon: "codestudio" },
+  { id: "swarm", name: "Agent Swarm", icon: "swarm" },
+  { id: "cyberglobe", name: "Cyber Globe", icon: "cyberglobe" },
   { id: "growth", name: "Growth Engine", icon: "growth" },
   { id: "workspaces", name: "AI Workspaces", icon: "workspaces" },
+  { id: "focus", name: "Focus Matrix", icon: "focus" },
+  { id: "game2048", name: "Cyber 2048", icon: "game2048" },
   { id: "saas", name: "SaaS Pro Store", icon: "saas" },
   { id: "browser", name: "Browser", icon: "browser" },
   { id: "terminal", name: "Terminal", icon: "terminal" },
@@ -348,6 +364,67 @@ const ShortcutIcons: Record<string, React.ReactNode> = {
       <rect width="48" height="48" rx="12" fill="url(#ic-focus)" />
       <circle cx="24" cy="24" r="12" fill="none" stroke="#ffffff" strokeWidth="2.5" />
       <polyline points="24,16 24,24 29,27" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  ),
+  canvas: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="ic-canvas" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#8b5cf6" />
+          <stop offset="100%" stopColor="#ec4899" />
+        </linearGradient>
+      </defs>
+      <rect width="48" height="48" rx="12" fill="url(#ic-canvas)" />
+      <circle cx="18" cy="18" r="5" fill="#fff" />
+      <circle cx="30" cy="30" r="5" fill="#fff" />
+      <circle cx="32" cy="16" r="3.5" fill="rgba(255,255,255,0.7)" />
+      <line x1="18" y1="18" x2="30" y2="30" stroke="#fff" strokeWidth="2" strokeDasharray="3 2" />
+      <line x1="18" y1="18" x2="32" y2="16" stroke="#fff" strokeWidth="2" />
+    </svg>
+  ),
+  codestudio: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="ic-codestudio" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#06b6d4" />
+          <stop offset="100%" stopColor="#10b981" />
+        </linearGradient>
+      </defs>
+      <rect width="48" height="48" rx="12" fill="url(#ic-codestudio)" />
+      <path d="M18 16l-7 8 7 8M30 16l7 8-7 8M26 13l-4 22" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  ),
+  swarm: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="ic-swarm" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#f59e0b" />
+          <stop offset="100%" stopColor="#ef4444" />
+        </linearGradient>
+      </defs>
+      <rect width="48" height="48" rx="12" fill="url(#ic-swarm)" />
+      <circle cx="24" cy="18" r="4" fill="#fff" />
+      <circle cx="16" cy="30" r="4" fill="#fff" />
+      <circle cx="32" cy="30" r="4" fill="#fff" />
+      <line x1="24" y1="18" x2="16" y2="30" stroke="#fff" strokeWidth="2" />
+      <line x1="24" y1="18" x2="32" y2="30" stroke="#fff" strokeWidth="2" />
+      <line x1="16" y1="30" x2="32" y2="30" stroke="#fff" strokeWidth="2" />
+    </svg>
+  ),
+  cyberglobe: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="ic-globe" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#3b82f6" />
+          <stop offset="100%" stopColor="#06b6d4" />
+        </linearGradient>
+      </defs>
+      <rect width="48" height="48" rx="12" fill="url(#ic-globe)" />
+      <circle cx="24" cy="24" r="13" fill="none" stroke="#fff" strokeWidth="2" />
+      <ellipse cx="24" cy="24" rx="6" ry="13" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="1.6" />
+      <line x1="11" y1="24" x2="37" y2="24" stroke="rgba(255,255,255,0.7)" strokeWidth="1.6" />
+      <line x1="14" y1="17" x2="34" y2="17" stroke="rgba(255,255,255,0.5)" strokeWidth="1.2" />
+      <line x1="14" y1="31" x2="34" y2="31" stroke="rgba(255,255,255,0.5)" strokeWidth="1.2" />
     </svg>
   ),
 };
@@ -633,6 +710,10 @@ export const Desktop: React.FC = () => {
           saas: "SaaS Pro Store",
           game2048: "Cyber 2048",
           focus: "Focus Matrix",
+          canvas: "Neural Canvas",
+          codestudio: "Code Studio",
+          swarm: "Agent Swarm",
+          cyberglobe: "Cyber Globe",
         };
         launchApp(detail.app, titleMap[detail.app] ?? detail.app);
       }
@@ -654,6 +735,14 @@ export const Desktop: React.FC = () => {
       switch (component) {
         case "chat":
           return <ChatApp />;
+        case "canvas":
+          return <NeuralCanvasApp />;
+        case "codestudio":
+          return <CodeStudioApp />;
+        case "swarm":
+          return <AgentSwarmApp />;
+        case "cyberglobe":
+          return <CyberGlobeApp />;
         case "focus":
           return <FocusMatrixApp />;
         case "game2048":

@@ -206,3 +206,21 @@ export async function executeLoadBalancedQuery(userQuery: string): Promise<LoadB
     isFactualContextUsed: false,
   };
 }
+
+/**
+ * Universal Circuit Breaker Adapter accepting string or message array
+ */
+export async function executeAICircuitBreaker(
+  input: string | Array<{ role: string; content: string }>
+): Promise<{ content: string; provider?: string }> {
+  let promptText = "";
+  if (typeof input === "string") {
+    promptText = input;
+  } else {
+    promptText = input
+      .map((m) => `${m.role === "system" ? "[System Instructions]" : m.role === "user" ? "[User Prompt]" : "[AI Assistant]"}:\n${m.content}`)
+      .join("\n\n");
+  }
+  const result = await executeLoadBalancedQuery(promptText);
+  return { content: result.content, provider: result.provider };
+}
