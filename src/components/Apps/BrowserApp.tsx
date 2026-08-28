@@ -496,31 +496,3 @@ export const BrowserApp: React.FC = () => {
               <div
                 className={styles.linkCard}
                 onClick={() => {
-                  setUrlInput("https://news.ycombinator.com");
-                  setTabs(tabs.map((t) => t.id === activeTabId ? { ...t, url: "https://news.ycombinator.com", title: "Hacker News", isSearch: false } : t));
-                }}
-              >
-                <h3>Hacker News</h3>
-                <p>Global tech & developer headlines</p>
-              </div>
-              <div
-                className={styles.linkCard}
-                onClick={() => handleOpenExternal("https://google.com")}
-              >
-                <h3>Google Search ↗</h3>
-                <p>Launch Google in system browser</p>
-              </div>
-              <div
-                className={styles.linkCard}
-                onClick={() => handleOpenExternal("https://youtube.com")}
-              >
-                <h3>YouTube ↗</h3>
-                <p>Launch YouTube in system browser</p>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};

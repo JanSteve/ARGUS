@@ -131,30 +131,4 @@ export interface AIProvider {
   checkAvailability(config: AIConfig): Promise<OllamaStatus | "remote_ready" | "no_api_key">;
 
   /**
-   * List available models.
-   * For Ollama: returns names from /api/tags.
-   * For remote: returns hard-coded known models.
-   */
-  listModels(config: AIConfig): Promise<OllamaModel[]>;
-
-  /**
-   * Send a message and stream the response.
-   * Yields StreamChunk objects until done === true.
-   * Caller must pass an AbortSignal to support cancellation.
-   */
-  streamChat(
-    messages: AIMessage[],
-    config: AIConfig,
-    signal: AbortSignal
-  ): AsyncGenerator<StreamChunk>;
-}
-
-// ─── Ollama Model Info ────────────────────────────────────────────────────────
-
-export interface OllamaModel {
-  name: string;
-  size?: string;
-  family?: string;
-  modified?: string;
-}
-
+   * List available models
