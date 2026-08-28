@@ -28,6 +28,8 @@ import { SaaSStoreApp } from "../Apps/SaaSStoreApp";
 import { SpotlightBar } from "./SpotlightBar";
 import { ArcMatrixHUD } from "./ArcMatrixHUD";
 import { ProUpgradeModal } from "./ProUpgradeModal";
+import { DesktopWidgets } from "./DesktopWidgets";
+import { UpdateNotifier } from "./UpdateNotifier";
 import {
   playWindowOpenSound,
   playWindowCloseSound,
@@ -780,6 +782,12 @@ export const Desktop: React.FC = () => {
         onClose={() => setProModalOpen(false)}
         onOpenSaaSStore={() => launchApp("saas", "SaaS Pro Store")}
       />
+
+      {/* Hyper-Advanced VisionOS Desktop Holographic Widgets */}
+      <DesktopWidgets />
+
+      {/* Universal In-OS Auto-Update Notification Banner */}
+      <UpdateNotifier />
 
       {/* Taskbar */}
       <Taskbar

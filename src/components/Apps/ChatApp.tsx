@@ -10,6 +10,7 @@ import {
   useAIConfig,
   speakVoice,
   stopSpeaking,
+  queryOmniscientBrain,
 } from "../../lib/ai";
 import { playNotificationSound } from "../../lib/soundEffects";
 
@@ -268,13 +269,25 @@ export const ChatApp: React.FC = () => {
       return;
     }
 
-    // 2. Instant JARVIS Conversational Acknowledgment
+    // 2. Instant Conversational Acknowledgment
     if (ttsEnabled) {
       speakVoice(getRandomAck());
     }
 
-    // 3. Send to Gemini / Local AI stream
-    send(trimmed);
+    // 3. Query Omniscient Knowledge Brain (Gemini + Wikipedia + Groq)
+    try {
+      const response = await queryOmniscientBrain(trimmed);
+      setLocalHistory((prev) => [
+        ...prev,
+        { id: `u-${Date.now()}`, role: "user", content: trimmed },
+        { id: `a-${Date.now()}`, role: "assistant", content: response },
+      ]);
+      if (ttsEnabled) {
+        speakVoice(response);
+      }
+    } catch (err) {
+      send(trimmed);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
