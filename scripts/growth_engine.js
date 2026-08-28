@@ -123,16 +123,19 @@ Key Highlights:
 • Live functional desktop OS in production for macOS, Windows, and Web.
 • Freemium Pro model ($19/mo / ₹1,499/mo) on track to reach ₹1 Crore ARR.
 • 100% Data Sovereignty + British Neural Voice AI.
+• Top 100 VC Directory & Unit Economics: 97% profit margin with $0 cloud server bills.
 
 Web OS Demo: https://argus-sovereign-os-website.vercel.app/os/
 GitHub: https://github.com/JanSteve/ARGUS
+Founder Direct Email: contact.stevedaniel@gmail.com
 Pitch Deck: https://github.com/JanSteve/ARGUS/blob/batman/docs/startup/PITCH_DECK.md
 
-We are currently raising a Pre-Seed round. Would you have 10 minutes for a live demo this week?
+We are currently raising our Pre-Seed round ($500k - $1M). Would you have 10 minutes for a live demo this week?
 
 Sincerely,
 R Jan Steve Daniel
-Founder, ARGUS Sovereign OS
+Founder & CEO, ARGUS Sovereign OS
+📧 contact.stevedaniel@gmail.com
 \`\`\`
 `;
 
