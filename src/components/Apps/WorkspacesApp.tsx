@@ -3,10 +3,11 @@
  * Autonomous Project Manager, Startup Roadmap & Problem-Solving Studio
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./WorkspacesApp.module.css";
 import { speakVoice } from "../../lib/ai";
 import { playNotificationSound } from "../../lib/soundEffects";
+import { isProOrEnterprise, getActiveLicense } from "../../lib/licensing/licenseManager";
 
 interface RoadmapTask {
   id: string;
@@ -48,15 +49,15 @@ const DEFAULT_TASKS: RoadmapTask[] = [
   {
     id: "5",
     title: "Reach ₹1 Crore Startup Milestone & Pre-Seed Angel Round",
-    category: "Funding",
-    status: "todo",
-    impact: "Enterprise Scale",
+    category: "Finances",
+    status: "in_progress",
+    impact: "₹1 Crore Goal",
   },
   {
     id: "6",
-    title: "Enterprise Sovereign Plugin Marketplace & Agent Store",
-    category: "Ecosystem",
-    status: "todo",
+    title: "Launch SaaS Pro Subscription Tier (₹1,499/mo / $19/mo)",
+    category: "SaaS",
+    status: "completed",
     impact: "Revenue Model",
   },
 ];
@@ -64,6 +65,11 @@ const DEFAULT_TASKS: RoadmapTask[] = [
 export const WorkspacesApp: React.FC = () => {
   const [tasks, setTasks] = useState<RoadmapTask[]>(DEFAULT_TASKS);
   const [newTaskTitle, setNewTaskTitle] = useState("");
+  const [isPro, setIsPro] = useState(false);
+
+  useEffect(() => {
+    setIsPro(isProOrEnterprise());
+  }, []);
 
   const toggleTask = (id: string) => {
     playNotificationSound();
@@ -86,6 +92,13 @@ export const WorkspacesApp: React.FC = () => {
   const handleAddTask = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTaskTitle.trim()) return;
+
+    if (!isPro && tasks.length >= 8) {
+      playNotificationSound();
+      window.dispatchEvent(new CustomEvent("argus:voice-limit-reached"));
+      speakVoice("Workspace limit reached on Community tier, sir. Upgrade to ARGUS Pro for unlimited multi-agent workspaces.");
+      return;
+    }
 
     playNotificationSound();
     const newTask: RoadmapTask = {

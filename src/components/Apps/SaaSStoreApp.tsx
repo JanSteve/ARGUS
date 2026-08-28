@@ -1,37 +1,53 @@
-/**
- * ARGUS SaaS Store & Pro License Hub
- * Monetization tier store, Pro license key activation, and SaaS subscription manager
- */
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./SaaSStoreApp.module.css";
 import { speakVoice } from "../../lib/ai";
 import { playNotificationSound } from "../../lib/soundEffects";
+import {
+  activateLicenseKey,
+  getActiveLicense,
+  getDeviceFingerprint,
+  LicenseTier,
+} from "../../lib/licensing/licenseManager";
 
 export const SaaSStoreApp: React.FC = () => {
   const [licenseKey, setLicenseKey] = useState("");
-  const [currentTier, setCurrentTier] = useState<"community" | "pro" | "enterprise">("community");
+  const [currentTier, setCurrentTier] = useState<LicenseTier>("community");
   const [activationMsg, setActivationMsg] = useState<string | null>(null);
+  const [deviceSig, setDeviceSig] = useState("");
+
+  useEffect(() => {
+    const lic = getActiveLicense();
+    setCurrentTier(lic.tier);
+    setDeviceSig(getDeviceFingerprint());
+  }, []);
 
   const handleActivateKey = (e: React.FormEvent) => {
     e.preventDefault();
     if (!licenseKey.trim()) return;
 
     playNotificationSound();
-    if (licenseKey.toLowerCase().includes("pro") || licenseKey.length >= 10) {
-      setCurrentTier("pro");
-      setActivationMsg("✓ ARGUS Pro License activated successfully! Unlimited British Neural Voice unlocked.");
-      speakVoice("Pro license verified and activated, sir. Unlimited British neural voice and multi-agent workspaces are now active.");
+    const result = activateLicenseKey(licenseKey);
+    setActivationMsg(result.message);
+
+    if (result.success && result.tier) {
+      setCurrentTier(result.tier);
+      speakVoice(
+        `Cryptographic license verified for ${result.tier.toUpperCase()} tier, sir. Unlimited British neural voice and autonomous multi-agent systems are now active.`
+      );
     } else {
-      setActivationMsg("Invalid license format. Please check your ARGUS Pro license key.");
+      speakVoice("License verification failed. Signature mismatch or invalid key.");
     }
   };
 
   const handleSimulateUpgrade = (tier: "pro" | "enterprise") => {
     playNotificationSound();
-    setCurrentTier(tier);
-    setActivationMsg(`✓ Upgraded to ARGUS ${tier.toUpperCase()}! Welcome to the Sovereign Tier.`);
-    speakVoice(`Welcome to ARGUS ${tier.toUpperCase()}. All enterprise features and priority neural streams have been unlocked.`);
+    const mockKey = tier === "enterprise" ? "ARGUS-ENT-9999-8888-A45B" : "ARGUS-PRO-E45A-074D-4EBF";
+    const result = activateLicenseKey(mockKey);
+    setActivationMsg(result.message);
+    if (result.success && result.tier) {
+      setCurrentTier(result.tier);
+      speakVoice(`Welcome to ARGUS ${tier.toUpperCase()}. All enterprise features unlocked.`);
+    }
   };
 
   return (
@@ -234,6 +250,11 @@ export const SaaSStoreApp: React.FC = () => {
             Activate
           </button>
         </form>
+      </div>
+
+      {/* Hardware Fingerprint Indicator */}
+      <div style={{ textAlign: "center", fontSize: "10.5px", color: "#64748b" }}>
+        🔒 Device Cryptographic Binding ID: <code style={{ color: "#38bdf8" }}>{deviceSig}</code> • Zero Data Leaks • Offline Verified
       </div>
     </div>
   );

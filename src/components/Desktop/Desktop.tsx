@@ -27,6 +27,7 @@ import { WorkspacesApp } from "../Apps/WorkspacesApp";
 import { SaaSStoreApp } from "../Apps/SaaSStoreApp";
 import { SpotlightBar } from "./SpotlightBar";
 import { ArcMatrixHUD } from "./ArcMatrixHUD";
+import { ProUpgradeModal } from "./ProUpgradeModal";
 import {
   playWindowOpenSound,
   playWindowCloseSound,
@@ -322,6 +323,7 @@ export const Desktop: React.FC = () => {
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   const [controlPanelOpen, setControlPanelOpen] = useState(false);
   const [spotlightOpen, setSpotlightOpen] = useState(false);
+  const [proModalOpen, setProModalOpen] = useState(false);
   const [topZIndex, setTopZIndex] = useState(10);
   const [wallpaper, setWallpaper] = useState<WallpaperTheme>("space");
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
@@ -338,6 +340,13 @@ export const Desktop: React.FC = () => {
     };
     window.addEventListener("keydown", handleGlobalKey);
     return () => window.removeEventListener("keydown", handleGlobalKey);
+  }, []);
+
+  // Wire Voice Limit / Pro Upgrade Event Listener
+  useEffect(() => {
+    const handleVoiceLimit = () => setProModalOpen(true);
+    window.addEventListener("argus:voice-limit-reached", handleVoiceLimit);
+    return () => window.removeEventListener("argus:voice-limit-reached", handleVoiceLimit);
   }, []);
 
   // Focus window
@@ -764,6 +773,13 @@ export const Desktop: React.FC = () => {
 
       {/* Iron Man Arc-Matrix Holographic Telemetry HUD */}
       <ArcMatrixHUD onLaunchApp={launchApp} />
+
+      {/* Irresistible Pro Upgrade Holographic Modal */}
+      <ProUpgradeModal
+        isOpen={proModalOpen}
+        onClose={() => setProModalOpen(false)}
+        onOpenSaaSStore={() => launchApp("saas", "SaaS Pro Store")}
+      />
 
       {/* Taskbar */}
       <Taskbar

@@ -10,6 +10,7 @@
 
 import { DEFAULT_ELEVENLABS_KEY } from "./types";
 import { speakMiniMaxVoice } from "./minimaxVoice";
+import { incrementVoiceUsage } from "../licensing/licenseManager";
 
 export interface ElevenLabsVoiceConfig {
   apiKey: string;
@@ -99,6 +100,13 @@ export async function speakElevenLabsVoice(
   if (!cleanText) return;
 
   stopElevenLabsPlayback();
+
+  // Check daily free voice allocation limit
+  const canSpeak = incrementVoiceUsage();
+  if (!canSpeak) {
+    console.warn("[ARGUS Voice] Daily free voice limit reached. Prompting Pro Upgrade.");
+    return;
+  }
 
   // If ElevenLabs quota was flagged, use Tier 2 unlimited British neural voice
   if (elevenLabsQuotaExhausted && !customApiKey) {
