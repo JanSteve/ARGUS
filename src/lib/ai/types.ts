@@ -47,6 +47,7 @@ export interface AIConfig {
   localProvider: LocalProviderID;
   remoteProvider: RemoteProviderID;
   model: string;
+  remoteModel?: string;
   ollamaEndpoint: string;
   groqApiKey: string; // stored in localStorage only — NOT committed
   openrouterApiKey: string; // stored in localStorage only — NOT committed
@@ -136,7 +137,8 @@ export interface AIProvider {
 
 export interface OllamaModel {
   name: string;
-  size?: string;       // human-readable e.g. "4.7 GB"
-  family?: string;     // e.g. "llama"
-  modified?: string;   // ISO date
+  size?: string;
+  family?: string;
+  modified?: string;
 }
+

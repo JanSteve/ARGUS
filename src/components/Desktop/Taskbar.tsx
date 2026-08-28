@@ -320,7 +320,7 @@ export const Taskbar: React.FC<TaskbarProps> = ({
         })}
       </div>
 
-      {/* ─── Right: System Tray ─── */}
+      {/* Right: System Tray */}
       <div className={styles.rightSection}>
         {/* Status Icons Group */}
         <div className={styles.trayGroup} onClick={onToggleControlPanel}>

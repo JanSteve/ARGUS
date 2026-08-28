@@ -4,8 +4,8 @@ import { useSystemState } from "../../hooks/useSystemState";
 
 let tauriOpen: ((url: string) => Promise<void>) | null = null;
 try {
-  import("@tauri-apps/plugin-opener").then((mod) => {
-    tauriOpen = mod.open;
+  import("@tauri-apps/plugin-opener").then((mod: any) => {
+    tauriOpen = mod.openUrl || mod.open || null;
   }).catch(() => {});
 } catch {}
 

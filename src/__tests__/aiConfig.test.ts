@@ -12,7 +12,7 @@ describe("AI Config persistence", () => {
 
   it("returns DEFAULT_AI_CONFIG when localStorage is empty", () => {
     const config = loadAIConfig();
-    expect(config.mode).toBe("local");
+    expect(config.mode).toBe(DEFAULT_AI_CONFIG.mode);
     expect(config.localProvider).toBe("ollama");
     expect(config.ollamaEndpoint).toBe("http://localhost:11434");
     expect(config.profile).toBe("balanced");
@@ -48,7 +48,7 @@ describe("AI Config persistence", () => {
   it("returns default config when localStorage has corrupt JSON", () => {
     localStorage.setItem("argus-ai-config", "not-valid-json{{{");
     const loaded = loadAIConfig();
-    expect(loaded.mode).toBe("local");
+    expect(loaded.mode).toBe(DEFAULT_AI_CONFIG.mode);
     expect(loaded.model).toBe(DEFAULT_AI_CONFIG.model);
   });
 

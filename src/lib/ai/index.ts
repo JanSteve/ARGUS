@@ -205,15 +205,12 @@ export function useStreamingChat(config: AIConfig) {
             if (chunk.done) break;
           }
         } catch (fallbackErr) {
-          let userFacingError = "Something went wrong. Please try again.";
-
-          if (err instanceof Error) {
-            if (err.name === "AbortError") {
-              userFacingError = "Generation stopped.";
-            } else {
-              userFacingError = err.message;
-            }
-          }
+          const userFacingError =
+            err instanceof Error && err.name === "AbortError"
+              ? "Generation stopped."
+              : err instanceof Error
+              ? err.message
+              : "Something went wrong. Please try again.";
 
           setMessages((prev) =>
             prev.map((m) =>

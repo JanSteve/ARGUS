@@ -680,48 +680,48 @@ export const Desktop: React.FC = () => {
    ═══════════════════════════════════════════════════════════════════════ */
 
 /* ─── File Explorer App ─── */
+type FSEntry = { name: string; type: "folder" | "file"; size?: string; children?: FSEntry[] };
+
+const DEMO_FILESYSTEM: Record<string, FSEntry[]> = {
+  "/home/user": [
+    { name: "Desktop", type: "folder" },
+    { name: "Documents", type: "folder" },
+    { name: "Downloads", type: "folder" },
+    { name: "Music", type: "folder" },
+    { name: "Pictures", type: "folder" },
+    { name: ".config", type: "folder" },
+    { name: "README.md", type: "file", size: "5.8 KB" },
+    { name: "notes.txt", type: "file", size: "1.2 KB" },
+  ],
+  "/home/user/Desktop": [
+    { name: "project-plan.pdf", type: "file", size: "2.4 MB" },
+    { name: "screenshot.png", type: "file", size: "845 KB" },
+  ],
+  "/home/user/Documents": [
+    { name: "Resume.pdf", type: "file", size: "156 KB" },
+    { name: "Budget.xlsx", type: "file", size: "48 KB" },
+    { name: "Projects", type: "folder" },
+  ],
+  "/home/user/Downloads": [
+    { name: "argus-installer.dmg", type: "file", size: "128 MB" },
+    { name: "llama3.2-model.bin", type: "file", size: "4.2 GB" },
+  ],
+  "/home/user/Music": [
+    { name: "Ambient", type: "folder" },
+    { name: "Electronic", type: "folder" },
+  ],
+  "/home/user/Pictures": [
+    { name: "Wallpapers", type: "folder" },
+    { name: "Screenshots", type: "folder" },
+    { name: "vacation-2025.jpg", type: "file", size: "3.2 MB" },
+  ],
+};
+
 const FileExplorerApp: React.FC = () => {
   const [currentPath, setCurrentPath] = useState("/home/user");
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
 
-  type FSEntry = { name: string; type: "folder" | "file"; size?: string; children?: FSEntry[] };
-
-  const filesystem: Record<string, FSEntry[]> = {
-    "/home/user": [
-      { name: "Desktop", type: "folder" },
-      { name: "Documents", type: "folder" },
-      { name: "Downloads", type: "folder" },
-      { name: "Music", type: "folder" },
-      { name: "Pictures", type: "folder" },
-      { name: ".config", type: "folder" },
-      { name: "README.md", type: "file", size: "5.8 KB" },
-      { name: "notes.txt", type: "file", size: "1.2 KB" },
-    ],
-    "/home/user/Desktop": [
-      { name: "project-plan.pdf", type: "file", size: "2.4 MB" },
-      { name: "screenshot.png", type: "file", size: "845 KB" },
-    ],
-    "/home/user/Documents": [
-      { name: "Resume.pdf", type: "file", size: "156 KB" },
-      { name: "Budget.xlsx", type: "file", size: "48 KB" },
-      { name: "Projects", type: "folder" },
-    ],
-    "/home/user/Downloads": [
-      { name: "argus-installer.dmg", type: "file", size: "128 MB" },
-      { name: "llama3.2-model.bin", type: "file", size: "4.2 GB" },
-    ],
-    "/home/user/Music": [
-      { name: "Ambient", type: "folder" },
-      { name: "Electronic", type: "folder" },
-    ],
-    "/home/user/Pictures": [
-      { name: "Wallpapers", type: "folder" },
-      { name: "Screenshots", type: "folder" },
-      { name: "vacation-2025.jpg", type: "file", size: "3.2 MB" },
-    ],
-  };
-
-  const items = filesystem[currentPath] || [];
+  const items = DEMO_FILESYSTEM[currentPath] || [];
   const pathParts = currentPath.split("/").filter(Boolean);
 
   const navigateUp = () => {

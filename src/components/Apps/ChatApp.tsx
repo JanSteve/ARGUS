@@ -6,7 +6,6 @@ import {
   OLLAMA_STATUS_LABELS,
   OllamaStatus,
 } from "../../lib/ai";
-import type { PerformanceProfile } from "../../lib/ai";
 import { playNotificationSound } from "../../lib/soundEffects";
 
 // ─── Slash Command Types ──────────────────────────────────────────────────────
@@ -594,13 +593,13 @@ export const ChatApp: React.FC = () => {
                     ? "linear-gradient(135deg, #3b82f6, #6366f1)"
                     : msg.role === "slash"
                     ? "rgba(99,102,241,0.08)"
-                    : msg.error
+                    : ("error" in msg && msg.error)
                     ? "rgba(239,68,68,0.1)"
                     : "rgba(255,255,255,0.05)",
                 border:
                   msg.role === "user"
                     ? "none"
-                    : msg.error
+                    : ("error" in msg && msg.error)
                     ? "1px solid rgba(239,68,68,0.25)"
                     : msg.role === "slash"
                     ? "1px solid rgba(99,102,241,0.2)"
@@ -615,7 +614,7 @@ export const ChatApp: React.FC = () => {
               }}
             >
               {msg.content}
-              {msg.streaming && (
+              {("streaming" in msg && msg.streaming) && (
                 <span
                   style={{
                     display: "inline-block",
@@ -644,8 +643,8 @@ export const ChatApp: React.FC = () => {
           disabled={isStreaming || (config.mode === "remote" && !remoteReady)}
           placeholder={
             config.mode === "remote"
-              ? isDuckChat
-                ? "Message keyless Free Cloud AI... or type commands like 'open browser'"
+              ? isKeyless
+                ? "Message keyless Free Cloud AI... or type commands like 'turn off wifi'"
                 : remoteReady
                 ? "Message OpenRouter cloud AI... or type commands like 'open browser'"
                 : "API key required — configure OpenRouter in Settings"

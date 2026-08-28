@@ -1,4 +1,4 @@
-import React, { useState, useEffect, KeyboardEvent } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './CalculatorApp.module.css';
 
 export const CalculatorApp: React.FC = () => {

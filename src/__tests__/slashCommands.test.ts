@@ -3,7 +3,7 @@
  * Verifies /calc, /system, /notes, /web, /music dispatch
  */
 
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 
 // ─── Re-implement slash handler for testing (isolated from React component) ──
 
