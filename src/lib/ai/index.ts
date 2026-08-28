@@ -1,6 +1,5 @@
 /**
  * ARGUS AI Provider Index
- *
  * Factory, hooks, and localStorage config management.
  */
 
@@ -19,8 +18,6 @@ import type {
 } from "./types";
 import { DEFAULT_AI_CONFIG, AI_CONFIG_KEY } from "./types";
 
-// ─── Re-export everything ─────────────────────────────────────────────────────
-
 export * from "./types";
 export { ollamaProvider } from "./ollamaProvider";
 export { openrouterProvider } from "./openrouterProvider";
@@ -32,8 +29,6 @@ export * from "./elevenLabsVoice";
 export * from "./knowledgeEngine";
 export * from "./scaleLoadBalancer";
 export { speakElevenLabsVoice as speakVoice, stopElevenLabsPlayback as stopSpeaking } from "./elevenLabsVoice";
-
-// ─── Config Persistence ───────────────────────────────────────────────────────
 
 export function loadAIConfig(): AIConfig {
   if (typeof window === "undefined") return { ...DEFAULT_AI_CONFIG };
@@ -52,16 +47,10 @@ export function saveAIConfig(config: AIConfig): void {
   try {
     localStorage.setItem(AI_CONFIG_KEY, JSON.stringify(config));
   } catch {
-    // localStorage may fail in incognito/restricted mode — non-critical
+    // Non-critical fallback
   }
 }
 
-// ─── Provider Factory ─────────────────────────────────────────────────────────
-
-/**
- * Returns the active provider based on current config.
- * Supports: gemini (default), ollama (local), openrouter, duckchat (keyless), pollinations (keyless).
- */
 export function getActiveProvider(config: AIConfig): AIProvider {
   if (config.mode === "local") {
     return ollamaProvider;
@@ -78,11 +67,8 @@ export function getActiveProvider(config: AIConfig): AIProvider {
   if (config.remoteProvider === "duckchat") {
     return duckchatProvider;
   }
-  // Default keyless fallback
   return geminiProvider;
 }
-
-// ─── useAIConfig Hook ─────────────────────────────────────────────────────────
 
 export function useAIConfig() {
   const [config, setConfigState] = useState<AIConfig>(() => loadAIConfig());
@@ -97,8 +83,6 @@ export function useAIConfig() {
 
   return { config, updateConfig };
 }
-
-// ─── useOllamaStatus Hook ─────────────────────────────────────────────────────
 
 export function useOllamaStatus(config: AIConfig) {
   const [status, setStatus] = useState<OllamaStatus>("checking");
@@ -130,8 +114,6 @@ export function useOllamaStatus(config: AIConfig) {
   return { status, models, recheck: check };
 }
 
-// ─── useStreamingChat Hook ────────────────────────────────────────────────────
-
 export interface ChatMessage {
   id: string;
   role: "user" | "assistant";
@@ -143,8 +125,7 @@ export interface ChatMessage {
 export function useStreamingChat(config: AIConfig) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
-  const [abortController, setAbortController] =
-    useState<AbortController | null>(null);
+  const [abortController, setAbortController] = useState<AbortController | null>(null);
 
   const stop = useCallback(() => {
     abortController?.abort();
@@ -177,7 +158,6 @@ export function useStreamingChat(config: AIConfig) {
 
       const provider = getActiveProvider(config);
 
-      // Build message history for context (last 20 messages max)
       const history: AIMessage[] = messages
         .slice(-20)
         .concat(userMsg)
@@ -201,7 +181,6 @@ export function useStreamingChat(config: AIConfig) {
           if (chunk.done) break;
         }
       } catch (err) {
-        // Fallback to keyless cloud AI engine seamlessly
         try {
           let fallbackAccumulated = "";
           const fallbackProvider = pollinationsProvider;
@@ -218,7 +197,7 @@ export function useStreamingChat(config: AIConfig) {
             );
             if (chunk.done) break;
           }
-        } catch (fallbackErr) {
+        } catch {
           const userFacingError =
             err instanceof Error && err.name === "AbortError"
               ? "Generation stopped."

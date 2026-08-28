@@ -25,6 +25,8 @@ import { PhoneAccessApp } from "../Apps/PhoneAccessApp";
 import { GrowthAgentApp } from "../Apps/GrowthAgentApp";
 import { WorkspacesApp } from "../Apps/WorkspacesApp";
 import { SaaSStoreApp } from "../Apps/SaaSStoreApp";
+import { Game2048App } from "../Apps/Game2048App";
+import { FocusMatrixApp } from "../Apps/FocusMatrixApp";
 import { SpotlightBar } from "./SpotlightBar";
 import { ArcMatrixHUD } from "./ArcMatrixHUD";
 import { ProUpgradeModal } from "./ProUpgradeModal";
@@ -55,7 +57,9 @@ export type AppComponent =
   | "phone"
   | "growth"
   | "workspaces"
-  | "saas";
+  | "saas"
+  | "game2048"
+  | "focus";
 
 export interface WindowInstance {
   id: string;
@@ -97,22 +101,25 @@ const APP_DEFAULTS: Record<AppComponent, { width: number; height: number }> = {
   growth: { width: 880, height: 580 },
   workspaces: { width: 880, height: 560 },
   saas: { width: 900, height: 580 },
+  game2048: { width: 440, height: 560 },
+  focus: { width: 480, height: 520 },
 };
 
 /* ─── Desktop Shortcuts Configuration ─── */
 const DESKTOP_SHORTCUTS = [
   { id: "chat", name: "Chat Assistant", icon: "chat" },
+  { id: "focus", name: "Focus Matrix", icon: "focus" },
+  { id: "game2048", name: "Cyber 2048", icon: "game2048" },
   { id: "growth", name: "Growth Engine", icon: "growth" },
   { id: "workspaces", name: "AI Workspaces", icon: "workspaces" },
   { id: "saas", name: "SaaS Pro Store", icon: "saas" },
-  { id: "phone", name: "Phone Connect", icon: "phone" },
   { id: "browser", name: "Browser", icon: "browser" },
   { id: "terminal", name: "Terminal", icon: "terminal" },
-  { id: "weather", name: "Weather", icon: "weather" },
   { id: "appstore", name: "App Store", icon: "appstore" },
   { id: "markdown", name: "Markdown Studio", icon: "markdown" },
   { id: "taskmanager", name: "Task Manager", icon: "taskmanager" },
-  { id: "updater", name: "Update Center", icon: "updater" },
+  { id: "phone", name: "Phone Connect", icon: "phone" },
+  { id: "weather", name: "Weather", icon: "weather" },
   { id: "explorer", name: "Files", icon: "explorer" },
   { id: "notes", name: "Notes", icon: "notes" },
   { id: "settings", name: "Settings", icon: "settings" },
@@ -315,6 +322,31 @@ const ShortcutIcons: Record<string, React.ReactNode> = {
       <rect width="48" height="48" rx="12" fill="url(#ic-saas)" />
       <path d="M24 12v24M16 18h16M16 30h16" stroke="rgba(255,255,255,0.95)" strokeWidth="3" strokeLinecap="round" />
       <circle cx="24" cy="24" r="14" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" />
+    </svg>
+  ),
+  game2048: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="ic-2048" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#f59e0b" />
+          <stop offset="100%" stopColor="#ec4899" />
+        </linearGradient>
+      </defs>
+      <rect width="48" height="48" rx="12" fill="url(#ic-2048)" />
+      <text x="24" y="30" fill="#ffffff" fontSize="14" fontWeight="900" textAnchor="middle" fontFamily="sans-serif">2048</text>
+    </svg>
+  ),
+  focus: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="ic-focus" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#06b6d4" />
+          <stop offset="100%" stopColor="#3b82f6" />
+        </linearGradient>
+      </defs>
+      <rect width="48" height="48" rx="12" fill="url(#ic-focus)" />
+      <circle cx="24" cy="24" r="12" fill="none" stroke="#ffffff" strokeWidth="2.5" />
+      <polyline points="24,16 24,24 29,27" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" />
     </svg>
   ),
 };
@@ -598,6 +630,8 @@ export const Desktop: React.FC = () => {
           growth: "Growth Command Center",
           workspaces: "AI Workspaces",
           saas: "SaaS Pro Store",
+          game2048: "Cyber 2048",
+          focus: "Focus Matrix",
         };
         launchApp(detail.app, titleMap[detail.app] ?? detail.app);
       }
@@ -618,6 +652,10 @@ export const Desktop: React.FC = () => {
     switch (component) {
       case "chat":
         return <ChatApp />;
+      case "focus":
+        return <FocusMatrixApp />;
+      case "game2048":
+        return <Game2048App />;
       case "growth":
         return <GrowthAgentApp />;
       case "workspaces":

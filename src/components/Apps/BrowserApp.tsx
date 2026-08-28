@@ -132,6 +132,23 @@ export const BrowserApp: React.FC = () => {
         });
       }
 
+      // 3. Search Wikipedia for deep contextual knowledge
+      try {
+        const wikiRes = await fetch(
+          `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query.trim())}`
+        );
+        if (wikiRes.ok) {
+          const wikiData = await wikiRes.json();
+          if (wikiData.extract) {
+            results.unshift({
+              title: `📚 Wikipedia: ${wikiData.title}`,
+              url: wikiData.content_urls?.desktop?.page || `https://en.wikipedia.org/wiki/${encodeURIComponent(query)}`,
+              snippet: wikiData.extract,
+            });
+          }
+        }
+      } catch {}
+
       // Fallback if no structured answer was found
       if (results.length === 0) {
         results.push({

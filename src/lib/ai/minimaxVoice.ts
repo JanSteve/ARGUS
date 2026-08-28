@@ -1,6 +1,6 @@
 /**
  * ARGUS Sovereign Voice Intelligence Engine
- * MiniMax Speech-01-HD Neural TTS with JARVIS / Ultron Persona & Resilient Web Speech Fallback
+ * MiniMax Speech-01-HD Neural TTS with British Persona & Resilient Web Speech Fallback
  */
 
 export type VoicePersona = "argus" | "ultron" | "sovereign";
@@ -26,7 +26,6 @@ export const DEFAULT_VOICE_CONFIG: VoiceConfig = {
 
 export const VOICE_CONFIG_KEY = "argus-voice-config";
 
-// Persona Parameters for MiniMax Speech-01-HD
 const PERSONA_SETTINGS: Record<
   VoicePersona,
   { voiceId: string; speed: number; pitch: number; label: string; description: string }
@@ -42,7 +41,7 @@ const PERSONA_SETTINGS: Record<
     voiceId: "audiobook_male_2",
     speed: 0.92,
     pitch: -5,
-    label: "ARGUS Titan (Deep Resonant Cybernetic Authority)",
+    label: "ARGUS Titan (Deep Resonant Authority)",
     description: "Deep, powerful, resonant acoustic authority",
   },
   sovereign: {
@@ -56,9 +55,6 @@ const PERSONA_SETTINGS: Record<
 
 let currentAudio: HTMLAudioElement | null = null;
 
-/**
- * Load Voice Configuration from LocalStorage
- */
 export function loadVoiceConfig(): VoiceConfig {
   if (typeof window === "undefined") return DEFAULT_VOICE_CONFIG;
   try {
@@ -70,9 +66,6 @@ export function loadVoiceConfig(): VoiceConfig {
   }
 }
 
-/**
- * Save Voice Configuration to LocalStorage
- */
 export function saveVoiceConfig(config: VoiceConfig): void {
   if (typeof window === "undefined") return;
   try {
@@ -80,9 +73,6 @@ export function saveVoiceConfig(config: VoiceConfig): void {
   } catch {}
 }
 
-/**
- * Stop any active voice synthesis playback
- */
 export function stopSpeaking(): void {
   if (currentAudio) {
     currentAudio.pause();
@@ -94,9 +84,6 @@ export function stopSpeaking(): void {
   }
 }
 
-/**
- * Helper to convert Hex string to Uint8Array (MiniMax T2A hex output format)
- */
 function hexToBytes(hex: string): Uint8Array {
   const bytes = new Uint8Array(hex.length / 2);
   for (let i = 0; i < hex.length; i += 2) {
@@ -105,9 +92,6 @@ function hexToBytes(hex: string): Uint8Array {
   return bytes;
 }
 
-/**
- * Fallback Web Speech Synthesis with Deep ARGUS / Ultron Acoustic Modulation
- */
 function speakWebSpeechFallback(text: string, persona: VoicePersona = "argus") {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
 
@@ -118,7 +102,6 @@ function speakWebSpeechFallback(text: string, persona: VoicePersona = "argus") {
   const utterance = new SpeechSynthesisUtterance(clean);
   const voices = window.speechSynthesis.getVoices();
 
-  // Pick best available English voice
   const preferredVoice =
     voices.find((v) => v.name.includes("Daniel") || v.name.includes("Oliver") || v.name.includes("Google UK English Male")) ||
     voices.find((v) => v.lang.startsWith("en-GB") && v.name.includes("Male")) ||
@@ -131,10 +114,10 @@ function speakWebSpeechFallback(text: string, persona: VoicePersona = "argus") {
   }
 
   if (persona === "argus") {
-    utterance.pitch = 0.85; // Deep sophisticated tone
+    utterance.pitch = 0.85;
     utterance.rate = 1.05;
   } else if (persona === "ultron") {
-    utterance.pitch = 0.65; // Ultra deep cybernetic resonance
+    utterance.pitch = 0.65;
     utterance.rate = 0.92;
   } else {
     utterance.pitch = 1.0;
@@ -144,9 +127,6 @@ function speakWebSpeechFallback(text: string, persona: VoicePersona = "argus") {
   window.speechSynthesis.speak(utterance);
 }
 
-/**
- * Primary Voice Synthesis: Calls MiniMax Speech-01-HD API, falls back gracefully to Web Speech
- */
 export async function speakMiniMaxVoice(
   rawText: string,
   overrideConfig?: Partial<VoiceConfig>
@@ -167,7 +147,6 @@ export async function speakMiniMaxVoice(
   const personaKey = config.persona || "argus";
   const persona = PERSONA_SETTINGS[personaKey] || PERSONA_SETTINGS.argus;
 
-  // If MiniMax is enabled and key is present, attempt high-fidelity neural synthesis
   if (config.minimaxEnabled && config.apiKey) {
     try {
       const groupId = config.groupId || "2002706633687311008";
@@ -200,10 +179,7 @@ export async function speakMiniMaxVoice(
 
       if (response.ok) {
         const json = await response.json();
-        
-        // MiniMax return check
         if (json.base_resp?.status_code === 0 && json.data?.audio) {
-          // Decode hex audio
           const audioBytes = hexToBytes(json.data.audio);
           const blob = new Blob([audioBytes], { type: "audio/mp3" });
           const audioUrl = URL.createObjectURL(blob);
@@ -216,29 +192,13 @@ export async function speakMiniMaxVoice(
           };
           await audio.play();
           return { success: true, source: "minimax" };
-        } else {
-          // MiniMax quota exceeded or token expired (e.g. 1008 insufficient balance)
-          const errorMsg = json.base_resp?.status_msg || "MiniMax quota exhausted";
-          console.warn("[ARGUS Voice] MiniMax returned:", errorMsg, "Falling back to neural Web Speech.");
-          
-          // Dispatch warning for UI
-          if (typeof window !== "undefined") {
-            window.dispatchEvent(
-              new CustomEvent("argus:voice-warning", {
-                detail: { message: `MiniMax Voice: ${errorMsg}. Local JARVIS acoustic fallback active.` },
-              })
-            );
-          }
         }
       }
-    } catch (err) {
-      console.warn("[ARGUS Voice] Network error reaching MiniMax, using Web Speech fallback:", err);
-    }
+    } catch {}
   }
 
-  // Graceful Fallback
   speakWebSpeechFallback(cleanText, personaKey);
   return { success: true, source: "webspeech" };
 }
 
-export { PERSONA_SE
+export { PERSONA_SETTINGS };
