@@ -77,7 +77,6 @@ async function speakUnlimitedBritishNeural(text: string): Promise<void> {
 
     audio.onerror = () => {
       currentAudio = null;
-      // Fall back to Tier 3 / Tier 4
       speakMiniMaxVoice(text).then(resolve);
     };
 
@@ -150,7 +149,6 @@ export async function speakElevenLabsVoice(
           );
         }
       }
-      // Trigger Tier 2: Free Unlimited British Neural Voice
       return speakUnlimitedBritishNeural(cleanText);
     }
 

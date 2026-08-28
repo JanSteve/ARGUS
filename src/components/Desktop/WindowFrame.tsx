@@ -84,7 +84,10 @@ export const WindowFrame: React.FC<WindowFrameProps> = ({
     <div
       className={windowClass}
       style={inlineStyles}
-      onMouseDown={onFocus}
+      onMouseDown={(e) => {
+        e.stopPropagation();
+        onFocus();
+      }}
       data-testid={`window-frame-${id}`}
     >
       {/* Title bar / Drag Handle */}

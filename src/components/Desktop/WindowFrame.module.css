@@ -1,33 +1,38 @@
+/* ==============================================================================
+   ARGUS Sovereign OS — Ultra-Stable Glassmorphic Window Frame
+   ============================================================================== */
+
 .window {
   position: absolute;
   display: flex;
   flex-direction: column;
-  background: var(--win-inactive-bg);
-  border: 1px solid var(--win-inactive-border);
-  border-radius: var(--radius-window);
-  box-shadow: var(--win-inactive-shadow);
+  background: rgba(15, 23, 42, 0.78);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-window, 12px);
+  box-shadow: 0 12px 36px -8px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.04);
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
   overflow: hidden;
   user-select: none;
   pointer-events: auto;
-  animation: windowOpen 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  will-change: transform, left, top, width, height;
+  animation: windowFadeIn 0.18s ease-out forwards;
 }
 
-@keyframes windowOpen {
+@keyframes windowFadeIn {
   from {
     opacity: 0;
-    transform: scale(0.93) translateY(8px);
   }
   to {
     opacity: 1;
-    transform: scale(1) translateY(0);
   }
 }
 
 .active {
-  background: var(--win-active-bg);
-  border: 1px solid var(--win-active-border);
-  box-shadow: var(--win-active-shadow);
+  background: rgba(15, 23, 42, 0.88);
+  border: 1px solid rgba(6, 182, 212, 0.35);
+  box-shadow: 0 20px 48px -10px rgba(0, 0, 0, 0.7), 0 0 20px rgba(6, 182, 212, 0.15);
 }
 
 .maximized {
@@ -35,54 +40,64 @@
   left: 0 !important;
   width: 100% !important;
   height: calc(100% - var(--taskbar-height)) !important;
-  border-radius: 0;
-  border: none;
+  border-radius: 0 !important;
+  border: none !important;
 }
 
-/* Header/Title bar */
+/* Header / Title Bar */
 .header {
-  height: 36px;
+  height: 38px;
+  min-height: 38px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 12px;
+  padding: 0 14px;
   background: rgba(255, 255, 255, 0.03);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  cursor: move;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  cursor: grab;
+}
+
+.header:active {
+  cursor: grabbing;
 }
 
 .title {
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   color: var(--fg-default);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  pointer-events: none;
 }
 
 /* Window Control Buttons */
 .controls {
   display: flex;
+  align-items: center;
   gap: 8px;
 }
 
 .btn {
-  width: 12px;
-  height: 12px;
+  width: 13px;
+  height: 13px;
   border-radius: 50%;
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 8px;
-  font-weight: bold;
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 700;
   color: transparent;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition: all 0.15s ease;
+  padding: 0;
 }
 
 .header:hover .btn {
-  color: rgba(0, 0, 0, 0.55);
+  color: rgba(0, 0, 0, 0.7);
 }
 
 .close {
@@ -90,6 +105,7 @@
 }
 .close:hover {
   background: #ff3b30;
+  transform: scale(1.1);
 }
 
 .minimize {
@@ -97,6 +113,7 @@
 }
 .minimize:hover {
   background: #ffcc00;
+  transform: scale(1.1);
 }
 
 .maximize {
@@ -104,30 +121,34 @@
 }
 .maximize:hover {
   background: #34c759;
+  transform: scale(1.1);
 }
 
-/* Content Area */
+/* Main Content Client Area */
 .content {
   flex: 1;
-  padding: 16px;
-  overflow: auto;
-  background: rgba(10, 11, 16, 0.35);
+  min-height: 0;
+  height: calc(100% - 38px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: rgba(10, 11, 16, 0.4);
   color: var(--fg-default);
 }
 
-/* Resizing borders and corners */
+/* Resize Handles */
 .resizeHandle {
   position: absolute;
   background: transparent;
-  z-index: 10;
+  z-index: 100;
 }
 
-.n { top: 0; left: 4px; right: 4px; height: 4px; cursor: n-resize; }
-.s { bottom: 0; left: 4px; right: 4px; height: 4px; cursor: s-resize; }
-.e { right: 0; top: 4px; bottom: 4px; width: 4px; cursor: e-resize; }
-.w { left: 0; top: 4px; bottom: 4px; width: 4px; cursor: w-resize; }
+.n { top: 0; left: 8px; right: 8px; height: 6px; cursor: n-resize; }
+.s { bottom: 0; left: 8px; right: 8px; height: 6px; cursor: s-resize; }
+.e { right: 0; top: 8px; bottom: 8px; width: 6px; cursor: e-resize; }
+.w { left: 0; top: 8px; bottom: 8px; width: 6px; cursor: w-resize; }
 
-.nw { top: 0; left: 0; width: 6px; height: 6px; cursor: nw-resize; }
-.ne { top: 0; right: 0; width: 6px; height: 6px; cursor: ne-resize; }
-.sw { bottom: 0; left: 0; width: 6px; height: 6px; cursor: sw-resize; }
-.se { bottom: 0; right: 0; width: 6px; height: 6px; cursor: se-resize; }
+.nw { top: 0; left: 0; width: 10px; height: 10px; cursor: nw-resize; }
+.ne { top: 0; right: 0; width: 10px; height: 10px; cursor: ne-resize; }
+.sw { bottom: 0; left: 0; width: 10px; height: 10px; cursor: sw-resize; }
+.se { bottom: 0; right: 0; width: 10px; height: 10px; cursor: se-resize; }

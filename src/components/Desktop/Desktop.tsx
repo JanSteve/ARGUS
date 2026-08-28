@@ -6,6 +6,7 @@ import { StartMenu } from "./StartMenu";
 import { ContextMenu } from "./ContextMenu";
 import { ControlPanel, WallpaperTheme } from "./ControlPanel";
 import { ArgusVoiceHUD } from "./ArgusVoiceHUD";
+import { AppErrorBoundary } from "./AppErrorBoundary";
 
 /* ─── App Components ─── */
 import { BrowserApp } from "../Apps/BrowserApp";
@@ -647,52 +648,60 @@ export const Desktop: React.FC = () => {
     return () => window.removeEventListener("argus:open-action-center", handler);
   }, []);
 
-  // Render app content inside window frame
+  // Render app content inside window frame safely wrapped in Error Boundary
   const renderAppContent = (component: AppComponent) => {
-    switch (component) {
-      case "chat":
-        return <ChatApp />;
-      case "focus":
-        return <FocusMatrixApp />;
-      case "game2048":
-        return <Game2048App />;
-      case "growth":
-        return <GrowthAgentApp />;
-      case "workspaces":
-        return <WorkspacesApp />;
-      case "saas":
-        return <SaaSStoreApp />;
-      case "phone":
-        return <PhoneAccessApp />;
-      case "settings":
-        return <SettingsApp />;
-      case "explorer":
-        return <FileExplorerApp />;
-      case "browser":
-        return <BrowserApp />;
-      case "terminal":
-        return <TerminalApp />;
-      case "calculator":
-        return <CalculatorApp />;
-      case "notes":
-        return <NotesApp />;
-      case "music":
-        return <MusicPlayerApp />;
-      case "photos":
-        return <PhotosApp />;
-      case "weather":
-        return <WeatherApp />;
-      case "appstore":
-        return <AppStoreApp />;
-      case "taskmanager":
-        return <TaskManagerApp />;
-      case "markdown":
-        return <MarkdownStudioApp />;
-      case "updater":
-        return <UpdateCenterApp />;
-      default:
-        return <div>Unknown App</div>;
-    }
+    const renderInner = () => {
+      switch (component) {
+        case "chat":
+          return <ChatApp />;
+        case "focus":
+          return <FocusMatrixApp />;
+        case "game2048":
+          return <Game2048App />;
+        case "growth":
+          return <GrowthAgentApp />;
+        case "workspaces":
+          return <WorkspacesApp />;
+        case "saas":
+          return <SaaSStoreApp />;
+        case "phone":
+          return <PhoneAccessApp />;
+        case "settings":
+          return <SettingsApp />;
+        case "explorer":
+          return <FileExplorerApp />;
+        case "browser":
+          return <BrowserApp />;
+        case "terminal":
+          return <TerminalApp />;
+        case "calculator":
+          return <CalculatorApp />;
+        case "notes":
+          return <NotesApp />;
+        case "music":
+          return <MusicPlayerApp />;
+        case "photos":
+          return <PhotosApp />;
+        case "weather":
+          return <WeatherApp />;
+        case "appstore":
+          return <AppStoreApp />;
+        case "taskmanager":
+          return <TaskManagerApp />;
+        case "markdown":
+          return <MarkdownStudioApp />;
+        case "updater":
+          return <UpdateCenterApp />;
+        default:
+          return <div>Unknown App</div>;
+      }
+    };
+
+    return (
+      <AppErrorBoundary appName={component.toUpperCase()}>
+        {renderInner()}
+      </AppErrorBoundary>
+    );
   };
 
   const isWindowActive = (winId: string) => {
@@ -909,7 +918,7 @@ const FileExplorerApp: React.FC = () => {
 
   const openFolder = (name: string) => {
     const newPath = `${currentPath}/${name}`;
-    if (filesystem[newPath]) {
+    if (DEMO_FILESYSTEM[newPath]) {
       setCurrentPath(newPath);
       setSelectedItem(null);
     }

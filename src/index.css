@@ -1,35 +1,35 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 :root {
   /* Colors */
-  --bg-desktop: #0a0b10;
-  --fg-default: #e2e8f0;
+  --bg-desktop: #06070a;
+  --fg-default: #f1f5f9;
   --fg-muted: #94a3b8;
   
   /* Glassmorphism Panel Colors */
-  --panel-bg: rgba(15, 23, 42, 0.45);
+  --panel-bg: rgba(15, 23, 42, 0.75);
   --panel-border: rgba(255, 255, 255, 0.08);
-  --panel-shadow: rgba(0, 0, 0, 0.35);
+  --panel-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
   
   /* Taskbar and Start Menu */
-  --taskbar-bg: rgba(10, 11, 16, 0.65);
-  --taskbar-border: rgba(255, 255, 255, 0.05);
+  --taskbar-bg: rgba(10, 11, 16, 0.82);
+  --taskbar-border: rgba(255, 255, 255, 0.08);
   --taskbar-item-hover: rgba(255, 255, 255, 0.08);
-  --taskbar-item-active: rgba(255, 255, 255, 0.12);
+  --taskbar-item-active: rgba(6, 182, 212, 0.18);
   
   /* Window Frame Active/Inactive States */
-  --win-active-bg: rgba(15, 23, 42, 0.65);
-  --win-active-border: rgba(255, 255, 255, 0.12);
-  --win-active-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.55);
+  --win-active-bg: rgba(15, 23, 42, 0.88);
+  --win-active-border: rgba(6, 182, 212, 0.35);
+  --win-active-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.75), 0 0 25px rgba(6, 182, 212, 0.12);
   
-  --win-inactive-bg: rgba(15, 23, 42, 0.5);
-  --win-inactive-border: rgba(255, 255, 255, 0.05);
-  --win-inactive-shadow: 0 8px 24px -10px rgba(0, 0, 0, 0.4);
+  --win-inactive-bg: rgba(15, 23, 42, 0.65);
+  --win-inactive-border: rgba(255, 255, 255, 0.06);
+  --win-inactive-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5);
   
   /* Controls and Accent Colors */
-  --accent-color: #3b82f6;
-  --accent-hover: #2563eb;
-  --accent-glow: rgba(59, 130, 246, 0.35);
+  --accent-color: #06b6d4;
+  --accent-hover: #0891b2;
+  --accent-glow: rgba(6, 182, 212, 0.4);
   
   --danger-color: #ef4444;
   --danger-hover: #dc2626;
@@ -38,16 +38,17 @@
   
   /* Typography */
   --font-system: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
   
   /* Layout and Sizing */
-  --radius-window: 12px;
-  --radius-panel: 16px;
+  --radius-window: 14px;
+  --radius-panel: 18px;
   --radius-control: 8px;
-  --taskbar-height: 48px;
+  --taskbar-height: 52px;
 }
 
 /* Global Reset */
-* {
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -61,44 +62,52 @@ html, body {
   color: var(--fg-default);
   overflow: hidden;
   user-select: none;
+  -webkit-user-select: none;
   -webkit-user-drag: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
+  touch-action: manipulation;
 }
 
 #root {
   width: 100%;
   height: 100%;
+  position: relative;
+  overflow: hidden;
 }
 
 /* Scrollbars */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 4px;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.16);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(6, 182, 212, 0.4);
 }
 
 /* Glassmorphism Utilities */
 .glass-blur {
-  backdrop-filter: blur(20px) saturate(140%);
-  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
 }
 
 .glass-panel {
   background: var(--panel-bg);
   border: 1px solid var(--panel-border);
-  box-shadow: 0 8px 32px 0 var(--panel-shadow);
+  box-shadow: var(--panel-shadow);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
 }
 
 /* Typography Utility */
@@ -112,4 +121,5 @@ button, input, textarea, select {
   font-size: inherit;
   color: inherit;
   outline: none;
+  border: none;
 }
