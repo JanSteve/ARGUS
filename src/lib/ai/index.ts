@@ -30,6 +30,7 @@ export { geminiProvider } from "./geminiProvider";
 export * from "./minimaxVoice";
 export * from "./elevenLabsVoice";
 export * from "./knowledgeEngine";
+export * from "./scaleLoadBalancer";
 export { speakElevenLabsVoice as speakVoice, stopElevenLabsPlayback as stopSpeaking } from "./elevenLabsVoice";
 
 // ─── Config Persistence ───────────────────────────────────────────────────────
@@ -226,4 +227,24 @@ export function useStreamingChat(config: AIConfig) {
               : "Something went wrong. Please try again.";
 
           setMessages((prev) =>
-    
+            prev.map((m) =>
+              m.id === assistantId
+                ? { ...m, content: userFacingError, streaming: false, error: true }
+                : m
+            )
+          );
+        }
+      } finally {
+        setIsStreaming(false);
+        setAbortController(null);
+      }
+    },
+    [messages, config, isStreaming]
+  );
+
+  const clearMessages = useCallback(() => {
+    setMessages([]);
+  }, []);
+
+  return { messages, isStreaming, send, stop, clearMessages };
+}

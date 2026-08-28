@@ -143,3 +143,54 @@ export async function speakElevenLabsVoice(
           window.dispatchEvent(
             new CustomEvent("argus:voice-quota-warning", {
               detail: {
+                message:
+                  "ElevenLabs 10,000 monthly credits quota reached. Switching seamlessly to ARGUS Unlimited British Neural Secondary Core. Speech will never stop.",
+              },
+            })
+          );
+        }
+      }
+      // Trigger Tier 2: Free Unlimited British Neural Voice
+      return speakUnlimitedBritishNeural(cleanText);
+    }
+
+    const audioBlob = await response.blob();
+    const audioUrl = URL.createObjectURL(audioBlob);
+
+    return new Promise((resolve) => {
+      const audio = new Audio(audioUrl);
+      currentAudio = audio;
+
+      audio.onplay = () => {
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("argus:speaking-started"));
+        }
+      };
+
+      audio.onended = () => {
+        URL.revokeObjectURL(audioUrl);
+        currentAudio = null;
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("argus:speaking-ended"));
+        }
+        resolve();
+      };
+
+      audio.onerror = () => {
+        URL.revokeObjectURL(audioUrl);
+        currentAudio = null;
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("argus:speaking-ended"));
+        }
+        speakUnlimitedBritishNeural(cleanText).then(resolve);
+      };
+
+      audio.play().catch(() => {
+        speakUnlimitedBritishNeural(cleanText).then(resolve);
+      });
+    });
+  } catch (err) {
+    console.warn("ElevenLabs TTS network error, using fallback voice:", err);
+    return speakUnlimitedBritishNeural(cleanText);
+  }
+}
