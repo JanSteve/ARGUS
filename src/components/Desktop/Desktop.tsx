@@ -24,7 +24,9 @@ import { UpdateCenterApp } from "../Apps/UpdateCenterApp";
 import { PhoneAccessApp } from "../Apps/PhoneAccessApp";
 import { GrowthAgentApp } from "../Apps/GrowthAgentApp";
 import { WorkspacesApp } from "../Apps/WorkspacesApp";
+import { SaaSStoreApp } from "../Apps/SaaSStoreApp";
 import { SpotlightBar } from "./SpotlightBar";
+import { ArcMatrixHUD } from "./ArcMatrixHUD";
 import {
   playWindowOpenSound,
   playWindowCloseSound,
@@ -49,7 +51,8 @@ export type AppComponent =
   | "updater"
   | "phone"
   | "growth"
-  | "workspaces";
+  | "workspaces"
+  | "saas";
 
 export interface WindowInstance {
   id: string;
@@ -90,6 +93,7 @@ const APP_DEFAULTS: Record<AppComponent, { width: number; height: number }> = {
   phone: { width: 720, height: 500 },
   growth: { width: 880, height: 580 },
   workspaces: { width: 880, height: 560 },
+  saas: { width: 900, height: 580 },
 };
 
 /* ─── Desktop Shortcuts Configuration ─── */
@@ -97,6 +101,7 @@ const DESKTOP_SHORTCUTS = [
   { id: "chat", name: "Chat Assistant", icon: "chat" },
   { id: "growth", name: "Growth Engine", icon: "growth" },
   { id: "workspaces", name: "AI Workspaces", icon: "workspaces" },
+  { id: "saas", name: "SaaS Pro Store", icon: "saas" },
   { id: "phone", name: "Phone Connect", icon: "phone" },
   { id: "browser", name: "Browser", icon: "browser" },
   { id: "terminal", name: "Terminal", icon: "terminal" },
@@ -294,6 +299,19 @@ const ShortcutIcons: Record<string, React.ReactNode> = {
       <rect x="26" y="12" width="10" height="10" rx="2" fill="rgba(255,255,255,0.9)" />
       <rect x="12" y="26" width="10" height="10" rx="2" fill="rgba(255,255,255,0.9)" />
       <rect x="26" y="26" width="10" height="10" rx="2" fill="rgba(255,255,255,0.4)" />
+    </svg>
+  ),
+  saas: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="ic-saas" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#10b981" />
+          <stop offset="100%" stopColor="#06b6d4" />
+        </linearGradient>
+      </defs>
+      <rect width="48" height="48" rx="12" fill="url(#ic-saas)" />
+      <path d="M24 12v24M16 18h16M16 30h16" stroke="rgba(255,255,255,0.95)" strokeWidth="3" strokeLinecap="round" />
+      <circle cx="24" cy="24" r="14" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" />
     </svg>
   ),
 };
@@ -568,6 +586,7 @@ export const Desktop: React.FC = () => {
           phone: "Phone Connect",
           growth: "Growth Command Center",
           workspaces: "AI Workspaces",
+          saas: "SaaS Pro Store",
         };
         launchApp(detail.app, titleMap[detail.app] ?? detail.app);
       }
@@ -592,6 +611,8 @@ export const Desktop: React.FC = () => {
         return <GrowthAgentApp />;
       case "workspaces":
         return <WorkspacesApp />;
+      case "saas":
+        return <SaaSStoreApp />;
       case "phone":
         return <PhoneAccessApp />;
       case "settings":
@@ -740,6 +761,9 @@ export const Desktop: React.FC = () => {
 
       {/* ARGUS Holographic Voice HUD & Autonomous Wake-Word Engine */}
       <ArgusVoiceHUD onLaunchApp={launchApp} />
+
+      {/* Iron Man Arc-Matrix Holographic Telemetry HUD */}
+      <ArcMatrixHUD onLaunchApp={launchApp} />
 
       {/* Taskbar */}
       <Taskbar

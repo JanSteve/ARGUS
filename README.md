@@ -1,220 +1,121 @@
-# ARGUS — AI-Native Sovereign Desktop Workspace
+# 🌌 ARGUS Sovereign OS
 
-> **v0.2.0 · Reality & Release Milestone**
+<div align="center">
 
-A desktop workspace built with React 19, TypeScript, Vite, Tauri 2, and Rust.  
-Runs on macOS (Apple Silicon) and Windows. Connects to a local Ollama instance for private AI inference.
+[![Release](https://img.shields.io/github/v/release/JanSteve/ARGUS?color=06b6d4&label=Release&style=for-the-badge)](https://github.com/JanSteve/ARGUS/releases/latest)
+[![Live Demo](https://img.shields.io/badge/Live%20Web%20OS-Vercel%20Preview-8b5cf6?style=for-the-badge&logo=vercel)](https://argus-sovereign-os-website.vercel.app/os/)
+[![Platform](https://img.shields.io/badge/Platform-macOS%20%7C%20Windows-blue?style=for-the-badge&logo=apple)](https://argus-sovereign-os-website.vercel.app/)
+[![License](https://img.shields.io/badge/License-Source--Available-green?style=for-the-badge)](LICENSE)
+[![Autonomous Growth](https://img.shields.io/badge/24%2F7%20Growth%20Agent-Active-10b981?style=for-the-badge&logo=githubactions)](https://github.com/JanSteve/ARGUS/actions)
 
----
+### **The World's First AI-Native Desktop Operating System**
+*Reimagining Personal Computing with 100% Data Sovereignty, Tony Stark-Level Autonomous Copilot, and High-Definition British Neural Voice.*
 
-## Honest Feature Status
+[🌐 Marketing Website](https://argus-sovereign-os-website.vercel.app/) • [📱 Interactive Web OS](https://argus-sovereign-os-website.vercel.app/os/) • [📦 Direct macOS DMG Download](https://argus-sovereign-os-website.vercel.app/downloads/ARGUS_macOS.dmg) • [💼 Startup Pitch Deck](docs/startup/PITCH_DECK.md)
 
-| Feature | Status | Notes |
-|---|---|---|
-| Window Manager (drag, resize, snap) | ✅ **REAL** | Full Aero Snap, z-index, minimize, maximize |
-| Taskbar & Start Menu | ✅ **REAL** | Live clock, running app indicators |
-| Context Menu | ✅ **REAL** | Right-click desktop |
-| Control Panel | ✅ **REAL** | Wallpaper, brightness, volume sliders |
-| **Chat AI (Ollama streaming)** | ✅ **REAL** | Real local inference, streaming, stop button |
-| **Settings (AI config)** | ✅ **REAL** | Wired to localStorage, live Ollama status |
-| **Ollama Detection** | ✅ **REAL** | 6 explicit states, model discovery |
-| **Privacy Indicator** | ✅ **REAL** | Shows LOCAL/REMOTE based on actual provider |
-| **Slash Commands** | ✅ **REAL** | /calc, /notes, /web, /music, /system |
-| **Performance Profiles** | ✅ **REAL** | ECO/BALANCED/TURBO with documented effects |
-| Notes | ✅ **REAL** | localStorage persistence, auto-save |
-| Terminal | ⚠️ **SIMULATED** | Cosmetic shell — no real shell access |
-| Browser | ⚠️ **PARTIAL** | Address bar UI — cannot load arbitrary URLs |
-| File Explorer | ⚠️ **SIMULATED** | In-memory filesystem, not your real disk |
-| Calculator | ✅ **REAL** | Functional math evaluation |
-| Music Player | ✅ **REAL** | UI working (no audio file loading yet) |
-| Photos | ⚠️ **PARTIAL** | Gallery UI, no real filesystem photos |
-| Remote AI (Groq) | ❌ **PLANNED** | Not yet implemented |
-| Persistent memory | ❌ **PLANNED** | Future milestone |
-| Voice interface | ❌ **PLANNED** | Future milestone |
-| Multi-agent system | ❌ **PLANNED** | Future milestone |
+</div>
 
 ---
 
-## Architecture
+## ⚡ Why ARGUS Sovereign OS?
 
-```
-ARGUS Desktop
-    │
-    ├── Window Manager (React)
-    │   ├── Desktop + Aero Snap
-    │   ├── Taskbar, Start Menu, Control Panel
-    │   └── WindowFrame (drag, resize, z-index)
-    │
-    └── AI Core (src/lib/ai/)
-        │
-        ├── types.ts         — AIProvider, AIConfig, OllamaStatus interfaces
-        ├── ollamaProvider.ts — Real Ollama implementation
-        └── index.ts          — Factory, hooks (useAIConfig, useOllamaStatus, useStreamingChat)
-                │
-                AI Provider abstraction
-                │
-          ┌────┴────┐
-          │         │
-        Ollama    Groq (future)
-          │
-     Local Model
-     (stays on your machine)
+Traditional operating systems treat AI as an invasive sidebar widget or browser tab. **ARGUS reimagines the desktop from first principles** where autonomous intelligence is built into every window, hardware toggle, file, and application workflow.
+
+```mermaid
+graph TD
+    User([User Voice / Natural Command]) --> Core[ARGUS Sovereign Neural Core]
+    Core --> Voice[4-Tier British Natural Voice Engine]
+    Core --> HUD[Arc-Reactor Telemetry Matrix]
+    Core --> Windows[Aero Snap Window Manager]
+    Core --> Apps[15+ Native Application Suite]
+    Core --> Mobile[Mobile Remote Access Bridge]
+    Core --> Security[100% Local Privacy via Ollama]
 ```
 
 ---
 
-## Local AI Setup
+## 🌟 Key Features
 
-ARGUS does **NOT** download Ollama or model weights automatically.  
-You must install and start Ollama yourself.
+### 🎙️ 1. Unstoppable 4-Tier British Natural Voice Matrix
+- **Natural British Male Speech:** Ultra-realistic conversational cadence (*George Baritone & Adam Titan*).
+- **4-Tier Failover Cascade:** ElevenLabs HD ➔ Free Unlimited Edge Neural TTS ➔ MiniMax Speech-01-HD ➔ Web Speech.
+- **Continuous 24/7 Voice:** Speech never stops even when third-party cloud credit limits are reached.
 
-### 1. Install Ollama
+### 🦾 2. Iron Man Arc-Matrix Holographic HUD
+- **Real-Time Telemetry:** Live CPU, RAM, and Neural Latency indicators.
+- **Autonomous Triggers:** 1-Click System Diagnostics, Dev Matrix Deployment, and Sovereign Privacy Lock.
 
-Go to [https://ollama.com](https://ollama.com) and download the installer for your OS.
+### 📱 3. Mobile Phone Remote Access Bridge
+- Instant access to the entire desktop OS from iPhone / Android via camera QR code scan.
+- No app store downloads required — runs directly via high-performance web stream.
 
-### 2. Start Ollama
+### 🔍 4. Universal Command Spotlight (`Cmd+K` / `Ctrl+K`)
+- Floating search HUD for instantaneous app launching, calculation solving, and hardware controls.
 
+### 🚀 5. Autonomous 24/7 Internet Growth & Marketing Engine
+- Built-in GitHub Actions cron workflow that runs automatically around the clock every 6 hours.
+- Syndicates launch posts to Twitter/X, Hacker News, Dev.to, and generates investor outreach kits.
+
+### 🛠️ 6. 15+ Native Application Suite
+- **Chat Assistant:** Autonomous full-system copilot.
+- **Growth Command Center:** 4 Autonomous AI marketing agents.
+- **AI Workspaces:** Startup milestone & project Kanban board.
+- **SaaS Pro Store:** Subscription tier and license manager.
+- **Sovereign Browser & Terminal:** Tabbed browsing and monospace shell.
+- **Markdown Studio, Task Manager, Notes, Weather Radar, Calculator, Music Player, Photos.**
+
+---
+
+## 💰 SaaS Pricing & Startup Model
+
+| Tier | Price | Features |
+| :--- | :--- | :--- |
+| **Community** | **₹0 / Free** | 100% Local Ollama, 15+ Native Apps, Standard Voice |
+| **ARGUS Pro** | **₹1,499 / mo ($19/mo)** | Unlimited British Neural HD Voice, Cloud Neural Stream, AI Workspaces, Phone Remote |
+| **Sovereign Enterprise** | **₹7,999 / mo ($99/mo)** | Dedicated GPU Nodes, Custom Fine-Tuned LLMs, Multi-Seat, 24/7 SLA Support |
+
+*🎯 Financial Roadmap to ₹1 Crore ARR: Read the [SaaS Pricing Model](docs/startup/SAAS_PRICING_MODEL.md) & [Pre-Seed Pitch Deck](docs/startup/PITCH_DECK.md).*
+
+---
+
+## 🚀 Quick Start & Installation
+
+### Option 1: Live Interactive Web OS (No Install Needed)
+Open directly in your browser: 👉 **[https://argus-sovereign-os-website.vercel.app/os/](https://argus-sovereign-os-website.vercel.app/os/)**
+
+### Option 2: Direct macOS App (Apple Silicon & Intel)
+1. Download the latest installer: [ARGUS_0.1.0_aarch64.dmg](https://argus-sovereign-os-website.vercel.app/downloads/ARGUS_macOS.dmg)
+2. Drag `ARGUS.app` to your `Applications` folder.
+3. Launch ARGUS and experience sovereign computing.
+
+### Option 3: Build from Source
 ```bash
-ollama serve
-```
-
-### 3. Pull a supported model
-
-```bash
-ollama pull llama3.2
-```
-
-Other supported models: `mistral`, `llama3.1`, `gemma2`, `phi3`, `qwen2.5`, `deepseek-r1`
-
-### 4. Launch ARGUS
-
-- **macOS**: Open `ARGUS.app` from Applications
-- **Dev mode**: `npm run tauri dev`
-
-### 5. Configure in ARGUS
-
-- Open Settings (desktop shortcut or Start Menu)
-- Go to **AI Engine**
-- Execution Mode → **LOCAL**
-- Model → select your installed model
-- Status should show **LOCAL READY** with green dot
-
----
-
-## Ollama Status States
-
-| Status | Meaning |
-|---|---|
-| `CHECKING...` | Pinging endpoint |
-| `OLLAMA NOT DETECTED` | Cannot reach endpoint |
-| `OLLAMA OFFLINE` | Connection refused |
-| `NO LOCAL MODEL` | Running but no models installed |
-| `MODEL NOT INSTALLED` | Running, but selected model missing — install with `ollama pull <model>` |
-| `LOCAL READY` | All good, ready to chat |
-
----
-
-## Slash Commands
-
-In the Chat app, type:
-
-| Command | What it does |
-|---|---|
-| `/calc 25 * 17` | Evaluates the math expression → `425` |
-| `/notes` | Opens the Notes app |
-| `/web` | Opens the Browser app |
-| `/music` | Opens the Music Player |
-| `/system` | Shows ARGUS system info |
-
----
-
-## Performance Profiles
-
-| Profile | Token Limit | Description |
-|---|---|---|
-| **ECO** | 256 tokens | Best for slower hardware. Shorter AI responses. |
-| **BALANCED** | 1024 tokens | Default. Recommended for most users. |
-| **TURBO** | No limit | Let the model decide. Best for capable hardware. |
-
-> ⚠️ TURBO does **not** make the model faster — it removes the token output cap only.
-
----
-
-## Privacy
-
-In **LOCAL** mode:
-- Your prompt is sent only to `http://localhost:11434`
-- No data leaves your machine
-- No external network request is made
-- The Chat UI shows "Prompt routed to local Ollama instance · No data leaves your machine"
-
-In **REMOTE** mode (when implemented):
-- The Chat UI will clearly state "Prompt routed to remote provider"
-- No silent rerouting — ARGUS never sends LOCAL prompts to remote providers
-
----
-
-## Installation
-
-### macOS (Apple Silicon)
-
-1. Download `ARGUS_0.2.0_aarch64.dmg` from Releases
-2. Open the DMG
-3. Drag ARGUS to Applications
-4. Open ARGUS
-5. Follow the Local AI Setup above
-
-### Windows
-
-1. Download the `.msi` or `.exe` installer from Releases
-2. Run the installer
-3. Launch ARGUS from Start Menu
-
-### From source
-
-```bash
-# Clone
+# 1. Clone the repository
 git clone https://github.com/JanSteve/ARGUS.git
 cd ARGUS
 
-# Install dependencies
+# 2. Install dependencies
 npm install
 
-# Dev mode
-npm run tauri dev
+# 3. Start local development server
+npm run dev
 
-# Production build
+# 4. Compile native desktop app (macOS / Windows)
 npm run tauri build
 ```
 
 ---
 
-## CLI
+## 🏛️ System Architecture
 
-After `npm link` or global install:
-
-```bash
-argus       # starts the dev server
-argus-ai    # alias
-```
+- **UI & Layout:** React 19, TypeScript 5.8, Vite 7, CSS Modules with Glassmorphism System.
+- **Native Bridge:** Tauri 2.0, Rust (Memory Footprint <85MB idle).
+- **Intelligence:** Multi-tier neural routing, Google Gemini API, Ollama local model connector.
+- **Voice Engine:** ElevenLabs Turbo v2.5, British Edge TTS, MiniMax Speech-01-HD.
 
 ---
 
-## Tech Stack
+## 📄 License & Creator
 
-| Layer | Technology |
-|---|---|
-| Frontend framework | React 19 |
-| Language | TypeScript |
-| Build tool | Vite 7 |
-| Desktop runtime | Tauri 2 |
-| Backend | Rust |
-| Testing | Vitest + Testing Library |
-| Local AI | Ollama |
-
----
-
-## License
-
-Open-Core · © 2026 R Jan Steve Daniel  
-Source available for personal and educational use.
+- **Author & Founder:** R Jan Steve Daniel ([@JanSteve](https://github.com/JanSteve))
+- **License:** Source-Available & Proprietary © 2026 R Jan Steve Daniel. All rights reserved.

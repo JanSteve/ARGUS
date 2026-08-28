@@ -46,6 +46,13 @@ export const SpotlightBar: React.FC<SpotlightBarProps> = ({
       action: () => onLaunchApp("workspaces", "AI Workspaces"),
     },
     {
+      id: "saas",
+      title: "SaaS Pro Store & Pricing Tiers",
+      category: "Tool",
+      icon: "💎",
+      action: () => onLaunchApp("saas", "SaaS Pro Store"),
+    },
+    {
       id: "chat",
       title: "Chat Assistant (ARGUS Core)",
       category: "App",

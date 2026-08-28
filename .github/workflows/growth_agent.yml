@@ -1,0 +1,35 @@
+name: "ARGUS 24/7 Autonomous Internet Growth Agent"
+
+on:
+  schedule:
+    - cron: "0 */6 * * *" # Runs every 6 hours automatically 24/7
+  workflow_dispatch:      # Allows manual 1-click trigger from GitHub Actions tab
+
+jobs:
+  growth-campaign:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run Autonomous 24/7 Growth Agent
+        run: |
+          node scripts/growth_engine.js
+
+      - name: Commit & Publish Daily Growth Campaign
+        run: |
+          git config --global user.name "ARGUS Growth Agent [Bot]"
+          git config --global user.email "bot@argus-sovereign-os.ai"
+          git add CAMPAIGNS/
+          git diff --quiet && git diff --staged --quiet || git commit -m "chore(growth): syndicate automated 24/7 marketing campaign [$(date +'%Y-%m-%d %H:%M')]"
+          git push origin HEAD:${{ github.ref }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

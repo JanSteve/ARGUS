@@ -125,6 +125,10 @@ function executeCopilotCommand(text: string): { reply: string; spoken: string } 
 
   // 4. App Launchers
   const apps = [
+    { name: "growth", label: "Growth Command Center", spoken: "Deploying Autonomous Growth and Marketing Agent matrix.", keywords: ["growth", "marketing", "campaign", "twitter agent", "viral", "seo", "investor pitch"] },
+    { name: "workspaces", label: "AI Workspaces", spoken: "Opening AI Workspaces and Startup Milestone Hub.", keywords: ["workspace", "workspaces", "startup", "kanban", "milestone", "roadmap", "tasks"] },
+    { name: "saas", label: "SaaS Pro Store", spoken: "Opening SaaS Pro Subscription and License Hub.", keywords: ["pricing", "saas", "pro", "subscription", "upgrade", "license", "tier", "store"] },
+    { name: "phone", label: "Phone Connect", spoken: "Opening Phone Connect Mobile Bridge QR code.", keywords: ["phone", "mobile", "iphone", "android", "remote access", "qr"] },
     { name: "weather", label: "Weather", spoken: "Opening live Weather Satellite Radar.", keywords: ["weather", "forecast", "climate", "radar"] },
     { name: "taskmanager", label: "Task Manager", spoken: "Accessing Task Manager. Neural and hardware telemetry nominal.", keywords: ["task manager", "processes", "activity monitor", "cpu", "memory"] },
     { name: "terminal", label: "Terminal", spoken: "Terminal emulator initialized. Ready for sovereign root execution.", keywords: ["terminal", "shell", "bash", "command prompt"] },
