@@ -5,6 +5,7 @@ import { Taskbar } from "./Taskbar";
 import { StartMenu } from "./StartMenu";
 import { ContextMenu } from "./ContextMenu";
 import { ControlPanel, WallpaperTheme } from "./ControlPanel";
+import { JarvisVoiceHUD } from "./JarvisVoiceHUD";
 
 /* ─── App Components ─── */
 import { BrowserApp } from "../Apps/BrowserApp";
@@ -652,6 +653,9 @@ export const Desktop: React.FC = () => {
           onClose={() => setControlPanelOpen(false)}
         />
       )}
+
+      {/* J.A.R.V.I.S. Holographic Voice HUD & Wake-Word Engine */}
+      <JarvisVoiceHUD onLaunchApp={launchApp} />
 
       {/* Taskbar */}
       <Taskbar

@@ -382,7 +382,17 @@ export const ChatApp: React.FC = () => {
   const remoteReady = isGemini || isKeyless || config.openrouterApiKey.trim() !== "";
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%", gap: "10px" }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        minHeight: "420px",
+        gap: "10px",
+        color: "var(--fg-default, #f1f5f9)",
+        boxSizing: "border-box",
+      }}
+    >
       {/* Status Bar */}
       <div
         style={{
