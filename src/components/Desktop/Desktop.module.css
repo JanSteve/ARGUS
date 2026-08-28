@@ -40,6 +40,7 @@
   gap: 4px;
   z-index: 2;
   align-content: start;
+  pointer-events: auto;
 }
 
 .shortcut {
@@ -52,6 +53,7 @@
   border-radius: 10px;
   border: 1.5px solid transparent;
   cursor: pointer;
+  pointer-events: auto;
   transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
 }
 
@@ -76,6 +78,7 @@
   align-items: center;
   justify-content: center;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  pointer-events: none;
 }
 
 .shortcutIcon svg {
@@ -92,6 +95,7 @@
   word-break: break-word;
   line-height: 1.2;
   max-width: 80px;
+  pointer-events: none;
 }
 
 /* Workspace */
@@ -102,6 +106,7 @@
   right: 0;
   bottom: var(--taskbar-height);
   z-index: 3;
+  pointer-events: none;
 }
 
 /* ─── Aero Snap Preview ─── */
