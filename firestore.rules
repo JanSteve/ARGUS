@@ -1,0 +1,26 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // User profile documents: users can read and write their own document
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Enterprise Inquiries and Leads: Public submission allowed, read restricted to auth
+    match /leads/{leadId} {
+      allow create: if true;
+      allow read, update, delete: if request.auth != null;
+    }
+    
+    // Missions & Agent Workspaces
+    match /missions/{missionId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // System Telemetry Logs
+    match /telemetry/{logId} {
+      allow create: if true;
+      allow read: if request.auth != null;
+    }
+  }
+}

@@ -15,6 +15,7 @@ export * from "./sentryMonitoring";
 export * from "./resendEmail";
 export * from "./upstashRedis";
 export * from "./pineconeVectorDB";
+export * from "../firebase/firebaseConfig";
 
 import { initPostHog } from "./posthogAnalytics";
 import { initSentry } from "./sentryMonitoring";
