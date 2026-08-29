@@ -165,10 +165,13 @@ function speakWebSpeechFallback(text: string, personaKey: VoicePersona = "imposi
   window.speechSynthesis.speak(utterance);
 }
 
+// In-Memory LRU Audio Cache for instant 0ms playback of frequent phrases
+const voiceAudioCache = new Map<string, string>();
+
 export async function speakMiniMaxVoice(
   rawText: string,
   overrideConfig?: Partial<VoiceConfig>
-): Promise<{ success: boolean; source: "minimax" | "webspeech"; error?: string }> {
+): Promise<{ success: boolean; source: "minimax" | "webspeech" | "cache"; error?: string }> {
   const config = { ...loadVoiceConfig(), ...overrideConfig };
   if (!config.enabled) return { success: false, source: "webspeech", error: "Voice disabled" };
 
@@ -184,14 +187,42 @@ export async function speakMiniMaxVoice(
 
   const personaKey = config.persona || "imposing_queen";
   const persona = PERSONA_SETTINGS[personaKey] || PERSONA_SETTINGS.imposing_queen;
+  const cacheKey = `${personaKey}_${cleanText}`;
 
+  // 1. Instant Cache Hit (0ms playback)
+  if (voiceAudioCache.has(cacheKey)) {
+    const cachedUrl = voiceAudioCache.get(cacheKey)!;
+    try {
+      const audio = new Audio(cachedUrl);
+      currentAudio = audio;
+      audio.onplay = () => {
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("argus:speaking-started"));
+        }
+      };
+      audio.onended = () => {
+        currentAudio = null;
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("argus:speaking-ended"));
+        }
+      };
+      await audio.play();
+      return { success: true, source: "cache" };
+    } catch {}
+  }
+
+  // 2. MiniMax Cloud API with 1800ms Fast Timeout Guard
   if (config.minimaxEnabled && config.apiKey) {
     try {
       const groupId = config.groupId || "2002706633687311008";
       const endpoint = `https://api.minimax.io/v1/t2a_v2?GroupId=${groupId}`;
 
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 1800);
+
       const response = await fetch(endpoint, {
         method: "POST",
+        signal: controller.signal,
         headers: {
           Authorization: `Bearer ${config.apiKey.trim()}`,
           "Content-Type": "application/json",
@@ -215,12 +246,18 @@ export async function speakMiniMaxVoice(
         }),
       });
 
+      clearTimeout(timeoutId);
+
       if (response.ok) {
         const json = await response.json();
         if (json.base_resp?.status_code === 0 && json.data?.audio) {
           const audioBytes = hexToBytes(json.data.audio);
           const blob = new Blob([audioBytes], { type: "audio/mp3" });
           const audioUrl = URL.createObjectURL(blob);
+
+          if (voiceAudioCache.size < 50) {
+            voiceAudioCache.set(cacheKey, audioUrl);
+          }
 
           const audio = new Audio(audioUrl);
           currentAudio = audio;
@@ -230,7 +267,6 @@ export async function speakMiniMaxVoice(
             }
           };
           audio.onended = () => {
-            URL.revokeObjectURL(audioUrl);
             currentAudio = null;
             if (typeof window !== "undefined") {
               window.dispatchEvent(new CustomEvent("argus:speaking-ended"));
@@ -240,9 +276,12 @@ export async function speakMiniMaxVoice(
           return { success: true, source: "minimax" };
         }
       }
-    } catch {}
+    } catch (e) {
+      console.warn("[ARGUS Voice] MiniMax fast failover triggered, switching to instant offline speech:", e);
+    }
   }
 
+  // 3. Fallback to High-Precision British/English Female Web Speech
   speakWebSpeechFallback(cleanText, personaKey);
   return { success: true, source: "webspeech" };
 }
