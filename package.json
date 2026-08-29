@@ -14,7 +14,8 @@
     "tauri": "tauri",
     "lint": "oxlint",
     "test": "vitest run",
-    "test:security": "node scripts/run-security-suite.mjs"
+    "test:security": "node scripts/run-security-suite.mjs",
+    "agent:dev": "node scripts/run-developer-agent.mjs"
   },
   "dependencies": {
     "@tauri-apps/api": "^2",
