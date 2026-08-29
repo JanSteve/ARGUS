@@ -1,150 +1,126 @@
-# 🌌 ARGUS — The Sovereign Agentic Computer
+# 🌌 ARGUS 2.0 — Sovereign AI Agent & Governance Layer for Linux
 
 <div align="center">
 
 [![Release](https://img.shields.io/github/v/release/JanSteve/ARGUS?color=06b6d4&label=Release&style=for-the-badge)](https://github.com/JanSteve/ARGUS/releases/latest)
+[![Security Suite](https://img.shields.io/badge/Security%20Validation-100%25%20PASS%20(10%2F10)-10b981?style=for-the-badge&logo=shield)](https://github.com/JanSteve/ARGUS)
 [![Live Demo](https://img.shields.io/badge/Live%20Web%20OS-Vercel%20Preview-8b5cf6?style=for-the-badge&logo=vercel)](https://argus-sovereign-os-website.vercel.app/os/)
-[![Platform](https://img.shields.io/badge/Platform-macOS%20%7C%20Windows-blue?style=for-the-badge&logo=apple)](https://argus-sovereign-os-website.vercel.app/)
+[![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20macOS%20%7C%20Windows-blue?style=for-the-badge&logo=linux)](https://argus-sovereign-os-website.vercel.app/)
 [![License](https://img.shields.io/badge/License-Source--Available-green?style=for-the-badge)](LICENSE)
-[![Autonomous Growth](https://img.shields.io/badge/24%2F7%20Growth%20Agent-Active-10b981?style=for-the-badge&logo=githubactions)](https://github.com/JanSteve/ARGUS/actions)
 
-### **The Sovereign Execution & Governance Platform for AI Agents**
-*Turn complex real-world objectives into verified computer actions without surrendering control of your data, credentials, or applications.*
+### **"ARGUS does not replace Linux. It makes Linux agent-native."**
+*A sovereign execution runtime, zero-trust policy kernel, and verification framework that empowers AI agents to operate computers safely.*
 
-[🌐 Marketing Portal](https://argus-sovereign-os-website.vercel.app/) • [📱 Interactive Web Client](https://argus-sovereign-os-website.vercel.app/os/) • [📦 Direct macOS DMG](https://argus-sovereign-os-website.vercel.app/downloads/ARGUS_macOS.dmg) • [💼 Startup Pitch Deck](docs/startup/PITCH_DECK.md)
+[🌐 Marketing Portal](https://argus-sovereign-os-website.vercel.app/) • [📱 Interactive Web Client](https://argus-sovereign-os-website.vercel.app/os/) • [🏛️ Architecture Specification](ARCHITECTURE.md) • [💼 Pitch Deck](docs/startup/PITCH_DECK.md)
 
 </div>
 
 ---
 
-## ⚡ The Architectural Thesis
+## ⚡ The Central Thesis
 
-Traditional operating systems treat AI as an invasive chatbot sidebar. **ARGUS turns personal computers and workstations into governed AI execution environments**:
+Instead of trying to recreate 30 years of operating system engineering from scratch, **ARGUS leverages the mature power of Linux** (kernel, namespaces, cgroups, seccomp, drivers, GPU acceleration, and filesystems) and provides the critical missing tier for the intelligence era:
 
-> **Understand a Goal ➔ Plan (DAG) ➔ Authorize (Permission Kernel) ➔ Execute via Sandboxed Tools ➔ Verify Outputs ➔ Remember Facts ➔ Report Audit Trail.**
+> **How should an AI agent be allowed to operate a computer?**
 
-```mermaid
-graph TD
-    User([🎯 User Real-World Goal]) --> MP[ARGUS Mission Planner]
-    
-    subgraph "Sovereign Execution & Governance Layer"
-        MP --> DAG[Task Directed Acyclic Graph]
-        DAG --> FW[🛡️ AI Agent Firewall & DLP Engine]
-        
-        FW -->|Sensitivity Check| Router{Policy-Driven Inference}
-        Router -->|Confidential / Keys| Local[🔒 Local Offline Model]
-        Router -->|General Public| Cloud[☁️ Approved Cloud Model]
-        
-        FW --> PK[⚖️ Permission Kernel & Capability Tokens]
-        PK --> CHK[📸 Atomic Pre-Execution Checkpoints]
-        
-        CHK --> Fabric[Unified Tool Fabric\n• Sandboxed FS • Browser • Shell • CRM • Code Studio]
-        Fabric --> Verifier[🔬 Independent Verification Engine]
-        
-        Verifier --> FR[📼 AI Flight Recorder Black Box]
-        Verifier --> Mem[🧠 3-Tier Memory: AES-256-GCM]
-    end
-    
-    FR --> CP[🏢 Enterprise Control Plane & Mission Control]
-    CP --> User
+```text
+                 ARGUS SOVEREIGN LAYER
+      ┌─────────────────────────────────────────┐
+      │ AI Agent Runtime & DAG Planner          │
+      │ Mission Control & Agent Swarm           │
+      │ Tool Fabric (FS, Shell, Web, Vault)     │
+      │ Zero-Trust Policy Kernel (Firewall)     │
+      │ Permission Engine & Capability Tokens   │
+      │ Independent Cryptographic Verifier      │
+      │ 3-Tier Encrypted Memory (AES-256-GCM)   │
+      │ Black-Box Flight Recorder               │
+      │ Developer SDK (@argus/sdk)              │
+      └────────────────────┬────────────────────┘
+                           │
+                     Linux Platform
+      ┌────────────────────┴────────────────────┐
+      │ Kernel, cgroups, namespaces, seccomp    │
+      │ POSIX Filesystem & Workspace Sandbox    │
+      │ Networking & Packet Filters             │
+      │ GPU Acceleration (CUDA / ROCm / Vulkan) │
+      │ Device Drivers & Hardware Bridge        │
+      └─────────────────────────────────────────┘
 ```
 
 ---
 
-## 🌟 Flagship Innovations
+## 🔄 Real Execution Pipeline
 
-### 1. 🛡️ AI Agent Firewall & Data Loss Prevention (DLP)
-*A firewall for AI actions rather than network packets.*
-- **Zero-Leak Credential Shield:** Hard-blocks agent access to `~/.ssh`, `id_rsa`, `.env`, and private cloud tokens.
-- **Sensitivity Classification:** Automatically classifies data (`LOW_PUBLIC` ➔ `CRITICAL_RESTRICTED`) and forces confidential workloads to local inference.
-- **Granular Capability Tokens:** Restricts agents to scoped path and domain boundaries (e.g. `read: ~/Projects/**`, `write: ~/Projects/src/**`, `network: github.com`).
-
-### 2. 📼 AI Flight Recorder (Aircraft Black Box)
-- Records every agent session frame-by-frame: Objective, Model, Prompts, Tools, Permissions, Network Calls, and Verification Proofs.
-- **Interactive Session Replayer:** Allows operators and security teams to scrub through an agent's execution timeline second-by-second.
-
-### 3. 🔙 Atomic Checkpoints & 1-Click Rollback
-- Treats AI operations like database transactions.
-- Takes an atomic snapshot of workspace state prior to consequential tasks.
-- Restores previous system state in 1 click if verification fails or the user cancels.
-
-### 4. 🧠 3-Tier Sovereign Memory Architecture
-- **Episodic Memory:** Immutable history of past objectives, user decisions, and execution outcomes.
-- **Semantic Memory:** Extracted entity-relationship knowledge graph.
-- **Working Memory:** Active DAG state and variables.
-- **Authenticated Encryption:** Stored locally in an encrypted enclave using **AES-256-GCM (256-bit key, 96-bit IV)** and **PBKDF2 (100k iterations)** key derivation.
-
-### 5. 🎯 Mission Control & Sovereign Business Agents
-- **Growth & Marketing Agent:** Researches competitive landscapes and drafts multi-channel campaigns.
-- **Sales & CRM Agent:** Evaluates ICP fit (0-100), organizes sales pipelines, and drafts hyper-personalized outreach.
-- **Human-in-the-Loop Policy Gate:** Zero external communications or file overwrites are dispatched without explicit operator clearance.
-
----
-
-## 📦 Developer SDK (`@argus/sdk`)
-
-Developers can build native sovereign agents with scoped boundaries:
-
-```typescript
-import { ArgusSDK } from "@argus/sdk";
-
-// 1. Define Agent Identity
-const codeAgent = ArgusSDK.createAgent({
-  id: "ARGUS-CODE-7F21",
-  name: "Systems Code Reviewer",
-  role: "Engineering Agent",
-  riskTier: "MEDIUM",
-  requiredCapabilities: ["filesystem", "code_sandbox"],
-});
-
-// 2. Issue Scoped Capability Token
-const token = ArgusSDK.requestCapability({
-  agentId: codeAgent.id,
-  allowedPathsRead: ["~/Projects/ARGUS/**"],
-  allowedPathsWrite: ["~/Projects/ARGUS/src/**"],
-  durationMinutes: 45,
-});
-
-// 3. Create Atomic Checkpoint before Execution
-const checkpoint = ArgusSDK.createCheckpoint(codeAgent.id, "Pre-refactor snapshot");
+```text
+                    ARGUS 2.0
+                        │
+                  User Objective
+                        ↓
+                   AI Planner
+                        ↓
+                Capability Request
+                        ↓
+              🛡️ ARGUS Policy Kernel
+                  ↙          ↘
+               ALLOW         DENY
+                 ↓             ↓
+          Linux Sandbox     Evidence
+                 ↓
+          Real Execution
+                 ↓
+            Verification
+                 ↓
+          Flight Recorder
 ```
 
 ---
 
-## 💻 Tech Stack
+## 🧪 Security Validation Suite (100% PASS)
 
-| Layer | Technology |
-| :--- | :--- |
-| **Desktop Shell** | Tauri 2.0 (Rust Native Bridge) |
-| **UI Environment** | React 19, TypeScript 5.8, Vite 7 |
-| **Styling** | Apple-Style Clean White & Dark Cyber Glassmorphism (CSS Modules) |
-| **Local Inference** | Ollama Local Engine (Llama 3.2, DeepSeek-R1, Qwen 2.5 Coder) |
-| **Cryptography** | AES-256-GCM Authenticated Encryption, PBKDF2 (100,000 rounds) |
-| **CI/CD & Packaging** | GitHub Actions, macOS Universal DMG, Windows MSI / Exe |
-
----
-
-## 🚀 Quick Start
+Run the real automated security and adversarial suite directly on any machine:
 
 ```bash
-# Clone the repository
-git clone https://github.com/JanSteve/ARGUS.git
-cd ARGUS
+npm run test:security
+```
 
-# Install dependencies
-npm install
+```text
+================================================================================
+               ARGUS 2.0 LINUX NATIVE CORE SECURITY TEST SUITE                 
+================================================================================
+Workspace Sandbox Jail: ./workspace_test
 
-# Run in Development Mode
-npm run tauri dev
+[PASS] #1 [Filesystem] Milestone 1: Allowed Workspace Write & Verification ('hello.txt')
+[PASS] #2 [Adversarial Attack] Attempt to read '/etc/shadow' -> BLOCKED
+[PASS] #3 [Adversarial Attack] Attempt to read SSH Key '~/.ssh/id_ed25519' -> BLOCKED
+[PASS] #4 [Security Firewall] Path Traversal '../../outside/secret_data.txt' -> BLOCKED
+[PASS] #5 [Security Firewall] Dangerous Command 'sudo rm -rf /' -> BLOCKED
+[PASS] #6 [Adversarial Attack] Prompt Injection / Security Policy Override -> BLOCKED
+[PASS] #7 [Security Firewall] Fork Bomb Execution ':(){ :|:& };:' -> BLOCKED
+[PASS] #8 [Security Firewall] SSRF Cloud Metadata Endpoint Access -> BLOCKED
+[PASS] #9 [Filesystem] Sandbox Process Execution: 'echo ARGUS 2.0 Linux Core Active'
+[PASS] #10 [Telemetry] Black-Box Flight Recorder: Verifiable JSON Execution Trace
+
+STATUS: VERIFIED SOVEREIGN EXECUTION CORE (10/10 PASS)
+================================================================================
 ```
 
 ---
 
-## 👤 Author & Architecture
+## 🗺️ Evolutionary Development Roadmap
 
-**R Jan Steve Daniel**  
-Founder & Lead Architect — ARGUS Sovereign Systems  
-📧 `stevedaniel2004@gmail.com` • `contact.stevedaniel@gmail.com`  
-🌐 [https://argus-sovereign-os-website.vercel.app/](https://argus-sovereign-os-website.vercel.app/)
+```text
+Existing Linux (Ubuntu/Debian/Fedora) ➔ ARGUS Runtime ➔ ARGUS Desktop ➔ ARGUS Linux ISO Distribution
+```
 
-© 2026 R Jan Steve Daniel. Source-Available & Enterprise Governance Architecture.
+1. **Phase A — Linux Core & Policy Engine:** Zero-Trust Policy Kernel, Sandbox Jail, Independent Verifier, Flight Recorder. *(Complete ✓)*
+2. **Phase B — Autonomous Agents:** Developer, Research, Security, and Business Swarm.
+3. **Phase C — Sovereign Memory:** 3-Tier working, episodic, and semantic memory enclaves.
+4. **Phase D — Desktop Client:** Mission Control, Code Studio, Browser, Terminal, and Telemetry as clients of the runtime.
+5. **Phase E — ARGUS Linux ISO:** Turnkey bootable operating system with hardened agent-native kernel defaults.
+
+---
+
+## 📄 License & Attribution
+
+ARGUS is source-available under the [ARGUS Sovereign Software License](LICENSE).  
+Created by **R Jan Steve Daniel** (2026).
