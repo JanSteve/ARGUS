@@ -89,11 +89,215 @@ export const ArgusVoiceHUD: React.FC<ArgusVoiceHUDProps> = ({ onLaunchApp }) => 
 
       // Perform real action depending on goal
       const lower = directive.goal.toLowerCase();
-      if (lower.includes("code") || lower.includes("build") || lower.includes("dashboard") || lower.includes("app")) {
+      if (lower.includes("task") || lower.includes("todo") || lower.includes("manager")) {
+        // Mount genuine Full-Stack Task Manager into Code Studio
+        const tmHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sovereign Task Manager</title>
+  <style>
+    :root {
+      --bg-primary: #0b0f19;
+      --bg-card: rgba(15, 23, 42, 0.75);
+      --border-card: rgba(255, 255, 255, 0.1);
+      --accent-blue: #0071e3;
+      --accent-cyan: #06b6d4;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: var(--bg-primary); color: var(--text-main); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 24px; min-height: 100vh; display: flex; justify-content: center; }
+    .app-container { width: 100%; max-width: 680px; display: flex; flex-direction: column; gap: 18px; }
+    .header-card { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 16px; padding: 20px; backdrop-filter: blur(16px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    .title-row { display: flex; justify-content: space-between; align-items: center; }
+    h1 { font-size: 18px; font-weight: 800; color: #fff; }
+    .badge { background: rgba(0, 113, 227, 0.15); color: #38bdf8; border: 1px solid rgba(0, 113, 227, 0.4); font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 9999px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 16px; }
+    .stat-box { background: rgba(0, 0, 0, 0.35); border: 1px solid var(--border-card); border-radius: 10px; padding: 10px; text-align: center; }
+    .stat-val { font-size: 20px; font-weight: 800; color: #00f0ff; }
+    .stat-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+    .input-card { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 16px; padding: 16px; display: flex; gap: 8px; }
+    .task-input { flex: 1; background: rgba(0,0,0,0.4); border: 1px solid var(--border-card); border-radius: 10px; padding: 10px 14px; color: #fff; font-size: 13px; outline: none; }
+    .task-input:focus { border-color: var(--accent-blue); }
+    .priority-select { background: rgba(0,0,0,0.4); border: 1px solid var(--border-card); border-radius: 10px; padding: 0 10px; color: #cbd5e1; font-size: 12px; outline: none; }
+    .add-btn { background: linear-gradient(135deg, #0071e3, #8b5cf6); border: none; color: #fff; font-weight: 700; font-size: 12px; padding: 10px 18px; border-radius: 10px; cursor: pointer; }
+    .filter-row { display: flex; justify-content: space-between; align-items: center; }
+    .tabs { display: flex; gap: 6px; }
+    .tab-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border-card); color: var(--text-muted); font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: 8px; cursor: pointer; }
+    .tab-btn.active { background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); }
+    .clear-btn { background: transparent; border: none; color: #ef4444; font-size: 11px; cursor: pointer; font-weight: 600; }
+    .task-list { display: flex; flex-direction: column; gap: 8px; }
+    .task-item { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; transition: all 0.2s ease; }
+    .task-item:hover { border-color: rgba(0, 113, 227, 0.4); transform: translateX(2px); }
+    .task-left { display: flex; align-items: center; gap: 12px; }
+    .checkbox { width: 18px; height: 18px; border-radius: 6px; cursor: pointer; accent-color: #0071e3; }
+    .task-text { font-size: 13.5px; font-weight: 500; }
+    .task-completed .task-text { text-decoration: line-through; color: var(--text-muted); }
+    .tag { font-size: 9.5px; font-weight: 700; padding: 2px 8px; border-radius: 6px; text-transform: uppercase; }
+    .tag-high { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+    .tag-med { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+    .tag-low { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+    .del-btn { background: transparent; border: none; color: #64748b; font-size: 16px; cursor: pointer; padding: 4px; }
+    .del-btn:hover { color: #ef4444; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <div class="header-card">
+      <div class="title-row">
+        <h1>⚡ SOVEREIGN TASK MANAGER</h1>
+        <span class="badge">LOCALSTORAGE ENCRYPTED</span>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-box"><div class="stat-val" id="stat-total">0</div><div class="stat-label">Total Tasks</div></div>
+        <div class="stat-box"><div class="stat-val" id="stat-active">0</div><div class="stat-label">Pending Active</div></div>
+        <div class="stat-box"><div class="stat-val" id="stat-done">0</div><div class="stat-label">Completed</div></div>
+      </div>
+    </div>
+    <form class="input-card" id="task-form">
+      <input type="text" id="task-title" class="task-input" placeholder="Add a new imperial directive or task..." required autocomplete="off">
+      <select id="task-priority" class="priority-select">
+        <option value="high">🔴 High</option>
+        <option value="med" selected>🟡 Medium</option>
+        <option value="low">🟢 Low</option>
+      </select>
+      <button type="submit" class="add-btn">+ Add Task</button>
+    </form>
+    <div class="filter-row">
+      <div class="tabs">
+        <button class="tab-btn active" data-filter="all">All</button>
+        <button class="tab-btn" data-filter="active">Active</button>
+        <button class="tab-btn" data-filter="completed">Completed</button>
+      </div>
+      <button class="clear-btn" id="clear-done-btn">Clear Completed</button>
+    </div>
+    <div class="task-list" id="task-list-container"></div>
+  </div>
+</body>
+</html>`;
+
+        const tmJs = `const STORAGE_KEY = "argus_taskmanager_store_v1";
+let tasks = [];
+let currentFilter = "all";
+
+function loadTasks() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) tasks = JSON.parse(raw);
+    else {
+      tasks = [
+        { id: "1", title: "Complete ARGUS Sovereign OS v2.0 Architecture", priority: "high", completed: true },
+        { id: "2", title: "Review Code Fortress Luhn Payment Shield with VCs", priority: "high", completed: false },
+        { id: "3", title: "Deploy Imposing Queen MiniMax Neural Voice Engine", priority: "med", completed: false }
+      ];
+      saveTasks();
+    }
+  } catch (e) { tasks = []; }
+  render();
+}
+
+function saveTasks() { localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks)); }
+
+function render() {
+  const container = document.getElementById("task-list-container");
+  const statTotal = document.getElementById("stat-total");
+  const statActive = document.getElementById("stat-active");
+  const statDone = document.getElementById("stat-done");
+
+  const completedCount = tasks.filter(t => t.completed).length;
+  const activeCount = tasks.length - completedCount;
+
+  if (statTotal) statTotal.textContent = tasks.length;
+  if (statActive) statActive.textContent = activeCount;
+  if (statDone) statDone.textContent = completedCount;
+
+  const filtered = tasks.filter(t => {
+    if (currentFilter === "active") return !t.completed;
+    if (currentFilter === "completed") return t.completed;
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div style="text-align:center; padding: 30px; color:#64748b; font-size:13px;">No tasks in this view. Add one above!</div>';
+    return;
+  }
+
+  container.innerHTML = filtered.map(t => \`
+    <div class="task-item \${t.completed ? 'task-completed' : ''}" data-id="\${t.id}">
+      <div class="task-left">
+        <input type="checkbox" class="checkbox" \${t.completed ? 'checked' : ''} onchange="toggleTask('\${t.id}')">
+        <span class="task-text">\${escapeHtml(t.title)}</span>
+        <span class="tag tag-\${t.priority}">\${t.priority}</span>
+      </div>
+      <button class="del-btn" onclick="deleteTask('\${t.id}')" title="Delete Task">&times;</button>
+    </div>
+  \`).join('');
+}
+
+function escapeHtml(str) { return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+
+window.toggleTask = function(id) {
+  tasks = tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t);
+  saveTasks();
+  render();
+};
+
+window.deleteTask = function(id) {
+  tasks = tasks.filter(t => t.id !== id);
+  saveTasks();
+  render();
+};
+
+document.getElementById("task-form")?.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const input = document.getElementById("task-title");
+  const prioritySelect = document.getElementById("task-priority");
+  if (!input || !input.value.trim()) return;
+
+  tasks.unshift({
+    id: Date.now().toString(),
+    title: input.value.trim(),
+    priority: prioritySelect ? prioritySelect.value : "med",
+    completed: false
+  });
+  saveTasks();
+  render();
+  input.value = "";
+});
+
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentFilter = btn.getAttribute("data-filter") || "all";
+    render();
+  });
+});
+
+document.getElementById("clear-done-btn")?.addEventListener("click", () => {
+  tasks = tasks.filter(t => !t.completed);
+  saveTasks();
+  render();
+});
+
+loadTasks();`;
+
+        localStorage.setItem(
+          "argus-codestudio-active-project",
+          JSON.stringify({ templateKey: "taskManager", html: tmHtml, js: tmJs })
+        );
+        window.dispatchEvent(
+          new CustomEvent("argus:codestudio-load-code", {
+            detail: { templateKey: "taskManager", html: tmHtml, js: tmJs },
+          })
+        );
+        onLaunchApp("codestudio", "Code Studio");
+      } else if (lower.includes("code") || lower.includes("build") || lower.includes("dashboard") || lower.includes("app")) {
         onLaunchApp("codestudio", "Code Studio");
       } else if (lower.includes("security") || lower.includes("vault") || lower.includes("scan") || lower.includes("card")) {
         onLaunchApp("vault", "Sovereign Vault");
-        // Run real Code Fortress DLP scan
         CodeFortressDLP.inspectPayload("Scanning workspace code and payment tokens...", "outbound_network");
       } else if (lower.includes("research") || lower.includes("brief") || lower.includes("dossier") || lower.includes("competitor")) {
         onLaunchApp("notes", "Notes");

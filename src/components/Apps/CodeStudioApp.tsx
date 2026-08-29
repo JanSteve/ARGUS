@@ -2,14 +2,412 @@ import React, { useState, useEffect, useRef } from "react";
 import styles from "./CodeStudioApp.module.css";
 import { executeAICircuitBreaker } from "../../lib/ai/scaleLoadBalancer";
 
-interface ProjectTemplate {
+export interface ProjectTemplate {
   name: string;
   html: string;
   css: string;
   js: string;
 }
 
-const TEMPLATES: Record<string, ProjectTemplate> = {
+export const TEMPLATES: Record<string, ProjectTemplate> = {
+  taskManager: {
+    name: "Full-Stack Task Manager (Local Storage)",
+    html: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sovereign Task Manager</title>
+  <style>
+    :root {
+      --bg-primary: #0b0f19;
+      --bg-card: rgba(15, 23, 42, 0.75);
+      --border-card: rgba(255, 255, 255, 0.1);
+      --accent-blue: #0071e3;
+      --accent-cyan: #06b6d4;
+      --accent-purple: #8b5cf6;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      padding: 24px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+    .app-container {
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .header-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 16px;
+      padding: 20px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    h1 { font-size: 18px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+    .badge {
+      background: rgba(0, 113, 227, 0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(0, 113, 227, 0.4);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 9999px;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .stat-box {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border-card);
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+    }
+    .stat-val { font-size: 20px; font-weight: 800; color: #00f0ff; }
+    .stat-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+    
+    .input-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      gap: 8px;
+    }
+    .task-input {
+      flex: 1;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid var(--border-card);
+      border-radius: 10px;
+      padding: 10px 14px;
+      color: #fff;
+      font-size: 13px;
+      outline: none;
+    }
+    .task-input:focus { border-color: var(--accent-blue); }
+    .priority-select {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid var(--border-card);
+      border-radius: 10px;
+      padding: 0 10px;
+      color: #cbd5e1;
+      font-size: 12px;
+      outline: none;
+    }
+    .add-btn {
+      background: linear-gradient(135deg, #0071e3, #8b5cf6);
+      border: none;
+      color: #fff;
+      font-weight: 700;
+      font-size: 12px;
+      padding: 10px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    .add-btn:hover { transform: translateY(-1px); }
+
+    .filter-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .tabs { display: flex; gap: 6px; }
+    .tab-btn {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border-card);
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .tab-btn.active {
+      background: var(--accent-blue);
+      color: #fff;
+      border-color: var(--accent-blue);
+    }
+    .clear-btn {
+      background: transparent;
+      border: none;
+      color: #ef4444;
+      font-size: 11px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .clear-btn:hover { text-decoration: underline; }
+
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .task-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+    }
+    .task-item:hover { border-color: rgba(0, 113, 227, 0.4); transform: translateX(2px); }
+    .task-left { display: flex; align-items: center; gap: 12px; }
+    .checkbox {
+      width: 18px;
+      height: 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      accent-color: #0071e3;
+    }
+    .task-text { font-size: 13.5px; font-weight: 500; }
+    .task-completed .task-text {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+    .tag {
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+    .tag-high { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+    .tag-med { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+    .tag-low { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+    .del-btn {
+      background: transparent;
+      border: none;
+      color: #64748b;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .del-btn:hover { color: #ef4444; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <div class="header-card">
+      <div class="title-row">
+        <h1>⚡ SOVEREIGN TASK MANAGER</h1>
+        <span class="badge">LOCALSTORAGE ENCRYPTED</span>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-val" id="stat-total">0</div>
+          <div class="stat-label">Total Tasks</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="stat-active">0</div>
+          <div class="stat-label">Pending Active</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="stat-done">0</div>
+          <div class="stat-label">Completed</div>
+        </div>
+      </div>
+    </div>
+
+    <form class="input-card" id="task-form">
+      <input type="text" id="task-title" class="task-input" placeholder="Add a new imperial directive or sprint task..." required autocomplete="off">
+      <select id="task-priority" class="priority-select">
+        <option value="high">🔴 High</option>
+        <option value="med" selected>🟡 Medium</option>
+        <option value="low">🟢 Low</option>
+      </select>
+      <button type="submit" class="add-btn">+ Add Task</button>
+    </form>
+
+    <div class="filter-row">
+      <div class="tabs">
+        <button class="tab-btn active" data-filter="all">All</button>
+        <button class="tab-btn" data-filter="active">Active</button>
+        <button class="tab-btn" data-filter="completed">Completed</button>
+      </div>
+      <button class="clear-btn" id="clear-done-btn">Clear Completed</button>
+    </div>
+
+    <div class="task-list" id="task-list-container"></div>
+  </div>
+</body>
+</html>`,
+    css: ``,
+    js: `// Task Manager Engine with LocalStorage Persistence
+const STORAGE_KEY = "argus_taskmanager_store_v1";
+
+let tasks = [];
+let currentFilter = "all";
+
+// Load from LocalStorage or seed defaults
+function loadTasks() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      tasks = JSON.parse(raw);
+    } else {
+      tasks = [
+        { id: "1", title: "Complete ARGUS Sovereign OS v2.0 Architecture", priority: "high", completed: true },
+        { id: "2", title: "Review Code Fortress Luhn Payment Shield with VCs", priority: "high", completed: false },
+        { id: "3", title: "Deploy Imposing Queen MiniMax Neural Voice Engine", priority: "med", completed: false },
+        { id: "4", title: "Verify Zero-Knowledge AES-256 Sovereign Vault Enclave", priority: "low", completed: false }
+      ];
+      saveTasks();
+    }
+  } catch (e) {
+    tasks = [];
+  }
+  render();
+}
+
+function saveTasks() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+}
+
+function render() {
+  const container = document.getElementById("task-list-container");
+  const statTotal = document.getElementById("stat-total");
+  const statActive = document.getElementById("stat-active");
+  const statDone = document.getElementById("stat-done");
+
+  const completedCount = tasks.filter(t => t.completed).length;
+  const activeCount = tasks.length - completedCount;
+
+  if (statTotal) statTotal.textContent = tasks.length;
+  if (statActive) statActive.textContent = activeCount;
+  if (statDone) statDone.textContent = completedCount;
+
+  const filtered = tasks.filter(t => {
+    if (currentFilter === "active") return !t.completed;
+    if (currentFilter === "completed") return t.completed;
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div style="text-align:center; padding: 30px; color:#64748b; font-size:13px;">No tasks in this view. Add one above!</div>';
+    return;
+  }
+
+  container.innerHTML = filtered.map(t => \`
+    <div class="task-item \${t.completed ? 'task-completed' : ''}" data-id="\${t.id}">
+      <div class="task-left">
+        <input type="checkbox" class="checkbox" \${t.completed ? 'checked' : ''} onchange="toggleTask('\${t.id}')">
+        <span class="task-text">\${escapeHtml(t.title)}</span>
+        <span class="tag tag-\${t.priority}">\${t.priority}</span>
+      </div>
+      <button class="del-btn" onclick="deleteTask('\${t.id}')" title="Delete Task">&times;</button>
+    </div>
+  \`).join('');
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+window.toggleTask = function(id) {
+  tasks = tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t);
+  saveTasks();
+  render();
+};
+
+window.deleteTask = function(id) {
+  tasks = tasks.filter(t => t.id !== id);
+  saveTasks();
+  render();
+};
+
+document.getElementById("task-form")?.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const input = document.getElementById("task-title");
+  const prioritySelect = document.getElementById("task-priority");
+  if (!input || !input.value.trim()) return;
+
+  const newTask = {
+    id: Date.now().toString(),
+    title: input.value.trim(),
+    priority: prioritySelect ? prioritySelect.value : "med",
+    completed: false
+  };
+
+  tasks.unshift(newTask);
+  saveTasks();
+  render();
+  input.value = "";
+});
+
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentFilter = btn.getAttribute("data-filter") || "all";
+    render();
+  });
+});
+
+document.getElementById("clear-done-btn")?.addEventListener("click", () => {
+  tasks = tasks.filter(t => !t.completed);
+  saveTasks();
+  render();
+});
+
+// Initialize on page load
+loadTasks();`,
+  },
+  cryptoTicker: {
+    name: "Sovereign Crypto & Stock Matrix",
+    html: `<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { margin: 0; background: #06070a; font-family: monospace; color: #fff; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .card { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 10px; padding: 14px; }
+    .symbol { font-size: 14px; color: #94a3b8; }
+    .price { font-size: 22px; font-weight: bold; color: #00f0ff; margin-top: 4px; }
+    .change { font-size: 12px; color: #10b981; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div style="font-size:14px; font-weight:bold; color:#38bdf8; margin-bottom:4px;">⚡ SOVEREIGN TELEMETRY MATRIX</div>
+  <div class="grid">
+    <div class="card"><div class="symbol">BTC / USD</div><div class="price" id="btc">$94,820</div><div class="change">+3.42% ▲</div></div>
+    <div class="card"><div class="symbol">ETH / USD</div><div class="price" id="eth">$3,450</div><div class="change">+2.15% ▲</div></div>
+    <div class="card"><div class="symbol">NVDA</div><div class="price" id="nvda">$138.40</div><div class="change">+4.80% ▲</div></div>
+    <div class="card"><div class="symbol">ARGUS TOKEN</div><div class="price" id="argus">$12.50</div><div class="change">+18.9% ▲</div></div>
+  </div>
+</body>
+</html>`,
+    css: ``,
+    js: `setInterval(() => {
+  const btcEl = document.getElementById('btc');
+  if (btcEl) {
+    const delta = (Math.random() - 0.48) * 100;
+    const current = 94820 + delta;
+    btcEl.textContent = '$' + Math.round(current).toLocaleString();
+  }
+}, 1500);`,
+  },
   cyberpunk: {
     name: "Cyberpunk Matrix Particle Mesh",
     html: `<!DOCTYPE html>
@@ -134,50 +532,44 @@ function drawWave() {
 }
 drawWave();`,
   },
-  cryptoTicker: {
-    name: "Sovereign Crypto & Stock Matrix",
-    html: `<!DOCTYPE html>
-<html>
-<head>
-  <style>
-    body { margin: 0; background: #06070a; font-family: monospace; color: #fff; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
-    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-    .card { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 10px; padding: 14px; }
-    .symbol { font-size: 14px; color: #94a3b8; }
-    .price { font-size: 22px; font-weight: bold; color: #00f0ff; margin-top: 4px; }
-    .change { font-size: 12px; color: #10b981; font-weight: bold; }
-  </style>
-</head>
-<body>
-  <div style="font-size:14px; font-weight:bold; color:#38bdf8; margin-bottom:4px;">⚡ SOVEREIGN TELEMETRY MATRIX</div>
-  <div class="grid">
-    <div class="card"><div class="symbol">BTC / USD</div><div class="price" id="btc">$94,820</div><div class="change">+3.42% ▲</div></div>
-    <div class="card"><div class="symbol">ETH / USD</div><div class="price" id="eth">$3,450</div><div class="change">+2.15% ▲</div></div>
-    <div class="card"><div class="symbol">NVDA</div><div class="price" id="nvda">$138.40</div><div class="change">+4.80% ▲</div></div>
-    <div class="card"><div class="symbol">ARGUS TOKEN</div><div class="price" id="argus">$12.50</div><div class="change">+18.9% ▲</div></div>
-  </div>
-</body>
-</html>`,
-    css: ``,
-    js: `setInterval(() => {
-  const btcEl = document.getElementById('btc');
-  if (btcEl) {
-    const delta = (Math.random() - 0.48) * 100;
-    const current = 94820 + delta;
-    btcEl.textContent = '$' + Math.round(current).toLocaleString();
-  }
-}, 1500);`,
-  },
 };
 
 export const CodeStudioApp: React.FC = () => {
-  const [currentTemplate, setCurrentTemplate] = useState<string>("cyberpunk");
+  const [currentTemplate, setCurrentTemplate] = useState<string>("taskManager");
   const [activeTab, setActiveTab] = useState<"html" | "js">("html");
-  const [htmlCode, setHtmlCode] = useState<string>(TEMPLATES.cyberpunk.html);
-  const [jsCode, setJsCode] = useState<string>(TEMPLATES.cyberpunk.js);
+  const [htmlCode, setHtmlCode] = useState<string>(TEMPLATES.taskManager.html);
+  const [jsCode, setJsCode] = useState<string>(TEMPLATES.taskManager.js);
   const [aiPrompt, setAiPrompt] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  // Load from external event or localStorage on mount
+  useEffect(() => {
+    const loadStoredProject = () => {
+      try {
+        const stored = localStorage.getItem("argus-codestudio-active-project");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed.html) setHtmlCode(parsed.html);
+          if (parsed.js) setJsCode(parsed.js);
+          if (parsed.templateKey) setCurrentTemplate(parsed.templateKey);
+        }
+      } catch {}
+    };
+
+    loadStoredProject();
+
+    const handleExternalLoad = (e: any) => {
+      if (e.detail) {
+        if (e.detail.html) setHtmlCode(e.detail.html);
+        if (e.detail.js) setJsCode(e.detail.js);
+        if (e.detail.templateKey) setCurrentTemplate(e.detail.templateKey);
+      }
+    };
+
+    window.addEventListener("argus:codestudio-load-code", handleExternalLoad);
+    return () => window.removeEventListener("argus:codestudio-load-code", handleExternalLoad);
+  }, []);
 
   // Compile and update live sandbox iframe
   const runCode = () => {
@@ -205,6 +597,16 @@ export const CodeStudioApp: React.FC = () => {
       setCurrentTemplate(key);
       setHtmlCode(TEMPLATES[key].html);
       setJsCode(TEMPLATES[key].js);
+      try {
+        localStorage.setItem(
+          "argus-codestudio-active-project",
+          JSON.stringify({
+            templateKey: key,
+            html: TEMPLATES[key].html,
+            js: TEMPLATES[key].js,
+          })
+        );
+      } catch {}
     }
   };
 
@@ -254,9 +656,10 @@ Return ONLY the revised executable code without markdown commentary.`;
             value={currentTemplate}
             onChange={(e) => loadTemplate(e.target.value)}
           >
+            <option value="taskManager">📋 Full-Stack Task Manager</option>
+            <option value="cryptoTicker">📈 Crypto & Stock Ticker</option>
             <option value="cyberpunk">🌌 Cyberpunk Matrix</option>
             <option value="audioVisualizer">🎙️ Audio Spectrogram</option>
-            <option value="cryptoTicker">📈 Crypto & Stock Ticker</option>
           </select>
         </div>
 
