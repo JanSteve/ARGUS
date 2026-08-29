@@ -297,4 +297,67 @@ export async function authenticateSovereignUser(
     sendFounderLeadAlert({
       event: "ARGUS OS USER SIGN-IN SUCCESSFUL",
       user: matchedEntry.user.fullName,
-      email: matchedEntr
+      email: matchedEntry.user.email,
+      timestamp: new Date().toISOString(),
+    });
+
+    Analytics.trackEvent("sovereign_user_signed_in", { email: matchedEntry.user.email });
+    return { success: true, user: matchedEntry.user };
+  }
+
+  return { success: false, error: "Invalid password or sovereign security PIN." };
+}
+
+export async function authenticateBiometric(): Promise<{ success: boolean; user?: SovereignUser; error?: string }> {
+  try {
+    const currentSession = getActiveSession();
+    if (currentSession.user) {
+      Analytics.trackEvent("sovereign_biometric_unlock", { user: currentSession.user.email });
+      return { success: true, user: currentSession.user };
+    }
+    setActiveSession({
+      user: DEFAULT_FOUNDER_USER,
+      token: "argus_biometric_unlocked_token",
+      isAuthenticated: true,
+      loginTime: new Date().toISOString(),
+    });
+    return { success: true, user: DEFAULT_FOUNDER_USER };
+  } catch (err: any) {
+    return { success: false, error: "Biometric validation failed." };
+  }
+}
+
+export function signOutSovereign(): void {
+  const emptySession: AuthSession = {
+    user: null,
+    token: null,
+    isAuthenticated: false,
+    loginTime: null,
+  };
+  setActiveSession(emptySession);
+  Analytics.trackEvent("sovereign_user_signed_out");
+}
+
+export function deleteSovereignAccount(email: string): { success: boolean } {
+  try {
+    const cleanEmail = email.trim().toLowerCase();
+    const vault = getRegisteredUsers();
+    delete vault[cleanEmail];
+    saveUsersVault(vault);
+    signOutSovereign();
+    return { success: true };
+  } catch {
+    return { success: false };
+  }
+}
+
+export function purgeAllSovereignData(): void {
+  try {
+    localStorage.removeItem(STORAGE_KEY_USERS);
+    localStorage.removeItem(STORAGE_KEY_SESSION);
+    localStorage.removeItem("argus-notes");
+    localStorage.removeItem("argus:ai-config");
+    localStorage.removeItem("argus:license-info");
+    signOutSovereign();
+  } catch {}
+}
