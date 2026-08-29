@@ -32,6 +32,27 @@ export const SpotlightBar: React.FC<SpotlightBarProps> = ({
 
   const allItems: SpotlightItem[] = [
     {
+      id: "mission",
+      title: "Mission Control (Flagship Multi-Agent Swarm & Sales Pipeline)",
+      category: "Tool",
+      icon: "🎯",
+      action: () => onLaunchApp("mission", "Mission Control"),
+    },
+    {
+      id: "controlplane",
+      title: "Enterprise AI Control Plane (Agent Firewall, Flight Recorder & DLP)",
+      category: "System",
+      icon: "🏢",
+      action: () => onLaunchApp("controlplane", "AI Control Plane"),
+    },
+    {
+      id: "runtime",
+      title: "Autonomous Runtime (M9 End-to-End Real-World Objective Execution)",
+      category: "Tool",
+      icon: "🦾",
+      action: () => onLaunchApp("runtime", "Autonomous Runtime"),
+    },
+    {
       id: "security",
       title: "Security & Intelligence Center (MNC Threat Defense & Public APIs)",
       category: "System",

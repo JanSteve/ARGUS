@@ -1,0 +1,249 @@
+/* ==============================================================================
+   ARGUS Sovereign OS — Enterprise AI Control Plane Stylesheet
+   M11 Enterprise Agent Governance, Firewall, Flight Recorder & ROI
+   ============================================================================== */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #090d16;
+  color: #f1f5f9;
+  font-family: var(--font-system, sans-serif);
+  overflow: hidden;
+}
+
+.topBar {
+  padding: 16px 20px;
+  background: rgba(15, 23, 42, 0.9);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.titleGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.iconBadge {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #10b981, #06b6d4);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.mainTitle {
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+
+.subTitle {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.navTabs {
+  display: flex;
+  gap: 4px;
+  padding: 8px 16px;
+  background: #0f172a;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  overflow-x: auto;
+}
+
+.tabItem {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #94a3b8;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.tabItem:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.tabItemActive {
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.contentArea {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.metricCard {
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metricLabel {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.metricValue {
+  font-size: 24px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.metricSub {
+  font-size: 11px;
+  color: #10b981;
+}
+
+.sectionBox {
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sectionTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.logTable {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.logRow {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 11px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.logRowBlocked {
+  border-color: rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.06);
+}
+
+.badgeStatus {
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.badgeAllowed {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+}
+
+.badgeBlocked {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
+
+.btnAction {
+  padding: 8px 14px;
+  background: #0071e3;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btnAction:hover {
+  background: #0077ed;
+}
+
+.btnRollback {
+  padding: 6px 12px;
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #f87171;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btnRollback:hover {
+  background: rgba(239, 68, 68, 0.3);
+}
+
+.flightReplayBox {
+  background: #04060c;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sliderRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.slider {
+  flex: 1;
+  cursor: pointer;
+}

@@ -20,6 +20,9 @@ export const StartMenu: React.FC<StartMenuProps> = ({ onLaunchApp, onClose }) =>
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   const apps: AppMenuItem[] = [
+    { id: "mission", name: "Mission Control", icon: "🎯", color: "#f59e0b", category: "ai" },
+    { id: "controlplane", name: "AI Control Plane", icon: "🏢", color: "#10b981", category: "system" },
+    { id: "runtime", name: "Autonomous Runtime", icon: "🦾", color: "#0071e3", category: "ai" },
     { id: "chat", name: "Chat Assistant", icon: "💬", color: "#6366f1", category: "ai" },
     { id: "security", name: "Security Center", icon: "🛡️", color: "#10b981", category: "system" },
     { id: "canvas", name: "Neural Canvas", icon: "🧠", color: "#c084fc", category: "ai" },

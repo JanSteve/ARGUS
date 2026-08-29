@@ -1,4 +1,4 @@
-# 🌌 ARGUS Sovereign OS
+# 🌌 ARGUS — The Sovereign Agentic Computer
 
 <div align="center">
 
@@ -8,125 +8,143 @@
 [![License](https://img.shields.io/badge/License-Source--Available-green?style=for-the-badge)](LICENSE)
 [![Autonomous Growth](https://img.shields.io/badge/24%2F7%20Growth%20Agent-Active-10b981?style=for-the-badge&logo=githubactions)](https://github.com/JanSteve/ARGUS/actions)
 
-### **The World's First AI-Native Desktop Operating System**
-*Reimagining Personal Computing with 100% Data Sovereignty, Tony Stark-Level Autonomous Copilot, and High-Definition British Neural Voice.*
+### **The Sovereign Execution & Governance Platform for AI Agents**
+*Turn complex real-world objectives into verified computer actions without surrendering control of your data, credentials, or applications.*
 
-[🌐 Marketing Website](https://argus-sovereign-os-website.vercel.app/) • [📱 Interactive Web OS](https://argus-sovereign-os-website.vercel.app/os/) • [📦 Direct macOS DMG Download](https://argus-sovereign-os-website.vercel.app/downloads/ARGUS_macOS.dmg) • [💼 Startup Pitch Deck](docs/startup/PITCH_DECK.md)
+[🌐 Marketing Portal](https://argus-sovereign-os-website.vercel.app/) • [📱 Interactive Web Client](https://argus-sovereign-os-website.vercel.app/os/) • [📦 Direct macOS DMG](https://argus-sovereign-os-website.vercel.app/downloads/ARGUS_macOS.dmg) • [💼 Startup Pitch Deck](docs/startup/PITCH_DECK.md)
 
 </div>
 
 ---
 
-## ⚡ Why ARGUS Sovereign OS?
+## ⚡ The Architectural Thesis
 
-Traditional operating systems treat AI as an invasive sidebar widget or browser tab. **ARGUS reimagines the desktop from first principles** where autonomous intelligence is built into every window, hardware toggle, file, and application workflow.
+Traditional operating systems treat AI as an invasive chatbot sidebar. **ARGUS turns personal computers and workstations into governed AI execution environments**:
+
+> **Understand a Goal ➔ Plan (DAG) ➔ Authorize (Permission Kernel) ➔ Execute via Sandboxed Tools ➔ Verify Outputs ➔ Remember Facts ➔ Report Audit Trail.**
 
 ```mermaid
 graph TD
-    User([User Voice / Natural Command]) --> Core[ARGUS Sovereign Neural Core]
-    Core --> Voice[4-Tier British Natural Voice Engine]
-    Core --> HUD[Arc-Reactor Telemetry Matrix]
-    Core --> Windows[Aero Snap Window Manager]
-    Core --> Apps[15+ Native Application Suite]
-    Core --> Mobile[Mobile Remote Access Bridge]
-    Core --> Security[100% Local Privacy via Ollama]
+    User([🎯 User Real-World Goal]) --> MP[ARGUS Mission Planner]
+    
+    subgraph "Sovereign Execution & Governance Layer"
+        MP --> DAG[Task Directed Acyclic Graph]
+        DAG --> FW[🛡️ AI Agent Firewall & DLP Engine]
+        
+        FW -->|Sensitivity Check| Router{Policy-Driven Inference}
+        Router -->|Confidential / Keys| Local[🔒 Local Offline Model]
+        Router -->|General Public| Cloud[☁️ Approved Cloud Model]
+        
+        FW --> PK[⚖️ Permission Kernel & Capability Tokens]
+        PK --> CHK[📸 Atomic Pre-Execution Checkpoints]
+        
+        CHK --> Fabric[Unified Tool Fabric\n• Sandboxed FS • Browser • Shell • CRM • Code Studio]
+        Fabric --> Verifier[🔬 Independent Verification Engine]
+        
+        Verifier --> FR[📼 AI Flight Recorder Black Box]
+        Verifier --> Mem[🧠 3-Tier Memory: AES-256-GCM]
+    end
+    
+    FR --> CP[🏢 Enterprise Control Plane & Mission Control]
+    CP --> User
 ```
 
 ---
 
-## 🌟 Key Features
+## 🌟 Flagship Innovations
 
-### 🎙️ 1. Unstoppable 4-Tier British Natural Voice Matrix
-- **Natural British Male Speech:** Ultra-realistic conversational cadence (*George Baritone & Adam Titan*).
-- **4-Tier Failover Cascade:** ElevenLabs HD ➔ Free Unlimited Edge Neural TTS ➔ MiniMax Speech-01-HD ➔ Web Speech.
-- **Continuous 24/7 Voice:** Speech never stops even when third-party cloud credit limits are reached.
+### 1. 🛡️ AI Agent Firewall & Data Loss Prevention (DLP)
+*A firewall for AI actions rather than network packets.*
+- **Zero-Leak Credential Shield:** Hard-blocks agent access to `~/.ssh`, `id_rsa`, `.env`, and private cloud tokens.
+- **Sensitivity Classification:** Automatically classifies data (`LOW_PUBLIC` ➔ `CRITICAL_RESTRICTED`) and forces confidential workloads to local inference.
+- **Granular Capability Tokens:** Restricts agents to scoped path and domain boundaries (e.g. `read: ~/Projects/**`, `write: ~/Projects/src/**`, `network: github.com`).
 
-### 🦾 2. Iron Man Arc-Matrix Holographic HUD
-- **Real-Time Telemetry:** Live CPU, RAM, and Neural Latency indicators.
-- **Autonomous Triggers:** 1-Click System Diagnostics, Dev Matrix Deployment, and Sovereign Privacy Lock.
+### 2. 📼 AI Flight Recorder (Aircraft Black Box)
+- Records every agent session frame-by-frame: Objective, Model, Prompts, Tools, Permissions, Network Calls, and Verification Proofs.
+- **Interactive Session Replayer:** Allows operators and security teams to scrub through an agent's execution timeline second-by-second.
 
-### 📱 3. Mobile Phone Remote Access Bridge
-- Instant access to the entire desktop OS from iPhone / Android via camera QR code scan.
-- No app store downloads required — runs directly via high-performance web stream.
+### 3. 🔙 Atomic Checkpoints & 1-Click Rollback
+- Treats AI operations like database transactions.
+- Takes an atomic snapshot of workspace state prior to consequential tasks.
+- Restores previous system state in 1 click if verification fails or the user cancels.
 
-### 🔍 4. Universal Command Spotlight (`Cmd+K` / `Ctrl+K`)
-- Floating search HUD for instantaneous app launching, calculation solving, and hardware controls.
+### 4. 🧠 3-Tier Sovereign Memory Architecture
+- **Episodic Memory:** Immutable history of past objectives, user decisions, and execution outcomes.
+- **Semantic Memory:** Extracted entity-relationship knowledge graph.
+- **Working Memory:** Active DAG state and variables.
+- **Authenticated Encryption:** Stored locally in an encrypted enclave using **AES-256-GCM (256-bit key, 96-bit IV)** and **PBKDF2 (100k iterations)** key derivation.
 
-### 🚀 5. Autonomous 24/7 Internet Growth & Marketing Engine
-- Built-in GitHub Actions cron workflow that runs automatically around the clock every 6 hours.
-- Syndicates launch posts to Twitter/X, Hacker News, Dev.to, and generates investor outreach kits.
-
-### 🛠️ 6. 15+ Native Application Suite
-- **Chat Assistant:** Autonomous full-system copilot.
-- **Growth Command Center:** 4 Autonomous AI marketing agents.
-- **AI Workspaces:** Startup milestone & project Kanban board.
-- **SaaS Pro Store:** Subscription tier and license manager.
-- **Sovereign Browser & Terminal:** Tabbed browsing and monospace shell.
-- **Markdown Studio, Task Manager, Notes, Weather Radar, Calculator, Music Player, Photos.**
+### 5. 🎯 Mission Control & Sovereign Business Agents
+- **Growth & Marketing Agent:** Researches competitive landscapes and drafts multi-channel campaigns.
+- **Sales & CRM Agent:** Evaluates ICP fit (0-100), organizes sales pipelines, and drafts hyper-personalized outreach.
+- **Human-in-the-Loop Policy Gate:** Zero external communications or file overwrites are dispatched without explicit operator clearance.
 
 ---
 
-## 💰 SaaS Pricing & Startup Model
+## 📦 Developer SDK (`@argus/sdk`)
 
-| Tier | Price | Features |
-| :--- | :--- | :--- |
-| **Community** | **₹0 / Free** | 100% Local Ollama, 15+ Native Apps, Standard Voice |
-| **ARGUS Pro** | **₹1,499 / mo ($19/mo)** | Unlimited British Neural HD Voice, Cloud Neural Stream, AI Workspaces, Phone Remote |
-| **Sovereign Enterprise** | **₹7,999 / mo ($99/mo)** | Dedicated GPU Nodes, Custom Fine-Tuned LLMs, Multi-Seat, 24/7 SLA Support |
+Developers can build native sovereign agents with scoped boundaries:
 
-*🎯 Financial Roadmap to ₹1 Crore ARR: Read the [SaaS Pricing Model](docs/startup/SAAS_PRICING_MODEL.md) & [Pre-Seed Pitch Deck](docs/startup/PITCH_DECK.md).*
+```typescript
+import { ArgusSDK } from "@argus/sdk";
+
+// 1. Define Agent Identity
+const codeAgent = ArgusSDK.createAgent({
+  id: "ARGUS-CODE-7F21",
+  name: "Systems Code Reviewer",
+  role: "Engineering Agent",
+  riskTier: "MEDIUM",
+  requiredCapabilities: ["filesystem", "code_sandbox"],
+});
+
+// 2. Issue Scoped Capability Token
+const token = ArgusSDK.requestCapability({
+  agentId: codeAgent.id,
+  allowedPathsRead: ["~/Projects/ARGUS/**"],
+  allowedPathsWrite: ["~/Projects/ARGUS/src/**"],
+  durationMinutes: 45,
+});
+
+// 3. Create Atomic Checkpoint before Execution
+const checkpoint = ArgusSDK.createCheckpoint(codeAgent.id, "Pre-refactor snapshot");
+```
 
 ---
 
-## 🚀 Quick Start & Installation
+## 💻 Tech Stack
 
-### Option 1: Live Interactive Web OS (No Install Needed)
-Open directly in your browser: 👉 **[https://argus-sovereign-os-website.vercel.app/os/](https://argus-sovereign-os-website.vercel.app/os/)**
+| Layer | Technology |
+| :--- | :--- |
+| **Desktop Shell** | Tauri 2.0 (Rust Native Bridge) |
+| **UI Environment** | React 19, TypeScript 5.8, Vite 7 |
+| **Styling** | Apple-Style Clean White & Dark Cyber Glassmorphism (CSS Modules) |
+| **Local Inference** | Ollama Local Engine (Llama 3.2, DeepSeek-R1, Qwen 2.5 Coder) |
+| **Cryptography** | AES-256-GCM Authenticated Encryption, PBKDF2 (100,000 rounds) |
+| **CI/CD & Packaging** | GitHub Actions, macOS Universal DMG, Windows MSI / Exe |
 
-### Option 2: Direct macOS App (Apple Silicon & Intel)
-1. Download the latest installer: [ARGUS_0.1.0_aarch64.dmg](https://argus-sovereign-os-website.vercel.app/downloads/ARGUS_macOS.dmg)
-2. Drag `ARGUS.app` to your `Applications` folder.
-3. Launch ARGUS and experience sovereign computing.
+---
 
-### Option 3: Build from Source
+## 🚀 Quick Start
+
 ```bash
-# 1. Clone the repository
+# Clone the repository
 git clone https://github.com/JanSteve/ARGUS.git
 cd ARGUS
 
-# 2. Install dependencies
+# Install dependencies
 npm install
 
-# 3. Start local development server
-npm run dev
-
-# 4. Compile native desktop app (macOS / Windows)
-npm run tauri build
+# Run in Development Mode
+npm run tauri dev
 ```
 
 ---
 
-## 🏛️ System Architecture
+## 👤 Author & Architecture
 
-- **UI & Layout:** React 19, TypeScript 5.8, Vite 7, CSS Modules with Glassmorphism System.
-- **Native Bridge:** Tauri 2.0, Rust (Memory Footprint <85MB idle).
-- **Intelligence:** Multi-tier neural routing, Google Gemini API, Ollama local model connector.
-- **Voice Engine:** ElevenLabs Turbo v2.5, British Edge TTS, MiniMax Speech-01-HD.
+**R Jan Steve Daniel**  
+Founder & Lead Architect — ARGUS Sovereign Systems  
+📧 `stevedaniel2004@gmail.com` • `contact.stevedaniel@gmail.com`  
+🌐 [https://argus-sovereign-os-website.vercel.app/](https://argus-sovereign-os-website.vercel.app/)
 
----
-
-## 🛡️ Enterprise Security, Zero-Trust Architecture & Key Rotation
-
-- **Zero Secret Leakage:** No API keys, credentials, or tokens exist as string literals in client-side bundles. All backend keys are strictly isolated in `.env.local` / `.env` (excluded via `.gitignore`).
-- **Cryptographic Hashing:** Credentials use SHA-256 with email salt via the Web Crypto API.
-- **k-Anonymity Breach Protection:** Password validation queries range prefixes without transmitting raw credentials.
-- **Key Rotation Advisory:** Before deploying to public production environments, rotate all development API keys and service tokens to fresh production credentials.
-- **GDPR / Sovereign Data Rights:** Users can purge all local sessions and stored state via the Sovereign Identity Security Hub.
-
----
-
-## 📄 License & Creator
-
-- **Author & Founder:** R Jan Steve Daniel ([@JanSteve](https://github.com/JanSteve))
-- **Official Contact:** `stevedaniel2004@gmail.com` • `contact.stevedaniel@gmail.com`
-- **License:** Source-Available & Proprietary © 2026 R Jan Steve Daniel. All rights reserved.
+© 2026 R Jan Steve Daniel. Source-Available & Enterprise Governance Architecture.

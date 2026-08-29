@@ -33,6 +33,9 @@ import { CodeStudioApp } from "../Apps/CodeStudioApp";
 import { AgentSwarmApp } from "../Apps/AgentSwarmApp";
 import { CyberGlobeApp } from "../Apps/CyberGlobeApp";
 import { SecurityHubApp } from "../Apps/SecurityHubApp";
+import { AutonomousRuntimeApp } from "../Apps/AutonomousRuntimeApp";
+import { EnterpriseControlPlaneApp } from "../Apps/EnterpriseControlPlaneApp";
+import { MissionControlApp } from "../Apps/MissionControlApp";
 import { SpotlightBar } from "./SpotlightBar";
 import { ArcMatrixHUD } from "./ArcMatrixHUD";
 import { ProUpgradeModal } from "./ProUpgradeModal";
@@ -73,7 +76,10 @@ export type AppComponent =
   | "codestudio"
   | "swarm"
   | "cyberglobe"
-  | "security";
+  | "security"
+  | "runtime"
+  | "controlplane"
+  | "mission";
 
 export interface WindowInstance {
   id: string;
@@ -122,11 +128,16 @@ const APP_DEFAULTS: Record<AppComponent, { width: number; height: number }> = {
   swarm: { width: 900, height: 600 },
   cyberglobe: { width: 880, height: 560 },
   security: { width: 900, height: 600 },
+  runtime: { width: 920, height: 600 },
+  controlplane: { width: 940, height: 620 },
+  mission: { width: 960, height: 620 },
 };
 
 /* ─── Desktop Shortcuts Configuration ─── */
 const DESKTOP_SHORTCUTS = [
-  { id: "chat", name: "Chat Assistant", icon: "chat" },
+  { id: "mission", name: "Mission Control", icon: "mission" },
+  { id: "controlplane", name: "AI Control Plane", icon: "controlplane" },
+  { id: "runtime", name: "Autonomous Runtime", icon: "runtime" },
   { id: "security", name: "Security Center", icon: "security" },
   { id: "canvas", name: "Neural Canvas", icon: "canvas" },
   { id: "codestudio", name: "Code Studio", icon: "codestudio" },
@@ -151,6 +162,46 @@ const DESKTOP_SHORTCUTS = [
 
 /* ─── Desktop Shortcut SVG Icons ─── */
 const ShortcutIcons: Record<string, React.ReactNode> = {
+  mission: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="ic-msn" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#f59e0b" />
+          <stop offset="100%" stopColor="#ef4444" />
+        </linearGradient>
+      </defs>
+      <rect width="48" height="48" rx="12" fill="url(#ic-msn)" />
+      <circle cx="24" cy="24" r="10" fill="none" stroke="#fff" strokeWidth="2.5" />
+      <circle cx="24" cy="24" r="5" fill="none" stroke="#fff" strokeWidth="2" />
+      <circle cx="24" cy="24" r="2" fill="#fff" />
+    </svg>
+  ),
+  controlplane: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="ic-cp" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#10b981" />
+          <stop offset="100%" stopColor="#06b6d4" />
+        </linearGradient>
+      </defs>
+      <rect width="48" height="48" rx="12" fill="url(#ic-cp)" />
+      <path d="M14 24h20M24 14v20M17 17l14 14M31 17L17 31" stroke="rgba(255,255,255,0.95)" strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="24" cy="24" r="5" fill="#10b981" stroke="#fff" strokeWidth="2" />
+    </svg>
+  ),
+  runtime: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="ic-runtime" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#0071e3" />
+          <stop offset="100%" stopColor="#8b5cf6" />
+        </linearGradient>
+      </defs>
+      <rect width="48" height="48" rx="12" fill="url(#ic-runtime)" />
+      <path d="M24 10l12 7v14l-12 7-12-7V17l12-7z" fill="none" stroke="rgba(255,255,255,0.95)" strokeWidth="2.5" strokeLinejoin="round" />
+      <circle cx="24" cy="24" r="4" fill="#38bdf8" />
+    </svg>
+  ),
   chat: (
     <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
       <defs>
@@ -816,6 +867,12 @@ export const Desktop: React.FC = () => {
           return <UpdateCenterApp />;
         case "security":
           return <SecurityHubApp />;
+        case "runtime":
+          return <AutonomousRuntimeApp />;
+        case "controlplane":
+          return <EnterpriseControlPlaneApp />;
+        case "mission":
+          return <MissionControlApp />;
         default:
           return <div>Unknown App</div>;
       }
