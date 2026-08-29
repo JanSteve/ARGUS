@@ -36,6 +36,7 @@ import { SecurityHubApp } from "../Apps/SecurityHubApp";
 import { AutonomousRuntimeApp } from "../Apps/AutonomousRuntimeApp";
 import { EnterpriseControlPlaneApp } from "../Apps/EnterpriseControlPlaneApp";
 import { MissionControlApp } from "../Apps/MissionControlApp";
+import { SovereignVaultApp } from "../Apps/SovereignVaultApp";
 import { SpotlightBar } from "./SpotlightBar";
 import { ArcMatrixHUD } from "./ArcMatrixHUD";
 import { ProUpgradeModal } from "./ProUpgradeModal";
@@ -79,7 +80,8 @@ export type AppComponent =
   | "security"
   | "runtime"
   | "controlplane"
-  | "mission";
+  | "mission"
+  | "vault";
 
 export interface WindowInstance {
   id: string;
@@ -131,10 +133,12 @@ const APP_DEFAULTS: Record<AppComponent, { width: number; height: number }> = {
   runtime: { width: 920, height: 600 },
   controlplane: { width: 940, height: 620 },
   mission: { width: 960, height: 620 },
+  vault: { width: 840, height: 560 },
 };
 
 /* ─── Desktop Shortcuts Configuration ─── */
 const DESKTOP_SHORTCUTS = [
+  { id: "vault", name: "Sovereign Vault", icon: "vault" },
   { id: "mission", name: "Mission Control", icon: "mission" },
   { id: "controlplane", name: "AI Control Plane", icon: "controlplane" },
   { id: "runtime", name: "Autonomous Runtime", icon: "runtime" },
@@ -496,6 +500,21 @@ const ShortcutIcons: Record<string, React.ReactNode> = {
       <rect width="48" height="48" rx="12" fill="url(#ic-sec-hub)" />
       <path d="M24 11l12 5v9c0 8-6 13-12 15-6-2-12-7-12-15v-9l12-5z" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinejoin="round" />
       <path d="M20 24l3 3 6-6" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  ),
+  vault: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="ic-vault" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#0071e3" />
+          <stop offset="100%" stopColor="#8b5cf6" />
+        </linearGradient>
+      </defs>
+      <rect width="48" height="48" rx="12" fill="url(#ic-vault)" />
+      <rect x="14" y="20" width="20" height="16" rx="4" fill="none" stroke="#fff" strokeWidth="2.5" />
+      <path d="M18 20v-5a6 6 0 0 1 12 0v5" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="24" cy="27" r="2" fill="#fff" />
+      <path d="M24 29v3" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
     </svg>
   ),
 };
@@ -873,6 +892,8 @@ export const Desktop: React.FC = () => {
           return <EnterpriseControlPlaneApp />;
         case "mission":
           return <MissionControlApp />;
+        case "vault":
+          return <SovereignVaultApp />;
         default:
           return <div>Unknown App</div>;
       }

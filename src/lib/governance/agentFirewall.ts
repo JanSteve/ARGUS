@@ -12,6 +12,7 @@
  */
 
 import { RuntimeEvents, RiskTier } from "../runtime/runtimeEvents";
+import { CodeFortressDLP, DLPInspectionResult } from "./codeFortress";
 
 export type DataSensitivity = "LOW_PUBLIC" | "MEDIUM_INTERNAL" | "HIGH_CONFIDENTIAL" | "CRITICAL_RESTRICTED";
 
@@ -42,12 +43,23 @@ export interface FirewallEvent {
   timestamp: string;
   agentId: string;
   agentName: string;
-  actionType: "FS_READ" | "FS_WRITE" | "FS_DELETE" | "NET_REQUEST" | "CREDENTIAL_ACCESS" | "CLIPBOARD_READ" | "SHELL_EXEC";
+  actionType:
+    | "FS_READ"
+    | "FS_WRITE"
+    | "FS_DELETE"
+    | "NET_REQUEST"
+    | "CREDENTIAL_ACCESS"
+    | "CLIPBOARD_READ"
+    | "SHELL_EXEC"
+    | "PAYMENT_ACCESS"
+    | "SECRET_ACCESS"
+    | "CODE_EXPORT";
   target: string;
   sensitivity: DataSensitivity;
   status: "ALLOWED" | "BLOCKED" | "FLAGGED_FOR_REVIEW";
   reason: string;
   modelRouted: "LOCAL_OLLAMA" | "APPROVED_ENTERPRISE_CLOUD" | "PUBLIC_CLOUD";
+  dlpCategories?: string[];
 }
 
 const CRITICAL_FILE_PATTERNS = [
@@ -118,7 +130,18 @@ class AgentFirewallEngine {
   public classifySensitivity(target: string, content?: string): DataSensitivity {
     const combined = `${target} ${content || ""}`.toLowerCase();
 
-    // Check critical restricted secrets
+    // 1. Run Code Fortress DLP on content
+    if (content) {
+      const dlp = CodeFortressDLP.inspectPayload(content);
+      if (dlp.severity === "CRITICAL") {
+        return "CRITICAL_RESTRICTED";
+      }
+      if (dlp.severity === "HIGH") {
+        return "HIGH_CONFIDENTIAL";
+      }
+    }
+
+    // 2. Check critical restricted secrets & file paths
     for (const pattern of CRITICAL_FILE_PATTERNS) {
       if (pattern.test(target) || pattern.test(combined)) {
         return "CRITICAL_RESTRICTED";
@@ -127,6 +150,8 @@ class AgentFirewallEngine {
 
     if (
       combined.includes("financial") ||
+      combined.includes("credit card") ||
+      combined.includes("payment") ||
       combined.includes("salary") ||
       combined.includes("acquisition") ||
       combined.includes("confidential") ||
@@ -203,6 +228,11 @@ class AgentFirewallEngine {
     const sensitivity = this.classifySensitivity(params.target, params.content);
     const modelRouted = this.resolveModelRouting(sensitivity);
 
+    // Deep DLP Inspection on payload
+    const dlpResult = params.content ? CodeFortressDLP.inspectPayload(params.content, "runtime") : null;
+    const safeTarget = CodeFortressDLP.sanitizeForTelemetry(params.target);
+
+    // Check Traversal
     const canonical = canonicalizePath(params.target);
     if (canonical === "__TRAVERSAL_ATTEMPT__") {
       const blockedEvent: FirewallEvent = {
@@ -211,11 +241,12 @@ class AgentFirewallEngine {
         agentId: params.agentId,
         agentName: params.agentName,
         actionType: params.actionType,
-        target: params.target,
+        target: safeTarget,
         sensitivity: "CRITICAL_RESTRICTED",
         status: "BLOCKED",
         reason: "DLP Firewall Shield: Path Traversal (../) escape attempt blocked",
         modelRouted,
+        dlpCategories: ["PATH_TRAVERSAL"],
       };
       this.eventLogs.unshift(blockedEvent);
       this.saveState();
@@ -251,11 +282,12 @@ class AgentFirewallEngine {
           agentId: params.agentId,
           agentName: params.agentName,
           actionType: params.actionType,
-          target: params.target,
+          target: safeTarget,
           sensitivity: "CRITICAL_RESTRICTED",
           status: "BLOCKED",
           reason: "DLP Firewall Shield: Prohibited access to system credentials / private keys",
           modelRouted,
+          dlpCategories: ["CREDENTIAL_ACCESS"],
         };
 
         this.eventLogs.unshift(blockedEvent);
@@ -269,7 +301,7 @@ class AgentFirewallEngine {
           agentId: params.agentId,
           agentName: params.agentName,
           riskLevel: "CRITICAL",
-          action: `${params.actionType}: ${params.target}`,
+          action: `${params.actionType}: ${safeTarget}`,
           status: "BLOCKED",
           payload: { reason: blockedEvent.reason },
         });
@@ -284,7 +316,48 @@ class AgentFirewallEngine {
       }
     }
 
-    // 2. CAPABILITY TOKEN BOUNDARY CHECK
+    // 2. CODE FORTRESS DLP INTERCEPTION: Block Payment card, CVV, Stripe keys, and Code Exfiltration leaks
+    if (dlpResult && dlpResult.hasSensitiveData && dlpResult.severity === "CRITICAL") {
+      const blockedEvent: FirewallEvent = {
+        id: `fw_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+        timestamp: new Date().toISOString(),
+        agentId: params.agentId,
+        agentName: params.agentName,
+        actionType: params.actionType,
+        target: safeTarget,
+        sensitivity: "CRITICAL_RESTRICTED",
+        status: "BLOCKED",
+        reason: `DLP Code Fortress Shield: ${dlpResult.riskDescription}`,
+        modelRouted,
+        dlpCategories: dlpResult.categories,
+      };
+
+      this.eventLogs.unshift(blockedEvent);
+      this.saveState();
+      this.notify();
+
+      RuntimeEvents.emit({
+        type: "PermissionDenied",
+        sessionId: "session_firewall",
+        missionId: "mission_sec",
+        agentId: params.agentId,
+        agentName: params.agentName,
+        riskLevel: "CRITICAL",
+        action: `${params.actionType}: ${safeTarget}`,
+        status: "BLOCKED",
+        payload: { reason: blockedEvent.reason, categories: dlpResult.categories },
+      });
+
+      return {
+        allowed: false,
+        status: "BLOCKED",
+        sensitivity: "CRITICAL_RESTRICTED",
+        modelRouted,
+        reason: blockedEvent.reason,
+      };
+    }
+
+    // 3. CAPABILITY TOKEN BOUNDARY CHECK
     const token = this.activeTokens.get(params.agentId);
     if (token) {
       const isExpired = new Date() > new Date(token.expiresAt);

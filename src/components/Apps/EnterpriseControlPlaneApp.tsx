@@ -30,10 +30,14 @@ import {
   RuntimeEvents,
   ArgusRuntimeEvent,
 } from "../../lib/runtime/runtimeEvents";
+import {
+  CodeFortressDLP,
+  DLPInspectionResult,
+} from "../../lib/governance/codeFortress";
 import { playNotificationSound } from "../../lib/soundEffects";
 
 export const EnterpriseControlPlaneApp: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<"firewall" | "flight" | "tokens" | "roi" | "checkpoints" | "memory" | "benchmark" | "capabilities">("firewall");
+  const [activeTab, setActiveTab] = useState<"firewall" | "flight" | "tokens" | "roi" | "checkpoints" | "memory" | "benchmark" | "capabilities" | "leak_defense">("firewall");
   const [firewallEvents, setFirewallEvents] = useState<FirewallEvent[]>([]);
   const [flightSessions, setFlightSessions] = useState<FlightSession[]>([]);
   const [snapshots, setSnapshots] = useState<SystemSnapshot[]>([]);
@@ -44,6 +48,8 @@ export const EnterpriseControlPlaneApp: React.FC = () => {
   const [isRunningBenchmarks, setIsRunningBenchmarks] = useState(false);
   const [capabilities] = useState<CapabilityRecord[]>(CapabilityRegistryService.getAll());
   const [liveEvents, setLiveEvents] = useState<ArgusRuntimeEvent[]>([]);
+  const [dlpTestText, setDlpTestText] = useState("");
+  const [dlpScanResult, setDlpScanResult] = useState<DLPInspectionResult | null>(null);
 
   // Flight Replay State
   const [selectedSession, setSelectedSession] = useState<FlightSession | null>(null);
@@ -200,6 +206,12 @@ export const EnterpriseControlPlaneApp: React.FC = () => {
           onClick={() => setActiveTab("capabilities")}
         >
           📋 Capability Registry
+        </button>
+        <button
+          className={`${styles.tabItem} ${activeTab === "leak_defense" ? styles.tabItemActive : ""}`}
+          onClick={() => setActiveTab("leak_defense")}
+        >
+          🔒 Payment & IP Leak Defense
         </button>
       </div>
 
@@ -659,6 +671,137 @@ export const EnterpriseControlPlaneApp: React.FC = () => {
                   </div>
                 );
               })}
+            </div>
+          </div>
+        )}
+
+        {/* TAB 9: Payment & IP Leak Defense */}
+        {activeTab === "leak_defense" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            <div className={styles.metricsGrid}>
+              <div className={styles.metricCard}>
+                <span className={styles.metricLabel}>Credit Card & CVV Shield</span>
+                <span className={styles.metricValue} style={{ color: "#34d399" }}>Luhn Active</span>
+                <span className={styles.metricSub}>Visa, MC, Amex, UPI Filtered</span>
+              </div>
+              <div className={styles.metricCard}>
+                <span className={styles.metricLabel}>Cloud Secret Mask</span>
+                <span className={styles.metricValue} style={{ color: "#38bdf8" }}>Active</span>
+                <span className={styles.metricSub}>Stripe (sk_live), OpenAI, AWS</span>
+              </div>
+              <div className={styles.metricCard}>
+                <span className={styles.metricLabel}>Source Code Fortress</span>
+                <span className={styles.metricValue} style={{ color: "#a78bfa" }}>Enforced</span>
+                <span className={styles.metricSub}>Zero-Outbound Code Leaks</span>
+              </div>
+              <div className={styles.metricCard}>
+                <span className={styles.metricLabel}>Prompt Injection Trap</span>
+                <span className={styles.metricValue} style={{ color: "#fbbf24" }}>Armed</span>
+                <span className={styles.metricSub}>Anti-Jailbreak Protection</span>
+              </div>
+            </div>
+
+            {/* Interactive Live DLP Text Redaction Sandbox */}
+            <div style={{ background: "rgba(15, 23, 42, 0.7)", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "14px", padding: "20px", display: "flex", flexDirection: "column", gap: "12px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: "15px", color: "#fff" }}>🛡️ Live DLP & Anti-Leak Inspection Sandbox</h3>
+                  <p style={{ margin: 0, fontSize: "11px", color: "#94a3b8" }}>
+                    Test real-time redaction on payment cards, Stripe keys, or source code snippets.
+                  </p>
+                </div>
+                <button
+                  className={styles.benchmarkBtn}
+                  onClick={() => {
+                    const sample = "Testing payment with card 4532 0150 0000 0000 and CVV 789 with secret Bearer test_api_token_sample_key";
+                    setDlpTestText(sample);
+                    const res = CodeFortressDLP.inspectPayload(sample, "outbound_network");
+                    setDlpScanResult(res);
+                  }}
+                >
+                  ⚡ Load Test Payload
+                </button>
+              </div>
+
+              <textarea
+                rows={3}
+                placeholder="Type or paste any text containing credit card numbers, Stripe keys, or prompt injections to test live DLP redaction..."
+                value={dlpTestText}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setDlpTestText(val);
+                  if (val.trim()) {
+                    const res = CodeFortressDLP.inspectPayload(val, "outbound_network");
+                    setDlpScanResult(res);
+                  } else {
+                    setDlpScanResult(null);
+                  }
+                }}
+                style={{
+                  width: "100%",
+                  background: "rgba(0, 0, 0, 0.5)",
+                  border: "1px solid rgba(255, 255, 255, 0.15)",
+                  color: "#fff",
+                  fontFamily: "var(--font-mono, monospace)",
+                  fontSize: "12px",
+                  borderRadius: "8px",
+                  padding: "10px",
+                  outline: "none",
+                }}
+              />
+
+              {dlpScanResult && (
+                <div style={{ background: "rgba(0, 0, 0, 0.4)", border: `1px solid ${dlpScanResult.hasSensitiveData ? "#ef4444" : "#10b981"}`, borderRadius: "10px", padding: "14px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <strong style={{ fontSize: "13px", color: dlpScanResult.hasSensitiveData ? "#f87171" : "#34d399" }}>
+                      {dlpScanResult.hasSensitiveData ? "⚠️ SENSITIVE DATA INTERCEPTED" : "✓ PAYLOAD IS CLEAN"}
+                    </strong>
+                    <span style={{ fontSize: "11px", color: "#94a3b8" }}>
+                      Severity: <span style={{ color: dlpScanResult.severity === "CRITICAL" ? "#f87171" : "#38bdf8", fontWeight: 700 }}>{dlpScanResult.severity}</span>
+                    </span>
+                  </div>
+
+                  <div style={{ fontSize: "12px", color: "#cbd5e1" }}>
+                    <strong>Risk Summary:</strong> {dlpScanResult.riskDescription}
+                  </div>
+
+                  {dlpScanResult.hasSensitiveData && (
+                    <div>
+                      <div style={{ fontSize: "11px", color: "#94a3b8", marginBottom: "4px" }}>AUTOMATIC SANITIZED / REDACTED OUTPUT (Safe for transmission):</div>
+                      <div style={{ background: "#050811", padding: "10px", borderRadius: "6px", color: "#38bdf8", fontFamily: "var(--font-mono, monospace)", fontSize: "12px" }}>
+                        {dlpScanResult.redactedContent}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Intercepted Sensitive Actions Log */}
+            <div className={styles.tableCard}>
+              <div className={styles.tableHeader}>
+                <span className={styles.tableTitle}>🛡️ Intercepted Sensitive & DLP Firewall Events</span>
+                <span className={styles.tableCount}>
+                  {firewallEvents.filter((e) => e.sensitivity === "CRITICAL_RESTRICTED" || e.sensitivity === "HIGH_CONFIDENTIAL").length} events
+                </span>
+              </div>
+              <div className={styles.tableBody}>
+                {firewallEvents
+                  .filter((e) => e.sensitivity === "CRITICAL_RESTRICTED" || e.sensitivity === "HIGH_CONFIDENTIAL")
+                  .map((e) => (
+                    <div key={e.id} className={styles.tableRow}>
+                      <span className={styles.eventTime}>{new Date(e.timestamp).toLocaleTimeString()}</span>
+                      <span className={styles.actionBadge}>{e.actionType}</span>
+                      <span className={styles.targetPath} title={e.target}>
+                        {e.target}
+                      </span>
+                      <span className={`${styles.statusBadge} ${styles.statusBlocked}`}>{e.status}</span>
+                      <span className={styles.reasonText} title={e.reason}>
+                        {e.reason}
+                      </span>
+                    </div>
+                  ))}
+              </div>
             </div>
           </div>
         )}
