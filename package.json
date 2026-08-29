@@ -4,8 +4,9 @@
   "version": "0.1.0",
   "type": "module",
   "bin": {
-    "argus": "./bin/cli.js",
-    "argus-ai": "./bin/cli.js"
+    "argus": "./bin/argus.mjs",
+    "argus-ai": "./bin/argus.mjs",
+    "argusd": "./bin/argus.mjs"
   },
   "scripts": {
     "dev": "vite",
@@ -14,8 +15,12 @@
     "tauri": "tauri",
     "lint": "oxlint",
     "test": "vitest run",
-    "test:security": "node scripts/run-security-suite.mjs",
-    "agent:dev": "node scripts/run-developer-agent.mjs"
+    "test:security": "node bin/argus.mjs security-test",
+    "redteam": "node bin/argus.mjs redteam",
+    "doctor": "node bin/argus.mjs doctor",
+    "capabilities": "node bin/argus.mjs capabilities",
+    "why": "node bin/argus.mjs why",
+    "agent:dev": "node bin/argus.mjs mission run"
   },
   "dependencies": {
     "@tauri-apps/api": "^2",

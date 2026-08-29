@@ -1,8 +1,8 @@
 /**
- * ARGUS 2.0 Policy Kernel & Security Firewall
+ * ARGUS Agent Policy Engine & Security Firewall
  * 
- * Enforces Zero-Trust Security on all Agent Capability Requests:
- * 1. Path Traversal Defense & Jail Enclosure
+ * Evaluates Zero-Trust Policies on all Agent Capability Requests:
+ * 1. Path Traversal Defense & Workspace Jail Enclosure
  * 2. Sensitive System Path Protection (/etc/shadow, ~/.ssh, .env)
  * 3. Command & Binary Whitelisting
  * 4. Prompt Injection & Policy Override Immunity
@@ -44,9 +44,8 @@ const DANGEROUS_COMMAND_PATTERNS = [
 
 // Adversarial Prompt Injection Keywords
 const PROMPT_INJECTION_PATTERNS = [
-  /ignore\s+(previous\s+|all\s+)?(instructions|policy|rules|guardrails)/i,
-  /bypass\s+(argus|security|firewall|kernel)/i,
-  /reveal\s+(ssh|private|root|shadow|password|master)\s+key/i,
+  /(ignore|bypass|override|forget)\s+(all\s+)?(previous\s+)?(system\s+)?(instructions|policy|rules|guardrails|security|kernel)/i,
+  /reveal\s+(all\s+)?(ssh|private|root|shadow|password|master)\s+(key|keys|secrets|passwords)/i,
   /system\s+override\s+code/i,
 ];
 
@@ -221,8 +220,4 @@ export class PolicyEngine {
       reason: `Outbound network access authorized: ${url}`,
       riskLevel: "LOW",
       matchedRule: "RULE_PUBLIC_NETWORK_ALLOW",
-      requiresHumanApproval: false,
-      evaluatedAt,
-    };
-  }
-}
+      requires

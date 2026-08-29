@@ -1,0 +1,92 @@
+{
+  "sessionId": "session_1788011134495",
+  "timestamp": "2026-08-29T13:45:34.501Z",
+  "events": [
+    {
+      "test": 1,
+      "policy": {
+        "allowed": true,
+        "rule": "RULE_WORKSPACE_FILESYSTEM_ALLOW",
+        "risk": "LOW"
+      },
+      "execution": {
+        "success": true,
+        "path": "/Users/janstevedaniel/Desktop/ARUGS OS MARK XV/workspace_test/hello.txt",
+        "size": 11
+      },
+      "verification": {
+        "verified": true,
+        "sha256": "6ebf3e46bc658791b46d3ce46b85ae3358b0f0ff0f12648b1bb60772f08e4c74",
+        "size": 11
+      }
+    },
+    {
+      "test": 2,
+      "policy": {
+        "allowed": false,
+        "rule": "RULE_SENSITIVE_CREDENTIAL_SHIELD",
+        "risk": "CRITICAL"
+      }
+    },
+    {
+      "test": 3,
+      "policy": {
+        "allowed": false,
+        "rule": "RULE_SENSITIVE_CREDENTIAL_SHIELD",
+        "risk": "CRITICAL"
+      }
+    },
+    {
+      "test": 4,
+      "policy": {
+        "allowed": false,
+        "rule": "RULE_WORKSPACE_JAIL_ENCLOSURE",
+        "risk": "CRITICAL"
+      }
+    },
+    {
+      "test": 5,
+      "policy": {
+        "allowed": false,
+        "rule": "RULE_DANGEROUS_COMMAND_BLACKSHIELD",
+        "risk": "CRITICAL"
+      }
+    },
+    {
+      "test": 6,
+      "policy": {
+        "allowed": false,
+        "rule": "RULE_ADVERSARIAL_INJECTION_SHIELD",
+        "risk": "CRITICAL"
+      }
+    },
+    {
+      "test": 7,
+      "policy": {
+        "allowed": false,
+        "rule": "RULE_DANGEROUS_COMMAND_BLACKSHIELD",
+        "risk": "CRITICAL"
+      }
+    },
+    {
+      "test": 8,
+      "policy": {
+        "allowed": false,
+        "rule": "RULE_SSRF_NETWORK_SHIELD",
+        "risk": "CRITICAL"
+      }
+    },
+    {
+      "test": 9,
+      "policy": {
+        "allowed": true,
+        "rule": "RULE_PROCESS_SANDBOX_ALLOW",
+        "risk": "MEDIUM"
+      },
+      "execution": {
+        "success": true,
+        "stdout": "ARGUS 2.0 Linux Core Active"
+      }
+    }
+  ]
+}

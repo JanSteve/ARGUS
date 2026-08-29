@@ -1,0 +1,60 @@
+{
+  "sessionId": "agent_run_1788024453003",
+  "durationMs": 70,
+  "steps": [
+    {
+      "step": 1,
+      "action": "List src",
+      "policy": {
+        "allowed": true,
+        "rule": "RULE_WORKSPACE_FILESYSTEM_ALLOW",
+        "risk": "LOW"
+      },
+      "files": [
+        "calculator.mjs"
+      ]
+    },
+    {
+      "step": 2,
+      "action": "Initial Test",
+      "policy": {
+        "allowed": true,
+        "rule": "RULE_PROCESS_SANDBOX_ALLOW",
+        "risk": "MEDIUM"
+      },
+      "output": "RUNNING FINANCIAL TEST SUITE...\n✓ PASS: Tier 1 receives 5% discount ($5)\n✓ PASS: Tier 2 receives 15% discount ($15)\n"
+    },
+    {
+      "step": 3,
+      "action": "Read Source",
+      "policy": {
+        "allowed": true,
+        "rule": "RULE_WORKSPACE_FILESYSTEM_ALLOW",
+        "risk": "LOW"
+      }
+    },
+    {
+      "step": 4,
+      "action": "Write Patch",
+      "policy": {
+        "allowed": true,
+        "rule": "RULE_WORKSPACE_FILESYSTEM_ALLOW",
+        "risk": "LOW"
+      },
+      "sha256": "5e7fdea6eae6d98f3655b6773c93d0f8f526bbfd773f6d43496f8dd89a39c6e4"
+    },
+    {
+      "step": 5,
+      "action": "Re-run Test",
+      "policy": {
+        "allowed": true,
+        "rule": "RULE_PROCESS_SANDBOX_ALLOW",
+        "risk": "MEDIUM"
+      },
+      "success": true,
+      "output": "RUNNING FINANCIAL TEST SUITE...\n✓ PASS: Tier 1 receives 5% discount ($5)\n✓ PASS: Tier 2 receives 15% discount ($15)\n✓ PASS: Tier 3 receives 25% discount ($25)\n✓ PASS: Tier 3 $200 total after 25% discount is $150\n\nTEST SUITE PASSED: All 4 assertions verified.\n"
+    }
+  ],
+  "status": "VERIFIED",
+  "hash": "5e7fdea6eae6d98f3655b6773c93d0f8f526bbfd773f6d43496f8dd89a39c6e4"
+}
