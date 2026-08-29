@@ -32,10 +32,12 @@ import { NeuralCanvasApp } from "../Apps/NeuralCanvasApp";
 import { CodeStudioApp } from "../Apps/CodeStudioApp";
 import { AgentSwarmApp } from "../Apps/AgentSwarmApp";
 import { CyberGlobeApp } from "../Apps/CyberGlobeApp";
+import { SecurityHubApp } from "../Apps/SecurityHubApp";
 import { SpotlightBar } from "./SpotlightBar";
 import { ArcMatrixHUD } from "./ArcMatrixHUD";
 import { ProUpgradeModal } from "./ProUpgradeModal";
 import { AuthModal } from "./AuthModal";
+import { PermissionModal } from "./PermissionModal";
 import { DesktopWidgets } from "./DesktopWidgets";
 import { UpdateNotifier } from "./UpdateNotifier";
 import { initializeStartupCloudInfrastructure } from "../../lib/cloud";
@@ -70,7 +72,8 @@ export type AppComponent =
   | "canvas"
   | "codestudio"
   | "swarm"
-  | "cyberglobe";
+  | "cyberglobe"
+  | "security";
 
 export interface WindowInstance {
   id: string;
@@ -118,11 +121,13 @@ const APP_DEFAULTS: Record<AppComponent, { width: number; height: number }> = {
   codestudio: { width: 960, height: 620 },
   swarm: { width: 900, height: 600 },
   cyberglobe: { width: 880, height: 560 },
+  security: { width: 900, height: 600 },
 };
 
 /* ─── Desktop Shortcuts Configuration ─── */
 const DESKTOP_SHORTCUTS = [
   { id: "chat", name: "Chat Assistant", icon: "chat" },
+  { id: "security", name: "Security Center", icon: "security" },
   { id: "canvas", name: "Neural Canvas", icon: "canvas" },
   { id: "codestudio", name: "Code Studio", icon: "codestudio" },
   { id: "swarm", name: "Agent Swarm", icon: "swarm" },
@@ -427,6 +432,19 @@ const ShortcutIcons: Record<string, React.ReactNode> = {
       <line x1="11" y1="24" x2="37" y2="24" stroke="rgba(255,255,255,0.7)" strokeWidth="1.6" />
       <line x1="14" y1="17" x2="34" y2="17" stroke="rgba(255,255,255,0.5)" strokeWidth="1.2" />
       <line x1="14" y1="31" x2="34" y2="31" stroke="rgba(255,255,255,0.5)" strokeWidth="1.2" />
+    </svg>
+  ),
+  security: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="ic-sec-hub" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#10b981" />
+          <stop offset="100%" stopColor="#06b6d4" />
+        </linearGradient>
+      </defs>
+      <rect width="48" height="48" rx="12" fill="url(#ic-sec-hub)" />
+      <path d="M24 11l12 5v9c0 8-6 13-12 15-6-2-12-7-12-15v-9l12-5z" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinejoin="round" />
+      <path d="M20 24l3 3 6-6" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
 };
@@ -796,6 +814,8 @@ export const Desktop: React.FC = () => {
           return <MarkdownStudioApp />;
         case "updater":
           return <UpdateCenterApp />;
+        case "security":
+          return <SecurityHubApp />;
         default:
           return <div>Unknown App</div>;
       }
@@ -939,6 +959,9 @@ export const Desktop: React.FC = () => {
         isOpen={authModalOpen}
         onClose={() => setAuthModalOpen(false)}
       />
+
+      {/* ARGUS Sovereign Permission Kernel & AI Governance Modal */}
+      <PermissionModal />
 
       {/* Hyper-Advanced VisionOS Desktop Holographic Widgets */}
       <DesktopWidgets />

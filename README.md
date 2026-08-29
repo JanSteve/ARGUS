@@ -115,7 +115,18 @@ npm run tauri build
 
 ---
 
+## 🛡️ Enterprise Security, Zero-Trust Architecture & Key Rotation
+
+- **Zero Secret Leakage:** No API keys, credentials, or tokens exist as string literals in client-side bundles. All backend keys are strictly isolated in `.env.local` / `.env` (excluded via `.gitignore`).
+- **Cryptographic Hashing:** Credentials use SHA-256 with email salt via the Web Crypto API.
+- **k-Anonymity Breach Protection:** Password validation queries range prefixes without transmitting raw credentials.
+- **Key Rotation Advisory:** Before deploying to public production environments, rotate all development API keys and service tokens to fresh production credentials.
+- **GDPR / Sovereign Data Rights:** Users can purge all local sessions and stored state via the Sovereign Identity Security Hub.
+
+---
+
 ## 📄 License & Creator
 
 - **Author & Founder:** R Jan Steve Daniel ([@JanSteve](https://github.com/JanSteve))
+- **Official Contact:** `stevedaniel2004@gmail.com` • `contact.stevedaniel@gmail.com`
 - **License:** Source-Available & Proprietary © 2026 R Jan Steve Daniel. All rights reserved.

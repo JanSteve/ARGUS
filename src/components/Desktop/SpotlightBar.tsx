@@ -32,6 +32,13 @@ export const SpotlightBar: React.FC<SpotlightBarProps> = ({
 
   const allItems: SpotlightItem[] = [
     {
+      id: "security",
+      title: "Security & Intelligence Center (MNC Threat Defense & Public APIs)",
+      category: "System",
+      icon: "🛡️",
+      action: () => onLaunchApp("security", "Security Center"),
+    },
+    {
       id: "canvas",
       title: "Neural Canvas (Spatial AI Mind Map & Node Chaining)",
       category: "Tool",
