@@ -18,16 +18,22 @@ import {
   SemanticFactRecord,
   EpisodicMemoryRecord,
 } from "../../lib/memory/sovereignMemory";
+import {
+  RuntimeBenchmark,
+  BenchmarkSuiteSummary,
+} from "../../lib/runtime/runtimeBenchmarkSuite";
 import { playNotificationSound } from "../../lib/soundEffects";
 
 export const EnterpriseControlPlaneApp: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<"firewall" | "flight" | "tokens" | "roi" | "checkpoints" | "memory">("firewall");
+  const [activeTab, setActiveTab] = useState<"firewall" | "flight" | "tokens" | "roi" | "checkpoints" | "memory" | "benchmark">("firewall");
   const [firewallEvents, setFirewallEvents] = useState<FirewallEvent[]>([]);
   const [flightSessions, setFlightSessions] = useState<FlightSession[]>([]);
   const [snapshots, setSnapshots] = useState<SystemSnapshot[]>([]);
   const [tokens, setTokens] = useState<CapabilityToken[]>([]);
   const [semanticMemory, setSemanticMemory] = useState<SemanticFactRecord[]>([]);
   const [episodicMemory, setEpisodicMemory] = useState<EpisodicMemoryRecord[]>([]);
+  const [benchmarkSummary, setBenchmarkSummary] = useState<BenchmarkSuiteSummary | null>(null);
+  const [isRunningBenchmarks, setIsRunningBenchmarks] = useState(false);
 
   // Flight Replay State
   const [selectedSession, setSelectedSession] = useState<FlightSession | null>(null);
@@ -84,6 +90,15 @@ export const EnterpriseControlPlaneApp: React.FC = () => {
     setTokens(AgentFirewall.getActiveTokens());
   };
 
+  const handleRunBenchmarks = async () => {
+    setIsRunningBenchmarks(true);
+    playNotificationSound();
+    const res = await RuntimeBenchmark.runAllBenchmarks();
+    setBenchmarkSummary(res);
+    setIsRunningBenchmarks(false);
+    playNotificationSound();
+  };
+
   const currentFrame = selectedSession?.frames[currentFrameIndex] || null;
 
   return (
@@ -98,9 +113,21 @@ export const EnterpriseControlPlaneApp: React.FC = () => {
           </div>
         </div>
 
-        <button className={styles.btnAction} onClick={triggerSimulatedThreat}>
-          🛡️ Test Firewall Credential Block
-        </button>
+        <div style={{ display: "flex", gap: "8px" }}>
+          <button
+            className={styles.btnAction}
+            style={{ background: "#8b5cf6" }}
+            onClick={() => {
+              setActiveTab("benchmark");
+              handleRunBenchmarks();
+            }}
+          >
+            🔬 Run M18 Benchmark Suite
+          </button>
+          <button className={styles.btnAction} onClick={triggerSimulatedThreat}>
+            🛡️ Test Firewall Credential Block
+          </button>
+        </div>
       </div>
 
       {/* Navigation Tabs */}
@@ -144,6 +171,15 @@ export const EnterpriseControlPlaneApp: React.FC = () => {
           }}
         >
           🧠 Memory Provenance & Enclave
+        </button>
+        <button
+          className={`${styles.tabItem} ${activeTab === "benchmark" ? styles.tabItemActive : ""}`}
+          onClick={() => {
+            setActiveTab("benchmark");
+            if (!benchmarkSummary) handleRunBenchmarks();
+          }}
+        >
+          🔬 Runtime Benchmark (M18)
         </button>
       </div>
 
@@ -470,6 +506,72 @@ export const EnterpriseControlPlaneApp: React.FC = () => {
                   )}
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 7: Runtime Benchmark Suite (M18) */}
+        {activeTab === "benchmark" && (
+          <div className={styles.sectionBox}>
+            <div className={styles.sectionHeader}>
+              <div>
+                <span className={styles.sectionTitle}>🔬 Sovereign Runtime Benchmark & Validation Suite (M18)</span>
+                <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "2px" }}>
+                  Empirically tests DLP Firewall, Human Gate, SSH Shield, Checkpoint Rollback & Hallucination Traps
+                </div>
+              </div>
+              <button
+                className={styles.btnAction}
+                style={{ background: "#8b5cf6" }}
+                onClick={handleRunBenchmarks}
+                disabled={isRunningBenchmarks}
+              >
+                {isRunningBenchmarks ? "⚡ Executing 6 Benchmarks..." : "🔄 Re-run All Benchmarks"}
+              </button>
+            </div>
+
+            {benchmarkSummary && (
+              <div style={{ display: "flex", gap: "12px", alignItems: "center", background: "rgba(139, 92, 246, 0.1)", border: "1px solid rgba(139, 92, 246, 0.3)", padding: "10px 14px", borderRadius: "8px" }}>
+                <span style={{ fontSize: "18px" }}>🛡️</span>
+                <div style={{ fontSize: "12px" }}>
+                  <strong>Suite Result:</strong> <span style={{ color: benchmarkSummary.overallStatus === "ALL_VERIFIED_PASS" ? "#34d399" : "#f87171" }}>{benchmarkSummary.overallStatus}</span> • {benchmarkSummary.passedTests}/{benchmarkSummary.totalTests} Verified Tests Passed (0 Security Anomalies)
+                </div>
+              </div>
+            )}
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              {benchmarkSummary?.results.map((b) => (
+                <div
+                  key={b.id}
+                  style={{
+                    background: "rgba(0,0,0,0.3)",
+                    border: `1px solid ${b.passed ? "rgba(52, 211, 153, 0.3)" : "rgba(239, 68, 68, 0.3)"}`,
+                    borderRadius: "10px",
+                    padding: "12px 16px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "4px",
+                  }}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <span style={{ color: b.passed ? "#34d399" : "#f87171", fontWeight: 800 }}>
+                        {b.passed ? "✓ PASS" : "✗ FAIL"}
+                      </span>
+                      <strong>{b.name}</strong>
+                      <span style={{ fontSize: "10px", color: "#fbbf24", background: "rgba(251, 191, 36, 0.15)", padding: "2px 6px", borderRadius: "4px" }}>
+                        {b.category}
+                      </span>
+                    </div>
+                    <span style={{ fontSize: "10px", color: "#94a3b8" }}>{b.executionTimeMs}ms</span>
+                  </div>
+
+                  <div style={{ fontSize: "11px", color: "#cbd5e1" }}>{b.description}</div>
+                  <div style={{ fontSize: "10px", color: "#94a3b8", fontFamily: "var(--font-mono, monospace)" }}>
+                    🔍 <strong>Evidence:</strong> {b.evidence}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}

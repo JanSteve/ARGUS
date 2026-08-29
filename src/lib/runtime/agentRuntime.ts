@@ -377,38 +377,4 @@ ARGUS autonomously executed a multi-step objective covering market research, com
         taskName: task.name,
         toolUsed: task.tool,
         modelUsed: "Scale Load Balancer / Ollama Local Core",
-        verificationPassed,
-        verificationDetails: task.verificationRule,
-        durationMs: task.durationMs,
-      });
-
-      if (verificationPassed) {
-        this.activeState.verificationSummary.passedChecks++;
-        this.log(`🔍 Verification Passed: ${task.verificationRule}`);
-      } else {
-        this.activeState.verificationSummary.failedChecks++;
-        this.log(`⚠️ Verification Failed: ${task.verificationRule}`);
-      }
-      this.activeState.verificationSummary.totalChecks++;
-
-      this.notify();
-      await this.delay(500);
-    }
-
-    this.activeState.phase = "COMPLETED";
-    FlightRecorder.closeSession("SUCCESS_VERIFIED");
-    this.log(`🏁 Autonomous Objective Fully Completed and Verified! Flight Session Sealed.`);
-    this.notify();
-    return this.activeState;
-  }
-
-  public getActiveState(): ObjectiveExecutionState | null {
-    return this.activeState ? { ...this.activeState } : null;
-  }
-
-  private delay(ms: number) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-}
-
-export const AgentRuntime = new AgentRuntimeEngine();
+        verification
