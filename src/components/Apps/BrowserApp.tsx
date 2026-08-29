@@ -306,6 +306,36 @@ export const BrowserApp: React.FC = () => {
             />
           </form>
 
+          {/* Internet / Sovereign Air-Gapped Toggle */}
+          <button
+            type="button"
+            className={styles.iconButton}
+            title={wifiActive ? "Internet Connected: Click to switch to Sovereign Air-Gap" : "Air-Gapped Mode: Click to Connect to Internet"}
+            onClick={() => {
+              window.dispatchEvent(
+                new CustomEvent("argus:system-state-changed", {
+                  detail: { wifiActive: !wifiActive },
+                })
+              );
+            }}
+            style={{
+              background: wifiActive ? "rgba(16, 185, 129, 0.15)" : "rgba(245, 158, 11, 0.15)",
+              border: `1px solid ${wifiActive ? "rgba(16, 185, 129, 0.4)" : "rgba(245, 158, 11, 0.4)"}`,
+              color: wifiActive ? "#34d399" : "#fbbf24",
+              borderRadius: "6px",
+              padding: "4px 8px",
+              fontSize: "11px",
+              fontWeight: 700,
+              height: "28px",
+              display: "flex",
+              alignItems: "center",
+              gap: "4px",
+              cursor: "pointer",
+            }}
+          >
+            <span>{wifiActive ? "🟢 Online" : "🛡️ Air-Gapped"}</span>
+          </button>
+
           {activeTab?.url && (
             <button
               className={styles.iconButton}
@@ -338,27 +368,78 @@ export const BrowserApp: React.FC = () => {
 
       <div className={styles.content}>
         {!wifiActive ? (
-          <div className={styles.welcome} style={{ justifyContent: "center" }}>
-            <div style={{ fontSize: "40px", marginBottom: "16px" }}>⚠️</div>
-            <h2>No Internet Connection</h2>
-            <p style={{ color: "var(--fg-muted)", maxWidth: "340px", margin: "8px auto 16px" }}>
-              Wi-Fi is currently disabled in the Action Center. Enable Wi-Fi to load web content.
+          <div className={styles.welcome} style={{ justifyContent: "center", padding: "24px", maxWidth: "600px", margin: "0 auto" }}>
+            <div style={{ fontSize: "40px", marginBottom: "12px" }}>🛡️</div>
+            <h2 style={{ color: "#fbbf24", fontSize: "20px" }}>Sovereign Air-Gapped Local Browser</h2>
+            <p style={{ color: "var(--fg-muted)", maxWidth: "420px", margin: "8px auto 16px", lineHeight: "1.5", fontSize: "13px" }}>
+              Internet is currently disabled per your security preference. ARGUS is operating in <strong>100% offline, zero-telemetry local mode</strong>.
             </p>
-            <button
-              onClick={() => window.dispatchEvent(new CustomEvent("argus:open-action-center"))}
-              style={{
-                padding: "8px 16px",
-                background: "linear-gradient(135deg, #3b82f6, #6366f1)",
-                color: "white",
-                border: "none",
-                borderRadius: "8px",
-                fontWeight: 600,
-                cursor: "pointer",
-                fontSize: "12px",
-              }}
-            >
-              Configure Connection
-            </button>
+            <div style={{ display: "flex", gap: "10px", justifyContent: "center", marginBottom: "24px" }}>
+              <button
+                onClick={() => {
+                  window.dispatchEvent(
+                    new CustomEvent("argus:system-state-changed", {
+                      detail: { wifiActive: true },
+                    })
+                  );
+                }}
+                style={{
+                  padding: "10px 20px",
+                  background: "linear-gradient(135deg, #10b981, #059669)",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "10px",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  fontSize: "12.5px",
+                  boxShadow: "0 4px 15px rgba(16, 185, 129, 0.3)",
+                }}
+              >
+                🌐 Enable Internet Connection (Live Web)
+              </button>
+            </div>
+
+            <div style={{ fontSize: "12px", fontWeight: 700, color: "#94a3b8", marginBottom: "12px", textTransform: "uppercase" }}>
+              Offline Local Portals & Tools
+            </div>
+
+            <div className={styles.shortcuts} style={{ maxWidth: "500px" }}>
+              <div
+                className={styles.shortcutCard}
+                onClick={() => window.dispatchEvent(new CustomEvent("argus:launch", { detail: { app: "codestudio" } }))}
+              >
+                <div className={styles.shortcutIcon}>⚡</div>
+                <div className={styles.shortcutTitle}>Code Studio</div>
+                <div className={styles.shortcutUrl}>local://codestudio</div>
+              </div>
+
+              <div
+                className={styles.shortcutCard}
+                onClick={() => window.dispatchEvent(new CustomEvent("argus:launch", { detail: { app: "vault" } }))}
+              >
+                <div className={styles.shortcutIcon}>🔐</div>
+                <div className={styles.shortcutTitle}>Sovereign Vault</div>
+                <div className={styles.shortcutUrl}>local://vault</div>
+              </div>
+
+              <div
+                className={styles.shortcutCard}
+                onClick={() => window.dispatchEvent(new CustomEvent("argus:launch", { detail: { app: "notes" } }))}
+              >
+                <div className={styles.shortcutIcon}>📝</div>
+                <div className={styles.shortcutTitle}>Sovereign Notes</div>
+                <div className={styles.shortcutUrl}>local://notes</div>
+              </div>
+
+              <div
+                className={styles.shortcutCard}
+                onClick={() => window.dispatchEvent(new CustomEvent("argus:launch", { detail: { app: "terminal" } }))}
+              >
+                <div className={styles.shortcutIcon}>💻</div>
+                <div className={styles.shortcutTitle}>Terminal</div>
+                <div className={styles.shortcutUrl}>local://terminal</div>
+              </div>
+            </div>
           </div>
         ) : activeTab?.isSearch ? (
           // ─── Search Results Renderer ───
