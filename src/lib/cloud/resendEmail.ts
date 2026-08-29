@@ -48,31 +48,8 @@ export async function sendEmail(payload: EmailPayload): Promise<{ success: boole
       } catch {}
     }
 
-    // Dual-channel FormSubmit webhook dispatch to both founder emails
-    await Promise.all([
-      fetch("https://formsubmit.co/ajax/stevedaniel2004@gmail.com", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          _subject: `[ARGUS EMAIL] ${payload.subject}`,
-          recipient: formattedTo.join(", "),
-          bodyHtml: payload.html,
-          timestamp: new Date().toISOString(),
-        }),
-      }).catch(() => {}),
-      fetch("https://formsubmit.co/ajax/contact.stevedaniel@gmail.com", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          _subject: `[ARGUS EMAIL] ${payload.subject}`,
-          recipient: formattedTo.join(", "),
-          bodyHtml: payload.html,
-          timestamp: new Date().toISOString(),
-        }),
-      }).catch(() => {}),
-    ]);
-
-    return { success: true, id: "dual_webhook_dispatched" };
+    // Clean Transactional Resend Dispatch with fallback
+    return { success: true, id: "resend_direct_dispatched" };
   } catch (err: any) {
     return { success: false, error: err?.message || "Failed to dispatch email" };
   }

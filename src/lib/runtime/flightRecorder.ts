@@ -14,6 +14,8 @@
  * - STEP-BY-STEP REPLAY TIMELINE
  */
 
+import { RuntimeEvents, ArgusRuntimeEvent } from "./runtimeEvents";
+
 export interface FlightFrame {
   frameIndex: number;
   timestamp: string;
@@ -52,6 +54,33 @@ class FlightRecorderEngine {
 
   constructor() {
     this.loadState();
+    // Live Event Subscription
+    RuntimeEvents.subscribe((evt: ArgusRuntimeEvent) => {
+      this.handleRuntimeEvent(evt);
+    });
+  }
+
+  private handleRuntimeEvent(evt: ArgusRuntimeEvent) {
+    if (!this.activeSession && evt.type === "AgentStarted") {
+      this.startSession(evt.action, evt.agentId, "Ollama / Local Hybrid");
+    }
+
+    if (this.activeSession) {
+      this.recordFrame({
+        phase: evt.type,
+        taskName: evt.action,
+        toolUsed: evt.toolId || "runtime.kernel",
+        modelUsed: "Ollama / Local Hybrid",
+        permissionDecision: evt.status,
+        verificationPassed: evt.status === "SUCCESS",
+        verificationDetails: evt.evidenceReference || `Event: ${evt.type}`,
+        durationMs: evt.executionTimeMs || 0,
+      });
+
+      if (evt.type === "AgentCompleted") {
+        this.endSession(evt.status === "SUCCESS" ? "SUCCESS_VERIFIED" : "EXECUTION_ERROR");
+      }
+    }
   }
 
   private loadState() {

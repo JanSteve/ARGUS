@@ -10,7 +10,11 @@
  * - Safe drafting: AI drafts outreach but CANNOT send without explicit operator clearance
  */
 
+import { RuntimeEvents } from "../runtime/runtimeEvents";
+
 export type LeadStage = "HOT_LEAD" | "READY_TO_CONTACT" | "FOLLOW_UP" | "WAITING" | "LOST";
+export type LeadOrigin = "DEMO_DATA" | "REAL_DISCOVERED";
+export type VerificationStatus = "VERIFIED" | "PROPOSED" | "OBSERVED" | "UNVERIFIED";
 
 export interface SalesLead {
   id: string;
@@ -23,6 +27,10 @@ export interface SalesLead {
   leadScore: number; // 0-100
   estimatedValueINR: number;
   stage: LeadStage;
+  origin: LeadOrigin;
+  verificationStatus: VerificationStatus;
+  confidence: number;
+  evidenceReference?: string;
   aiOutreachDraft?: string;
   aiSummary: string;
   lastContactDate?: string;
@@ -44,6 +52,10 @@ const INITIAL_DEMO_LEADS: SalesLead[] = [
     leadScore: 94,
     estimatedValueINR: 850000,
     stage: "HOT_LEAD",
+    origin: "DEMO_DATA",
+    verificationStatus: "PROPOSED",
+    confidence: 0.94,
+    evidenceReference: "public://postman.com/about",
     aiSummary: "High ICP fit for ARGUS Developer SDK & local inference routing for enterprise engineering teams.",
     aiOutreachDraft: "Subject: Sovereign Agentic Execution for Postman Engineering\n\nHi Abhinav,\n\nI built ARGUS—a sovereign agent execution runtime that lets developers deploy AI agents with granular capability tokens and zero-leak DLP. Would love to share a 2-min demo on how it safeguards API credentials during autonomous coding sessions.",
     nextFollowUpDate: "Today",
@@ -60,6 +72,10 @@ const INITIAL_DEMO_LEADS: SalesLead[] = [
     leadScore: 92,
     estimatedValueINR: 1200000,
     stage: "HOT_LEAD",
+    origin: "DEMO_DATA",
+    verificationStatus: "PROPOSED",
+    confidence: 0.92,
+    evidenceReference: "public://razorpay.com/security",
     aiSummary: "Strict financial compliance and GDPR requirements. Requires local-only LLM inference & DLP firewall.",
     aiOutreachDraft: "Subject: Policy-Governed AI Agents with 100% On-Prem DLP\n\nHi Harshil,\n\nFinancial infrastructure requires AI agents that can NEVER leak cardholder or employee credentials. ARGUS enforces capability tokens with atomic 1-click rollbacks. Happy to show a quick architecture brief.",
     nextFollowUpDate: "Tomorrow",
@@ -76,6 +92,10 @@ const INITIAL_DEMO_LEADS: SalesLead[] = [
     leadScore: 88,
     estimatedValueINR: 650000,
     stage: "READY_TO_CONTACT",
+    origin: "DEMO_DATA",
+    verificationStatus: "PROPOSED",
+    confidence: 0.88,
+    evidenceReference: "public://browserstack.com/enterprise",
     aiSummary: "Automated test execution synergies with ARGUS Verification Engine.",
     aiOutreachDraft: "Subject: Independent Verification Engine for Autonomous AI Workflows\n\nHi Ritesh,\n\nInstead of trusting LLM outputs, ARGUS verifies DOM nodes, test suites, and file integrity independently before committing state. Would love your feedback.",
     nextFollowUpDate: "In 2 days",
@@ -92,6 +112,10 @@ const INITIAL_DEMO_LEADS: SalesLead[] = [
     leadScore: 85,
     estimatedValueINR: 500000,
     stage: "FOLLOW_UP",
+    origin: "DEMO_DATA",
+    verificationStatus: "PROPOSED",
+    confidence: 0.85,
+    evidenceReference: "public://chargebee.com/compliance",
     aiSummary: "SaaS churn prediction and sales agent workflows.",
     nextFollowUpDate: "Today",
     createdAt: new Date().toISOString(),
@@ -107,6 +131,10 @@ const INITIAL_DEMO_LEADS: SalesLead[] = [
     leadScore: 89,
     estimatedValueINR: 750000,
     stage: "READY_TO_CONTACT",
+    origin: "DEMO_DATA",
+    verificationStatus: "PROPOSED",
+    confidence: 0.89,
+    evidenceReference: "public://hasura.io/community",
     aiSummary: "Developer-first ecosystem fit for ARGUS Tool Fabric.",
     nextFollowUpDate: "Today",
     createdAt: new Date().toISOString(),
@@ -172,6 +200,20 @@ class SalesCrmEngine {
     this.leads.unshift(newLead);
     this.save();
     this.notify();
+
+    RuntimeEvents.emit({
+      type: "ToolExecuted",
+      sessionId: "session_crm",
+      missionId: "mission_sales",
+      agentId: "sales-agent",
+      toolId: "crm.createLead",
+      riskLevel: "LOW",
+      action: `Create Lead: ${newLead.company} (${newLead.origin})`,
+      status: "SUCCESS",
+      payload: { leadId: newLead.id, score: newLead.leadScore, origin: newLead.origin },
+      evidenceReference: newLead.evidenceReference || `crm://${newLead.id}`,
+    });
+
     return newLead;
   }
 

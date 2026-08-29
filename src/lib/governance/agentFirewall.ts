@@ -11,7 +11,20 @@
  * - Granular Capability Tokens: Least-privilege path and domain boundaries with time-based expiry
  */
 
+import { RuntimeEvents, RiskTier } from "../runtime/runtimeEvents";
+
 export type DataSensitivity = "LOW_PUBLIC" | "MEDIUM_INTERNAL" | "HIGH_CONFIDENTIAL" | "CRITICAL_RESTRICTED";
+
+export function canonicalizePath(targetPath: string): string {
+  if (!targetPath) return "";
+  // Strip control chars & normalize separators
+  let normalized = targetPath.replace(/\\/g, "/").trim();
+  // Check traversal
+  if (normalized.includes("../") || normalized.includes("/..") || normalized === "..") {
+    return "__TRAVERSAL_ATTEMPT__";
+  }
+  return normalized;
+}
 
 export interface CapabilityToken {
   id: string;
@@ -190,6 +203,45 @@ class AgentFirewallEngine {
     const sensitivity = this.classifySensitivity(params.target, params.content);
     const modelRouted = this.resolveModelRouting(sensitivity);
 
+    const canonical = canonicalizePath(params.target);
+    if (canonical === "__TRAVERSAL_ATTEMPT__") {
+      const blockedEvent: FirewallEvent = {
+        id: `fw_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+        timestamp: new Date().toISOString(),
+        agentId: params.agentId,
+        agentName: params.agentName,
+        actionType: params.actionType,
+        target: params.target,
+        sensitivity: "CRITICAL_RESTRICTED",
+        status: "BLOCKED",
+        reason: "DLP Firewall Shield: Path Traversal (../) escape attempt blocked",
+        modelRouted,
+      };
+      this.eventLogs.unshift(blockedEvent);
+      this.saveState();
+      this.notify();
+
+      RuntimeEvents.emit({
+        type: "PermissionDenied",
+        sessionId: "session_firewall",
+        missionId: "mission_sec",
+        agentId: params.agentId,
+        agentName: params.agentName,
+        riskLevel: "CRITICAL",
+        action: `${params.actionType}: ${params.target}`,
+        status: "BLOCKED",
+        payload: { reason: blockedEvent.reason },
+      });
+
+      return {
+        allowed: false,
+        status: "BLOCKED",
+        sensitivity: "CRITICAL_RESTRICTED",
+        modelRouted,
+        reason: blockedEvent.reason,
+      };
+    }
+
     // 1. HARD SHIELD CHECK: Block credential theft attempts
     for (const pattern of CRITICAL_FILE_PATTERNS) {
       if (pattern.test(params.target)) {
@@ -209,6 +261,18 @@ class AgentFirewallEngine {
         this.eventLogs.unshift(blockedEvent);
         this.saveState();
         this.notify();
+
+        RuntimeEvents.emit({
+          type: "PermissionDenied",
+          sessionId: "session_firewall",
+          missionId: "mission_sec",
+          agentId: params.agentId,
+          agentName: params.agentName,
+          riskLevel: "CRITICAL",
+          action: `${params.actionType}: ${params.target}`,
+          status: "BLOCKED",
+          payload: { reason: blockedEvent.reason },
+        });
 
         return {
           allowed: false,

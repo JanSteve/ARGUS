@@ -22,10 +22,18 @@ import {
   RuntimeBenchmark,
   BenchmarkSuiteSummary,
 } from "../../lib/runtime/runtimeBenchmarkSuite";
+import {
+  CapabilityRegistryService,
+  CapabilityRecord,
+} from "../../lib/runtime/capabilityRegistry";
+import {
+  RuntimeEvents,
+  ArgusRuntimeEvent,
+} from "../../lib/runtime/runtimeEvents";
 import { playNotificationSound } from "../../lib/soundEffects";
 
 export const EnterpriseControlPlaneApp: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<"firewall" | "flight" | "tokens" | "roi" | "checkpoints" | "memory" | "benchmark">("firewall");
+  const [activeTab, setActiveTab] = useState<"firewall" | "flight" | "tokens" | "roi" | "checkpoints" | "memory" | "benchmark" | "capabilities">("firewall");
   const [firewallEvents, setFirewallEvents] = useState<FirewallEvent[]>([]);
   const [flightSessions, setFlightSessions] = useState<FlightSession[]>([]);
   const [snapshots, setSnapshots] = useState<SystemSnapshot[]>([]);
@@ -34,25 +42,31 @@ export const EnterpriseControlPlaneApp: React.FC = () => {
   const [episodicMemory, setEpisodicMemory] = useState<EpisodicMemoryRecord[]>([]);
   const [benchmarkSummary, setBenchmarkSummary] = useState<BenchmarkSuiteSummary | null>(null);
   const [isRunningBenchmarks, setIsRunningBenchmarks] = useState(false);
+  const [capabilities] = useState<CapabilityRecord[]>(CapabilityRegistryService.getAll());
+  const [liveEvents, setLiveEvents] = useState<ArgusRuntimeEvent[]>([]);
 
   // Flight Replay State
   const [selectedSession, setSelectedSession] = useState<FlightSession | null>(null);
   const [currentFrameIndex, setCurrentFrameIndex] = useState<number>(0);
 
   useEffect(() => {
-    // Load initial data
     setFirewallEvents(AgentFirewall.getEventLogs());
     setFlightSessions(FlightRecorder.getSessions());
     setSnapshots(CheckpointManager.getSnapshots());
     setTokens(AgentFirewall.getActiveTokens());
+    setLiveEvents(RuntimeEvents.getEvents());
 
-    // Subscribe to firewall events
+    // Subscribe to events
     const unsubFirewall = AgentFirewall.subscribe(setFirewallEvents);
     const unsubFlight = FlightRecorder.subscribe(setFlightSessions);
+    const unsubEvents = RuntimeEvents.subscribe(() => {
+      setLiveEvents(RuntimeEvents.getEvents());
+    });
 
     return () => {
       unsubFirewall();
       unsubFlight();
+      unsubEvents();
     };
   }, []);
 
@@ -180,6 +194,12 @@ export const EnterpriseControlPlaneApp: React.FC = () => {
           }}
         >
           🔬 Runtime Benchmark (M18)
+        </button>
+        <button
+          className={`${styles.tabItem} ${activeTab === "capabilities" ? styles.tabItemActive : ""}`}
+          onClick={() => setActiveTab("capabilities")}
+        >
+          📋 Capability Registry
         </button>
       </div>
 
@@ -545,7 +565,7 @@ export const EnterpriseControlPlaneApp: React.FC = () => {
                   key={b.id}
                   style={{
                     background: "rgba(0,0,0,0.3)",
-                    border: `1px solid ${b.passed ? "rgba(52, 211, 153, 0.3)" : "rgba(239, 68, 68, 0.3)"}`,
+                    border: `1px solid ${b.status === "PASS" ? "rgba(52, 211, 153, 0.3)" : "rgba(239, 68, 68, 0.3)"}`,
                     borderRadius: "10px",
                     padding: "12px 16px",
                     display: "flex",
@@ -555,8 +575,8 @@ export const EnterpriseControlPlaneApp: React.FC = () => {
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                      <span style={{ color: b.passed ? "#34d399" : "#f87171", fontWeight: 800 }}>
-                        {b.passed ? "✓ PASS" : "✗ FAIL"}
+                      <span style={{ color: b.status === "PASS" ? "#34d399" : "#f87171", fontWeight: 800 }}>
+                        {b.status === "PASS" ? "✓ PASS" : "✗ FAIL"}
                       </span>
                       <strong>{b.name}</strong>
                       <span style={{ fontSize: "10px", color: "#fbbf24", background: "rgba(251, 191, 36, 0.15)", padding: "2px 6px", borderRadius: "4px" }}>
@@ -572,6 +592,73 @@ export const EnterpriseControlPlaneApp: React.FC = () => {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* TAB 8: Capability Registry & Reality Matrix */}
+        {activeTab === "capabilities" && (
+          <div className={styles.sectionBox}>
+            <div className={styles.sectionHeader}>
+              <div>
+                <span className={styles.sectionTitle}>📋 ARGUS Capability Registry & Reality Matrix</span>
+                <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "2px" }}>
+                  Empirical classification of all features distinguishing Real Execution, Partial Runtimes, Simulations & Prototypes.
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              {capabilities.map((c) => {
+                const badgeColor =
+                  c.status === "REAL" ? "#34d399" :
+                  c.status === "PARTIAL" ? "#38bdf8" :
+                  c.status === "SIMULATED" ? "#fbbf24" :
+                  c.status === "DEMO_ONLY" ? "#a855f7" : "#94a3b8";
+
+                return (
+                  <div
+                    key={c.id}
+                    style={{
+                      background: "rgba(0,0,0,0.3)",
+                      border: `1px solid rgba(255,255,255,0.08)`,
+                      borderRadius: "10px",
+                      padding: "12px 16px",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "4px",
+                    }}
+                  >
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <span
+                          style={{
+                            fontSize: "10px",
+                            fontWeight: 800,
+                            color: badgeColor,
+                            background: `${badgeColor}22`,
+                            padding: "2px 6px",
+                            borderRadius: "4px",
+                            border: `1px solid ${badgeColor}44`,
+                          }}
+                        >
+                          {c.status}
+                        </span>
+                        <strong style={{ color: "#fff", fontSize: "13px" }}>{c.name}</strong>
+                        <span style={{ fontSize: "10px", color: "#64748b" }}>[{c.category}]</span>
+                      </div>
+                      <span style={{ fontSize: "10px", color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }}>
+                        {c.runtimeBoundary}
+                      </span>
+                    </div>
+
+                    <div style={{ fontSize: "11px", color: "#cbd5e1" }}>{c.description}</div>
+                    <div style={{ fontSize: "10px", color: "#94a3b8", fontFamily: "var(--font-mono, monospace)" }}>
+                      ✓ <strong>Verification:</strong> {c.evidenceProof}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
