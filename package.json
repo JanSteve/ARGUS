@@ -13,7 +13,8 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "lint": "oxlint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:security": "node scripts/run-security-suite.mjs"
   },
   "dependencies": {
     "@tauri-apps/api": "^2",
