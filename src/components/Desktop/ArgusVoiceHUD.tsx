@@ -1,11 +1,12 @@
 /**
  * ARGUS Holographic Voice HUD & Autonomous Wake-Word Engine
- * Sovereign Voice Intelligence Engine for ARGUS OS
+ * Persona: Imposing Queen — Steely, Polished, Regal Female Sovereign Intelligence
  */
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import styles from "./ArgusVoiceHUD.module.css";
-import { speakVoice, stopSpeaking } from "../../lib/ai";
+import { speakVoice } from "../../lib/ai";
+import { loadVoiceConfig, saveVoiceConfig, PERSONA_SETTINGS, type VoicePersona } from "../../lib/ai/minimaxVoice";
 import { playNotificationSound } from "../../lib/soundEffects";
 
 interface ArgusVoiceHUDProps {
@@ -16,13 +17,20 @@ export const ArgusVoiceHUD: React.FC<ArgusVoiceHUDProps> = ({ onLaunchApp }) => 
   const [isOpen, setIsOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [transcript, setTranscript] = useState("Say 'Hey ARGUS' or click to command...");
+  const [transcript, setTranscript] = useState("Say 'Hey ARGUS' or speak your imperial command...");
   const [lastReply, setLastReply] = useState<string | null>(null);
   const [continuousMode, setContinuousMode] = useState(false);
+  const [currentPersona, setCurrentPersona] = useState<VoicePersona>(() => loadVoiceConfig().persona || "imposing_queen");
 
   const recognitionRef = useRef<any>(null);
 
-  // Command Execution Engine
+  const handlePersonaChange = (newPersona: VoicePersona) => {
+    setCurrentPersona(newPersona);
+    const cfg = loadVoiceConfig();
+    saveVoiceConfig({ ...cfg, persona: newPersona });
+  };
+
+  // Command Execution Engine (Regal Queen Tone)
   const executeCommand = useCallback(
     async (commandText: string) => {
       const lower = commandText.toLowerCase().trim();
@@ -39,7 +47,7 @@ export const ArgusVoiceHUD: React.FC<ArgusVoiceHUDProps> = ({ onLaunchApp }) => 
               detail: { wifiActive: false },
             })
           );
-          const reply = "Right away, sir. Wi-Fi interface has been deactivated.";
+          const reply = "At your command. Wi-Fi interface has been deactivated.";
           setLastReply(reply);
           setIsSpeaking(true);
           await speakVoice(reply);
@@ -52,7 +60,7 @@ export const ArgusVoiceHUD: React.FC<ArgusVoiceHUDProps> = ({ onLaunchApp }) => 
               detail: { wifiActive: true },
             })
           );
-          const reply = "Re-establishing Wi-Fi link. Sovereign network connected.";
+          const reply = "Re-establishing Wi-Fi link. Sovereign network online and secured.";
           setLastReply(reply);
           setIsSpeaking(true);
           await speakVoice(reply);
@@ -72,7 +80,7 @@ export const ArgusVoiceHUD: React.FC<ArgusVoiceHUDProps> = ({ onLaunchApp }) => 
               detail: { bluetoothActive: false },
             })
           );
-          const reply = "Bluetooth hardware link disabled.";
+          const reply = "Bluetooth hardware link disabled per your directive.";
           setLastReply(reply);
           setIsSpeaking(true);
           await speakVoice(reply);
@@ -85,7 +93,7 @@ export const ArgusVoiceHUD: React.FC<ArgusVoiceHUDProps> = ({ onLaunchApp }) => 
               detail: { bluetoothActive: true },
             })
           );
-          const reply = "Bluetooth interface enabled and scanning.";
+          const reply = "Bluetooth interface active. Scanning for paired hardware.";
           setLastReply(reply);
           setIsSpeaking(true);
           await speakVoice(reply);
@@ -104,7 +112,7 @@ export const ArgusVoiceHUD: React.FC<ArgusVoiceHUDProps> = ({ onLaunchApp }) => 
             const notes = JSON.parse(localStorage.getItem("argus-notes") || "[]");
             notes.unshift({
               id: Date.now().toString(),
-              title: "ARGUS Voice Note",
+              title: "Imperial Sovereign Note",
               content: noteContent,
               updatedAt: new Date().toISOString(),
             });
@@ -112,7 +120,7 @@ export const ArgusVoiceHUD: React.FC<ArgusVoiceHUDProps> = ({ onLaunchApp }) => 
             window.dispatchEvent(new CustomEvent("argus:notes-updated"));
           } catch {}
         }
-        const reply = `Note recorded to sovereign storage: ${noteContent || "New Note"}`;
+        const reply = `Imperial directive recorded to sovereign memory: ${noteContent || "New Note"}`;
         setLastReply(reply);
         setIsSpeaking(true);
         await speakVoice(reply);
@@ -123,7 +131,7 @@ export const ArgusVoiceHUD: React.FC<ArgusVoiceHUDProps> = ({ onLaunchApp }) => 
       // 4. Weather Radar
       if (lower.includes("weather") || lower.includes("temperature") || lower.includes("forecast")) {
         onLaunchApp("weather", "Weather");
-        const reply = "Opening live Weather Satellite Radar. Scanning atmospheric telemetry.";
+        const reply = "Opening live Weather Satellite Radar. Atmospheric telemetry loaded.";
         setLastReply(reply);
         setIsSpeaking(true);
         await speakVoice(reply);
@@ -134,7 +142,7 @@ export const ArgusVoiceHUD: React.FC<ArgusVoiceHUDProps> = ({ onLaunchApp }) => 
       // 5. Task Manager / Hardware Telemetry
       if (lower.includes("task") || lower.includes("process") || lower.includes("cpu") || lower.includes("memory")) {
         onLaunchApp("taskmanager", "Task Manager");
-        const reply = "Accessing Task Manager. Neural and hardware telemetry nominal.";
+        const reply = "Accessing Task Manager. All neural and hardware cores report nominal execution.";
         setLastReply(reply);
         setIsSpeaking(true);
         await speakVoice(reply);
@@ -156,7 +164,7 @@ export const ArgusVoiceHUD: React.FC<ArgusVoiceHUDProps> = ({ onLaunchApp }) => 
           try {
             const result = Function(`"use strict"; return (${expr})`)();
             if (typeof result === "number" && isFinite(result)) {
-              const reply = `The calculation yields ${result}.`;
+              const reply = `The calculation yields exactly ${result}.`;
               setLastReply(reply);
               setIsSpeaking(true);
               await speakVoice(reply);
@@ -170,7 +178,7 @@ export const ArgusVoiceHUD: React.FC<ArgusVoiceHUDProps> = ({ onLaunchApp }) => 
       // 7. Terminal
       if (lower.includes("terminal") || lower.includes("shell") || lower.includes("bash")) {
         onLaunchApp("terminal", "Terminal");
-        const reply = "Terminal emulator initialized. Ready for sovereign root execution.";
+        const reply = "Terminal emulator online. Ready for sovereign root execution.";
         setLastReply(reply);
         setIsSpeaking(true);
         await speakVoice(reply);
@@ -178,7 +186,18 @@ export const ArgusVoiceHUD: React.FC<ArgusVoiceHUDProps> = ({ onLaunchApp }) => 
         return;
       }
 
-      // 8. App Launchers
+      // 8. Sovereign Vault & Security
+      if (lower.includes("vault") || lower.includes("secret") || lower.includes("security") || lower.includes("card")) {
+        onLaunchApp("vault", "Sovereign Vault");
+        const reply = "Unlocking Sovereign Secret Vault. AES-256-GCM zero-knowledge enclave ready.";
+        setLastReply(reply);
+        setIsSpeaking(true);
+        await speakVoice(reply);
+        setIsSpeaking(false);
+        return;
+      }
+
+      // 9. App Launchers
       const appMap: Record<string, { id: any; title: string }> = {
         browser: { id: "browser", title: "Browser" },
         calculator: { id: "calculator", title: "Calculator" },
@@ -190,12 +209,15 @@ export const ArgusVoiceHUD: React.FC<ArgusVoiceHUDProps> = ({ onLaunchApp }) => 
         settings: { id: "settings", title: "Settings" },
         phone: { id: "phone", title: "Phone Connect" },
         chat: { id: "chat", title: "Chat Assistant" },
+        swarm: { id: "swarm", title: "Agent Swarm" },
+        canvas: { id: "canvas", title: "Neural Canvas" },
+        controlplane: { id: "controlplane", title: "Control Plane" },
       };
 
       for (const [key, val] of Object.entries(appMap)) {
         if (lower.includes(key)) {
           onLaunchApp(val.id, val.title);
-          const reply = `Opening ${val.title}, sir.`;
+          const reply = `Opening ${val.title} at your command.`;
           setLastReply(reply);
           setIsSpeaking(true);
           await speakVoice(reply);
@@ -204,8 +226,8 @@ export const ArgusVoiceHUD: React.FC<ArgusVoiceHUDProps> = ({ onLaunchApp }) => 
         }
       }
 
-      // 9. Default Direct Answer
-      const reply = `Command acknowledged: "${commandText}". Executing task via ARGUS sovereign neural engine.`;
+      // 10. Default Direct Answer
+      const reply = `Directive received: "${commandText}". Executing via ARGUS Sovereign Queen Intelligence.`;
       setLastReply(reply);
       setIsSpeaking(true);
       await speakVoice(reply);
@@ -221,7 +243,7 @@ export const ArgusVoiceHUD: React.FC<ArgusVoiceHUDProps> = ({ onLaunchApp }) => 
       (window as unknown as { SpeechRecognition?: any; webkitSpeechRecognition?: any }).webkitSpeechRecognition;
 
     if (!SpeechRec) {
-      setTranscript("Speech recognition is not supported in this browser.");
+      setTranscript("Speech recognition is not supported in this browser environment.");
       return;
     }
 
@@ -238,7 +260,7 @@ export const ArgusVoiceHUD: React.FC<ArgusVoiceHUDProps> = ({ onLaunchApp }) => 
 
       recognition.onstart = () => {
         setIsListening(true);
-        setTranscript("Listening for your command...");
+        setTranscript("Listening for your imperial command...");
       };
 
       recognition.onresult = (event: any) => {
@@ -280,7 +302,7 @@ export const ArgusVoiceHUD: React.FC<ArgusVoiceHUDProps> = ({ onLaunchApp }) => 
       recognitionRef.current = null;
     }
     setIsListening(false);
-    setTranscript("Voice Copilot idle.");
+    setTranscript("Imposing Queen Voice Copilot idle.");
   }, []);
 
   // Listen to external speaking events
@@ -299,7 +321,7 @@ export const ArgusVoiceHUD: React.FC<ArgusVoiceHUDProps> = ({ onLaunchApp }) => 
 
   return (
     <div className={styles.hudContainer}>
-      {/* Floating Holographic Orb Trigger */}
+      {/* Floating Imperial Crown Voice Orb Trigger */}
       <button
         type="button"
         className={`${styles.orbButton} ${isListening || isSpeaking ? styles.orbActive : ""}`}
@@ -310,17 +332,30 @@ export const ArgusVoiceHUD: React.FC<ArgusVoiceHUDProps> = ({ onLaunchApp }) => 
             startListening();
           }
         }}
-        title="ARGUS Sovereign Voice Copilot (Click to Speak)"
+        title="ARGUS Sovereign Voice Copilot (Imposing Queen • Steely, Polished, Regal)"
       >
         <div className={styles.energyRing} />
-        {/* Arc Reactor Core SVG */}
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2">
-          <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" />
-          <circle cx="12" cy="12" r="6" stroke="#38bdf8" strokeWidth="2" />
-          <circle cx="12" cy="12" r="2" fill="#ffffff" />
-          <path d="M12 2v4M12 18v4M2 12h4M18 12h4" stroke="#38bdf8" strokeWidth="2" strokeLinecap="round" />
+        {/* Imperial Sovereign Queen Crown & Neural Core SVG */}
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="1.8">
+          {/* Royal Crown Geometry */}
+          <path d="M2 19h20L19 7l-5 6-2-8-2 8-5-6-3 12z" fill="url(#crownGoldGradient)" stroke="#fbbf24" strokeWidth="1.5" strokeLinejoin="round" />
+          {/* Imperial Jewels */}
+          <circle cx="2" cy="7" r="1.5" fill="#f59e0b" />
+          <circle cx="7" cy="13" r="1" fill="#38bdf8" />
+          <circle cx="12" cy="5" r="2" fill="#c084fc" />
+          <circle cx="17" cy="13" r="1" fill="#38bdf8" />
+          <circle cx="22" cy="7" r="1.5" fill="#f59e0b" />
+          {/* Base Headband */}
+          <rect x="2" y="18.5" width="20" height="2.5" rx="1" fill="#fbbf24" />
+          <defs>
+            <linearGradient id="crownGoldGradient" x1="2" y1="5" x2="22" y2="21" gradientUnits="userSpaceOnUse">
+              <stop stopColor="#fbbf24" stopOpacity="0.8" />
+              <stop offset="0.5" stopColor="#a855f7" stopOpacity="0.6" />
+              <stop offset="1" stopColor="#f59e0b" stopOpacity="0.9" />
+            </linearGradient>
+          </defs>
         </svg>
-        <span className={styles.orbLabel}>ARGUS CORE</span>
+        <span className={styles.orbLabel}>ARGUS QUEEN</span>
       </button>
 
       {/* Expanded Holographic Console Panel */}
@@ -328,14 +363,20 @@ export const ArgusVoiceHUD: React.FC<ArgusVoiceHUDProps> = ({ onLaunchApp }) => 
         <div className={styles.hologramPanel}>
           <div className={styles.panelHeader}>
             <div className={styles.panelTitle}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" strokeWidth="2">
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" strokeWidth="2">
+                <path d="M2 19h20L19 7l-5 6-2-8-2 8-5-6-3 12z" fill="#f59e0b" />
               </svg>
-              <span>ARGUS VOICE COPILOT</span>
+              <span>IMPOSING QUEEN VOICE ENGINE</span>
             </div>
             <button className={styles.closeBtn} onClick={() => setIsOpen(false)}>
               ✕
             </button>
+          </div>
+
+          {/* Persona Selection Header */}
+          <div className={styles.personaBadge}>
+            <span className={styles.personaTitle}>👑 {PERSONA_SETTINGS[currentPersona]?.label || "Imposing Queen"}</span>
+            <span className={styles.personaTag}>MiniMax HD • Female</span>
           </div>
 
           {/* Audio Wave Visualizer */}
@@ -358,7 +399,7 @@ export const ArgusVoiceHUD: React.FC<ArgusVoiceHUDProps> = ({ onLaunchApp }) => 
           {/* Last Spoken Response */}
           {lastReply && (
             <div className={styles.spokenReplyBox}>
-              <strong>ARGUS:</strong> "{lastReply}"
+              <strong>ARGUS QUEEN:</strong> "{lastReply}"
             </div>
           )}
 
@@ -367,16 +408,16 @@ export const ArgusVoiceHUD: React.FC<ArgusVoiceHUDProps> = ({ onLaunchApp }) => 
             {[
               "turn off wifi",
               "open weather in Tokyo",
-              "write a note Sovereign",
-              "open task manager",
-              "calculate 125 * 8",
+              "write a note Imperial Directive",
+              "open sovereign vault",
+              "calculate 1024 * 64",
             ].map((cmd) => (
               <button
                 key={cmd}
                 className={styles.commandChip}
                 onClick={() => executeCommand(cmd)}
               >
-                🎙️ "{cmd}"
+                👑 "{cmd}"
               </button>
             ))}
           </div>
@@ -393,7 +434,7 @@ export const ArgusVoiceHUD: React.FC<ArgusVoiceHUDProps> = ({ onLaunchApp }) => 
                 }
               }}
             >
-              {isListening ? "⏹ Stop Listening" : "🎙️ Speak to ARGUS"}
+              {isListening ? "⏹ Stop Listening" : "👑 Speak to ARGUS"}
             </button>
 
             <button

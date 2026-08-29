@@ -138,4 +138,40 @@ class FlightRecorderEngine {
   /**
    * Record a single execution frame into the active Flight Session
    */
-  public recordFrame(frame: Omit<FlightFrame, "frameInde
+  public recordFrame(frame: Omit<FlightFrame, "frameIndex" | "timestamp">): void {
+    if (!this.activeSession) return;
+
+    const fullFrame: FlightFrame = {
+      frameIndex: this.activeSession.frames.length + 1,
+      timestamp: new Date().toISOString(),
+      ...frame,
+    };
+
+    this.activeSession.frames.push(fullFrame);
+    this.activeSession.totalFrames = this.activeSession.frames.length;
+    this.saveState();
+    this.notify();
+  }
+
+  /**
+   * Close and seal the Flight Session
+   */
+  public closeSession(outcome: FlightSession["outcome"]): void {
+    if (!this.activeSession) return;
+    this.activeSession.completedAt = new Date().toISOString();
+    this.activeSession.outcome = outcome;
+    this.saveState();
+    this.notify();
+    this.activeSession = null;
+  }
+
+  public getSessions(): FlightSession[] {
+    return [...this.sessions];
+  }
+
+  public getSession(id: string): FlightSession | undefined {
+    return this.sessions.find((s) => s.sessionId === id);
+  }
+}
+
+export const FlightRecorder = new FlightRecorderEngine();

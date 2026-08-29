@@ -634,8 +634,9 @@ export const SettingsApp: React.FC = () => {
 
             {/* Persona Cards */}
             <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "20px" }}>
-              {(["argus", "ultron", "sovereign"] as VoicePersona[]).map((p) => {
+              {(["imposing_queen", "sovereign_queen", "cyber_valkyrie", "argus", "ultron"] as VoicePersona[]).map((p) => {
                 const setting = PERSONA_SETTINGS[p];
+                if (!setting) return null;
                 const isSelected = voiceConfig.persona === p;
                 return (
                   <div
@@ -643,8 +644,8 @@ export const SettingsApp: React.FC = () => {
                     onClick={() => updateVoice({ persona: p })}
                     style={{
                       padding: "12px 14px",
-                      background: isSelected ? "rgba(99, 102, 241, 0.12)" : "rgba(255, 255, 255, 0.02)",
-                      border: isSelected ? "1px solid rgba(99, 102, 241, 0.4)" : "1px solid rgba(255, 255, 255, 0.06)",
+                      background: isSelected ? "rgba(245, 158, 11, 0.12)" : "rgba(255, 255, 255, 0.02)",
+                      border: isSelected ? "1px solid rgba(245, 158, 11, 0.45)" : "1px solid rgba(255, 255, 255, 0.06)",
                       borderRadius: "10px",
                       cursor: "pointer",
                       display: "flex",
@@ -653,7 +654,7 @@ export const SettingsApp: React.FC = () => {
                     }}
                   >
                     <div>
-                      <div style={{ fontWeight: 600, fontSize: "13px", color: isSelected ? "#818cf8" : "inherit" }}>
+                      <div style={{ fontWeight: 600, fontSize: "13px", color: isSelected ? "#fbbf24" : "inherit" }}>
                         {setting.label}
                       </div>
                       <div style={{ fontSize: "11px", color: "var(--fg-muted)", marginTop: "2px" }}>
@@ -665,7 +666,7 @@ export const SettingsApp: React.FC = () => {
                         width: "14px",
                         height: "14px",
                         borderRadius: "50%",
-                        border: isSelected ? "4px solid #6366f1" : "2px solid rgba(255,255,255,0.2)",
+                        border: isSelected ? "4px solid #f59e0b" : "2px solid rgba(255,255,255,0.2)",
                         background: isSelected ? "#fff" : "transparent",
                       }}
                     />

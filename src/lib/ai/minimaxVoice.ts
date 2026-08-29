@@ -1,9 +1,9 @@
 /**
  * ARGUS Sovereign Voice Intelligence Engine
- * MiniMax Speech-01-HD Neural TTS with British Persona & Resilient Web Speech Fallback
+ * MiniMax Speech-01-HD Neural TTS with Imposing Queen Persona & Resilient Female Web Speech Fallback
  */
 
-export type VoicePersona = "argus" | "ultron" | "sovereign";
+export type VoicePersona = "imposing_queen" | "sovereign_queen" | "cyber_valkyrie" | "argus" | "ultron";
 
 export interface VoiceConfig {
   apiKey: string;
@@ -19,7 +19,7 @@ export const DEFAULT_MINIMAX_KEY =
 export const DEFAULT_VOICE_CONFIG: VoiceConfig = {
   apiKey: DEFAULT_MINIMAX_KEY,
   groupId: "2002706633687311008",
-  persona: "argus",
+  persona: "imposing_queen",
   enabled: true,
   minimaxEnabled: true,
 };
@@ -28,28 +28,47 @@ export const VOICE_CONFIG_KEY = "argus-voice-config";
 
 const PERSONA_SETTINGS: Record<
   VoicePersona,
-  { voiceId: string; speed: number; pitch: number; label: string; description: string }
+  { voiceId: string; speed: number; pitch: number; label: string; description: string; gender: "female" | "male" }
 > = {
+  imposing_queen: {
+    voiceId: "female-queen",
+    speed: 1.0,
+    pitch: 0,
+    label: "Imposing Queen (Steely • Polished • Regal)",
+    description: "Commanding, aristocratic female sovereign intelligence with steely composure and regal polish.",
+    gender: "female",
+  },
+  sovereign_queen: {
+    voiceId: "presenter_female",
+    speed: 1.02,
+    pitch: 1,
+    label: "Sovereign Empress (High-Precision British Female)",
+    description: "Articulate, razor-sharp British female royal cadence.",
+    gender: "female",
+  },
+  cyber_valkyrie: {
+    voiceId: "female-yujie",
+    speed: 1.05,
+    pitch: -1,
+    label: "Cyber Valkyrie (Steely Tactical Operative)",
+    description: "Disciplined, rapid tactical female neural synthesis.",
+    gender: "female",
+  },
   argus: {
     voiceId: "male-qn-qingse",
     speed: 1.05,
     pitch: -2,
     label: "ARGUS British Neural (Natural Sophisticated Male)",
-    description: "Crisp, hyper-intelligent, calm baritone with British acoustic cadence",
+    description: "Crisp, hyper-intelligent, calm baritone with British acoustic cadence.",
+    gender: "male",
   },
   ultron: {
     voiceId: "audiobook_male_2",
     speed: 0.92,
     pitch: -5,
     label: "ARGUS Titan (Deep Resonant Authority)",
-    description: "Deep, powerful, resonant acoustic authority",
-  },
-  sovereign: {
-    voiceId: "presenter_male",
-    speed: 1.0,
-    pitch: 0,
-    label: "ARGUS Sovereign (Professional Broadcast Human)",
-    description: "Natural human professional speaking voice",
+    description: "Deep, powerful, resonant acoustic authority.",
+    gender: "male",
   },
 };
 
@@ -92,7 +111,7 @@ function hexToBytes(hex: string): Uint8Array {
   return bytes;
 }
 
-function speakWebSpeechFallback(text: string, persona: VoicePersona = "argus") {
+function speakWebSpeechFallback(text: string, personaKey: VoicePersona = "imposing_queen") {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
 
   window.speechSynthesis.cancel();
@@ -102,26 +121,45 @@ function speakWebSpeechFallback(text: string, persona: VoicePersona = "argus") {
   const utterance = new SpeechSynthesisUtterance(clean);
   const voices = window.speechSynthesis.getVoices();
 
-  const preferredVoice =
-    voices.find((v) => v.name.includes("Daniel") || v.name.includes("Oliver") || v.name.includes("Google UK English Male")) ||
-    voices.find((v) => v.lang.startsWith("en-GB") && v.name.includes("Male")) ||
-    voices.find((v) => v.lang.startsWith("en") && (v.name.includes("Male") || v.name.includes("Guy") || v.name.includes("David"))) ||
-    voices.find((v) => v.lang.startsWith("en")) ||
-    voices[0];
+  const isFemale = PERSONA_SETTINGS[personaKey]?.gender === "female";
+
+  let preferredVoice: SpeechSynthesisVoice | undefined;
+
+  if (isFemale) {
+    preferredVoice =
+      voices.find((v) => v.name.includes("Victoria") || v.name.includes("Serena") || v.name.includes("Stephanie")) ||
+      voices.find((v) => v.name.includes("Google UK English Female") || v.name.includes("en-GB") && v.name.includes("Female")) ||
+      voices.find((v) => v.name.includes("Samantha") || v.name.includes("Karen") || v.name.includes("Moira") || v.name.includes("Tessa")) ||
+      voices.find((v) => v.lang.startsWith("en-GB") || v.lang.startsWith("en_GB")) ||
+      voices.find((v) => v.lang.startsWith("en") && !v.name.includes("Male") && !v.name.includes("David") && !v.name.includes("Guy")) ||
+      voices[0];
+  } else {
+    preferredVoice =
+      voices.find((v) => v.name.includes("Daniel") || v.name.includes("Oliver") || v.name.includes("Google UK English Male")) ||
+      voices.find((v) => v.lang.startsWith("en-GB") && v.name.includes("Male")) ||
+      voices.find((v) => v.lang.startsWith("en") && (v.name.includes("Male") || v.name.includes("David"))) ||
+      voices[0];
+  }
 
   if (preferredVoice) {
     utterance.voice = preferredVoice;
   }
 
-  if (persona === "argus") {
-    utterance.pitch = 0.85;
-    utterance.rate = 1.05;
-  } else if (persona === "ultron") {
+  if (personaKey === "imposing_queen") {
+    utterance.pitch = 1.02;
+    utterance.rate = 1.0;
+  } else if (personaKey === "sovereign_queen") {
+    utterance.pitch = 1.08;
+    utterance.rate = 1.02;
+  } else if (personaKey === "cyber_valkyrie") {
+    utterance.pitch = 0.95;
+    utterance.rate = 1.08;
+  } else if (personaKey === "ultron") {
     utterance.pitch = 0.65;
     utterance.rate = 0.92;
   } else {
-    utterance.pitch = 1.0;
-    utterance.rate = 1.0;
+    utterance.pitch = 0.88;
+    utterance.rate = 1.05;
   }
 
   window.speechSynthesis.speak(utterance);
@@ -144,8 +182,8 @@ export async function speakMiniMaxVoice(
 
   if (!cleanText) return { success: false, source: "webspeech" };
 
-  const personaKey = config.persona || "argus";
-  const persona = PERSONA_SETTINGS[personaKey] || PERSONA_SETTINGS.argus;
+  const personaKey = config.persona || "imposing_queen";
+  const persona = PERSONA_SETTINGS[personaKey] || PERSONA_SETTINGS.imposing_queen;
 
   if (config.minimaxEnabled && config.apiKey) {
     try {
@@ -186,9 +224,17 @@ export async function speakMiniMaxVoice(
 
           const audio = new Audio(audioUrl);
           currentAudio = audio;
+          audio.onplay = () => {
+            if (typeof window !== "undefined") {
+              window.dispatchEvent(new CustomEvent("argus:speaking-started"));
+            }
+          };
           audio.onended = () => {
             URL.revokeObjectURL(audioUrl);
             currentAudio = null;
+            if (typeof window !== "undefined") {
+              window.dispatchEvent(new CustomEvent("argus:speaking-ended"));
+            }
           };
           await audio.play();
           return { success: true, source: "minimax" };

@@ -20,8 +20,9 @@ export interface ElevenLabsVoiceConfig {
   similarityBoost: number;
 }
 
-// ─── Default Voice Persona (George - British Mature Natural Baritone) ─────────
-export const DEFAULT_ELEVENLABS_VOICE_ID = "JBFqnCBsd6RMkjVDRZzb"; // George (British Natural Male)
+// ─── Default Voice Persona (Imposing Queen - Steely, Polished, Regal Female) ─────────
+export const DEFAULT_ELEVENLABS_VOICE_ID = "EXAVITQu4vr4xnSDxMaL"; // Sarah / Queen (Regal Polished Female)
+export const QUEEN_ELEVENLABS_VOICE_ID = "EXAVITQu4vr4xnSDxMaL";   // Imposing Queen
 export const ULTRON_ELEVENLABS_VOICE_ID = "IRHApOXLvnW57QJPQH2P";  // Adam (Dark, Resonant Titan)
 
 let currentAudio: HTMLAudioElement | null = null;
@@ -50,12 +51,12 @@ export function stopElevenLabsPlayback() {
 }
 
 /**
- * Tier 2: Free Unlimited British Neural TTS Fallback (Edge TTS Ryan / Thomas)
+ * Tier 2: Free Unlimited British Neural TTS Fallback (Edge TTS Amy / Emma - Female)
  */
 async function speakUnlimitedBritishNeural(text: string): Promise<void> {
   const clean = encodeURIComponent(text.slice(0, 500));
-  // High-fidelity public British Edge TTS streaming endpoint
-  const streamUrl = `https://api.streamelements.com/kappa/v2/speech?voice=Brian&text=${clean}`;
+  // High-fidelity public British Edge TTS female streaming endpoint
+  const streamUrl = `https://api.streamelements.com/kappa/v2/speech?voice=Amy&text=${clean}`;
 
   return new Promise((resolve) => {
     const audio = new Audio(streamUrl);
