@@ -162,11 +162,11 @@ impl VoiceOrchestrator {
     fn try_emergency_system_tts(&self, text: &str) -> bool {
         #[cfg(target_os = "linux")]
         {
-            // Try espeak-ng, then spd-say
-            if Command::new("espeak-ng").args(&[text]).status().map(|s| s.success()).unwrap_or(false) {
+            // Try espeak-ng with British English, then spd-say
+            if Command::new("espeak-ng").args(&["-v", "en-gb", text]).status().map(|s| s.success()).unwrap_or(false) {
                 return true;
             }
-            if Command::new("spd-say").args(&[text]).status().map(|s| s.success()).unwrap_or(false) {
+            if Command::new("spd-say").args(&["-t", "female2", "-r", "-5", text]).status().map(|s| s.success()).unwrap_or(false) {
                 return true;
             }
             true
@@ -174,6 +174,15 @@ impl VoiceOrchestrator {
 
         #[cfg(target_os = "macos")]
         {
+            // Use British natural baritone/queen persona voice (Daniel or Oliver)
+            let res = Command::new("say")
+                .args(&["-v", "Daniel", "-r", "175", text])
+                .status();
+            
+            if res.is_ok() {
+                return true;
+            }
+
             Command::new("say")
                 .args(&[text])
                 .status()
