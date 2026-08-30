@@ -105,41 +105,4 @@ impl SandboxSupervisor {
                         Ok(None) => {
                             if start.elapsed() >= timeout {
                                 let _ = process.kill();
-                                return ProcessExecutionResult {
-                                    success: false,
-                                    exit_code: 124,
-                                    stdout: String::new(),
-                                    stderr: format!("Process timed out after {}ms limit.", timeout_ms),
-                                    duration_ms: start.elapsed().as_millis() as u64,
-                                    timed_out: true,
-                                    sandbox_engine: engine,
-                                };
-                            }
-                            std::thread::sleep(poll_interval);
-                        }
-                        Err(e) => {
-                            return ProcessExecutionResult {
-                                success: false,
-                                exit_code: 1,
-                                stdout: String::new(),
-                                stderr: format!("Error monitoring process: {}", e),
-                                duration_ms: start.elapsed().as_millis() as u64,
-                                timed_out: false,
-                                sandbox_engine: engine,
-                            };
-                        }
-                    }
-                }
-            }
-            Err(e) => ProcessExecutionResult {
-                success: false,
-                exit_code: 1,
-                stdout: String::new(),
-                stderr: format!("Failed to spawn process: {}", e),
-                duration_ms: start.elapsed().as_millis() as u64,
-                timed_out: false,
-                sandbox_engine: engine,
-            },
-        }
-    }
-}
+                                return ProcessExecutionRes

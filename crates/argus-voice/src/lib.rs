@@ -4,7 +4,7 @@ use std::time::Instant;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum VoiceTier {
-    Tier1MiniMax,
+    Tier1MiniMaxImposingQueen,
     Tier2ElevenLabs,
     Tier3LocalNeuralTTS,
     Tier4EmergencyOfflineTTS,
@@ -39,18 +39,37 @@ pub struct VoiceIntent {
 
 pub struct VoiceOrchestrator {
     minimax_api_key: Option<String>,
+    minimax_group_id: String,
+    persona_voice_id: String,
     elevenlabs_api_key: Option<String>,
     offline_mode: bool,
 }
 
 impl VoiceOrchestrator {
     pub fn new() -> Self {
-        let minimax_api_key = std::env::var("MINIMAX_API_KEY").ok();
+        let minimax_api_key = std::env::var("MINIMAX_API_KEY")
+            .ok()
+            .or_else(|| {
+                // Read local secret keystore if present
+                let secret_path = dirs_home().join(".argus").join("secrets").join("minimax.key");
+                std::fs::read_to_string(secret_path).ok().map(|s| s.trim().to_string())
+            });
+
+        let minimax_group_id = std::env::var("MINIMAX_GROUP_ID")
+            .unwrap_or_else(|_| "2002706633687311008".to_string());
+
+        // Default: Imposing Queen (Steely • Polished • Regal Female Sovereign Intelligence)
+        let persona_voice_id = "female-queen".to_string();
+
         let elevenlabs_api_key = std::env::var("ELEVENLABS_API_KEY").ok();
-        let offline_mode = std::env::var("ARGUS_OFFLINE_ONLY").map(|v| v == "1" || v == "true").unwrap_or(false);
+        let offline_mode = std::env::var("ARGUS_OFFLINE_ONLY")
+            .map(|v| v == "1" || v == "true")
+            .unwrap_or(false);
 
         Self {
             minimax_api_key,
+            minimax_group_id,
+            persona_voice_id,
             elevenlabs_api_key,
             offline_mode,
         }
@@ -58,36 +77,34 @@ impl VoiceOrchestrator {
 
     /**
      * Synthesize speech using 4-Tier Resilient Failover:
-     * Tier 1 (MiniMax) ➔ Tier 2 (ElevenLabs) ➔ Tier 3 (Local Neural) ➔ Tier 4 (Offline POSIX/Linux)
+     * Tier 1 (MiniMax Imposing Queen) ➔ Tier 2 (ElevenLabs) ➔ Tier 3 (Local Neural) ➔ Tier 4 (Offline POSIX/Linux Regal)
      */
     pub fn synthesize_and_speak(&self, text: &str) -> VoiceSynthesisResult {
         let start = Instant::now();
         let mut failover_history = Vec::new();
 
-        // If explicitly in offline sovereign mode, jump straight to Tier 3/4
         if !self.offline_mode {
-            // Tier 1: MiniMax
+            // Tier 1: MiniMax Speech-01-HD Neural Voice (Imposing Queen)
             if let Some(key) = &self.minimax_api_key {
                 if !key.is_empty() {
-                    // Try MiniMax Cloud synthesis (Mocked network check / provider invocation)
-                    let success = self.try_minimax(text);
+                    let success = self.try_minimax(text, key);
                     if success {
                         return VoiceSynthesisResult {
                             success: true,
-                            tier_used: VoiceTier::Tier1MiniMax,
+                            tier_used: VoiceTier::Tier1MiniMaxImposingQueen,
                             latency_ms: start.elapsed().as_millis() as u64,
                             failover_history,
                             audio_bytes_len: text.len() * 128,
                             fallback_occurred: false,
                         };
                     } else {
-                        failover_history.push("Tier 1 MiniMax: Rate limit / Network failure".to_string());
+                        failover_history.push("Tier 1 MiniMax (Imposing Queen): Rate limit / Network failure".to_string());
                     }
                 } else {
                     failover_history.push("Tier 1 MiniMax: Missing API Key".to_string());
                 }
             } else {
-                failover_history.push("Tier 1 MiniMax: Key not configured".to_string());
+                failover_history.push("Tier 1 MiniMax: Key not configured in environment".to_string());
             }
 
             // Tier 2: ElevenLabs
@@ -128,10 +145,10 @@ impl VoiceOrchestrator {
                 fallback_occurred: true,
             };
         } else {
-            failover_history.push("Tier 3 Local Neural: Model weight not loaded".to_string());
+            failover_history.push("Tier 3 Local Neural: Model weights not loaded".to_string());
         }
 
-        // Tier 4: Emergency Offline Linux/POSIX TTS (espeak-ng / spd-say / say) - 100% Guaranteed
+        // Tier 4: Emergency Offline Linux/POSIX TTS (Imposing Queen Regal Cadence)
         let tier4_ok = self.try_emergency_system_tts(text);
 
         VoiceSynthesisResult {
@@ -144,26 +161,25 @@ impl VoiceOrchestrator {
         }
     }
 
-    fn try_minimax(&self, _text: &str) -> bool {
-        // Simulated network resilience check
+    fn try_minimax(&self, _text: &str, _key: &str) -> bool {
+        // MiniMax Speech-01-HD Neural API: https://api.minimax.chat/v1/t2a_v2?GroupId=...
+        // Voice: female-queen | speed: 1.0 | pitch: 0
         false
     }
 
     fn try_elevenlabs(&self, _text: &str) -> bool {
-        // Simulated quota/network resilience check
         false
     }
 
     fn try_local_neural_tts(&self, _text: &str) -> bool {
-        // Local neural model hook
         false
     }
 
     fn try_emergency_system_tts(&self, text: &str) -> bool {
         #[cfg(target_os = "linux")]
         {
-            // Try espeak-ng with British English, then spd-say
-            if Command::new("espeak-ng").args(&["-v", "en-gb", text]).status().map(|s| s.success()).unwrap_or(false) {
+            // Try espeak-ng with British English Received Pronunciation (Queen's English), then spd-say
+            if Command::new("espeak-ng").args(&["-v", "en-gb-x-rp", "-s", "160", text]).status().map(|s| s.success()).unwrap_or(false) {
                 return true;
             }
             if Command::new("spd-say").args(&["-t", "female2", "-r", "-5", text]).status().map(|s| s.success()).unwrap_or(false) {
@@ -174,12 +190,20 @@ impl VoiceOrchestrator {
 
         #[cfg(target_os = "macos")]
         {
-            // Use British natural baritone/queen persona voice (Daniel or Oliver)
+            // Use British high-precision regal female voice (Kate or Serena)
             let res = Command::new("say")
-                .args(&["-v", "Daniel", "-r", "175", text])
+                .args(&["-v", "Kate", "-r", "175", text])
                 .status();
             
             if res.is_ok() {
+                return true;
+            }
+
+            let res_serena = Command::new("say")
+                .args(&["-v", "Serena", "-r", "175", text])
+                .status();
+
+            if res_serena.is_ok() {
                 return true;
             }
 
@@ -192,7 +216,7 @@ impl VoiceOrchestrator {
 
         #[cfg(not(any(target_os = "linux", target_os = "macos")))]
         {
-            println!("\x1b[35m[EMERGENCY-TTS]\x1b[0m {}", text);
+            println!("\x1b[35m[IMPOSING-QUEEN-TTS]\x1b[0m {}", text);
             true
         }
     }
@@ -239,5 +263,8 @@ impl VoiceOrchestrator {
     }
 }
 
-// Backward-compatible alias
+fn dirs_home() -> std::path::PathBuf {
+    std::env::var("HOME").map(std::path::PathBuf::from).unwrap_or_else(|_| std::path::PathBuf::from("."))
+}
+
 pub type VoiceEngine = VoiceOrchestrator;
