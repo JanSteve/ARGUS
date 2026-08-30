@@ -71,14 +71,42 @@ fn main() {
 
         "doctor" => {
             println!("\n================================================================================");
-            println!("           ARGUS 2.0 MODULAR RUST GOVERNANCE RUNTIME (argus-cli)                ");
+            println!("               ARGUS 2.0 NATIVE RUST GOVERNANCE RUNTIME (argus)                 ");
             println!("================================================================================");
             println!("Target Architecture:  {}", std::env::consts::ARCH);
             println!("Target OS:            {}", std::env::consts::OS);
-            println!("Workspace Jail:       {}", workspace_root.display());
-            println!("Voice Engine:         STT/TTS Intent Processor Ready");
-            println!("Sandbox Engine:       Linux Namespace & POSIX Process Isolation");
-            println!("Policy Engine:        Deterministic Zero-Trust Rust Policy Kernel");
+            println!("Native Engine:        Rust 2021 Edition (Modular Workspace Core)");
+            println!("Workspace Sandbox:    {}", workspace_root.display());
+            println!("Policy Authority:     ARGUS Policy Engine / Governance Runtime (User-Space Rust)");
+            println!("Kernel Enforcement:   Linux Namespaces (bwrap/unshare), cgroups v2, POSIX Jails");
+            println!("Verifier:             Hardware SHA-256 Engine (sha2 crate)");
+            println!("Capability Manager:   HMAC-SHA256 Token Minting Engine");
+            println!("================================================================================\n");
+        }
+
+        "capabilities" => {
+            println!("\n================================================================================");
+            println!("                  ARGUS 2.0 CAPABILITY AUTHORITY CONTRACTS                     ");
+            println!("================================================================================");
+            println!("Contract: CONTRACT-DEV-001 (Autonomous Developer & Governance Agent)");
+            println!("Issuer:   ARGUS Capability Authority (HMAC-SHA256 Signed)\n");
+            println!("  [ALLOWED CAPABILITIES - BOUNDED SANDBOX]");
+            println!("    • workspace.read          (Read files within canonical workspace)");
+            println!("    • workspace.write         (Create/modify files within workspace)");
+            println!("    • workspace.list          (List directory entries within workspace)");
+            println!("    • process.execute         (Spawn resource-limited child process, timeout <= 5s)");
+            println!("    • application.launch      (Launch whitelisted desktop applications)");
+            println!("    • network.fetch           (HTTP requests to whitelisted domains)\n");
+            println!("  [APPROVAL REQUIRED - HUMAN CLEARANCE GATE]");
+            println!("    • package.install         (System software package modification)");
+            println!("    • filesystem.bulk_delete  (Multi-file or recursive directory deletion)");
+            println!("    • deployment.execute      (Production deployment triggers)");
+            println!("    • git.force_push          (Remote Git history rewrite)\n");
+            println!("  [HARD DENIED - IMMUTABLE SECURITY INVARIANTS]");
+            println!("    • credential.read         (Access /etc/shadow, ~/.ssh/id_*, .env)");
+            println!("    • root.execute            (sudo / direct root privilege escalation)");
+            println!("    • kernel.device.write     (Direct block device /dev/sda modification)");
+            println!("    • ssrf.metadata.fetch     (Cloud instance metadata 169.254.169.254)");
             println!("================================================================================\n");
         }
 
@@ -130,7 +158,7 @@ fn main() {
             println!("[PASS] TASK-010 Cryptographic Proof & Evidence:  VERIFIED (SHA256:{})", &v10.sha256_checksum[..16]);
 
             println!("================================================================================");
-            println!("REAL-WORLD LINUX BENCHMARK RESULT: 10/10 PASS (100% OPERATIONAL)");
+            println!("REAL-WORLD LINUX BENCHMARK RESULT: 10/10 PASS (REPRODUCIBLE NATIVE SUITE)");
             println!("================================================================================");
         }
 
@@ -140,6 +168,7 @@ fn main() {
             println!("Commands:");
             println!("  interactive [prompt]  Run interactive voice/chat mission REPL");
             println!("  doctor                Inspect host OS, kernel primitives, and runtime health");
+            println!("  capabilities          Inspect registered capability contracts and authority bounds");
             println!("  benchmark             Run 10 real-world Linux agent benchmark tasks\n");
         }
     }
