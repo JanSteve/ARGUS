@@ -1,18 +1,12 @@
 [package]
-name = "argusd"
+name = "argus-linux"
 version = "0.1.0"
 edition = "2021"
 authors = ["R Jan Steve Daniel"]
-description = "ARGUS 2.0 Native Linux Agent Governance Daemon"
+description = "ARGUS 2.0 Linux Desktop & System Integration Layer"
 
 [dependencies]
 argus-core = { path = "../argus-core" }
 argus-sandbox = { path = "../argus-sandbox" }
-argus-linux = { path = "../argus-linux" }
-argus-agent = { path = "../argus-agent" }
-argus-voice = { path = "../argus-voice" }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-sha2 = "0.10"
-hmac = "0.12"
-hex = "0.4"

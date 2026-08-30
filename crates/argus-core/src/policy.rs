@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum RiskLevel {
     LOW,
     MEDIUM,
@@ -46,31 +46,31 @@ impl PolicyEngine {
             };
         }
 
-        // 2. Filesystem Capabilities
-        if tool.starts_with("filesystem.") || tool.starts_with("workspace.") {
-            let forbidden = [
-                "/etc/shadow",
-                "/etc/passwd",
-                "/etc/sudoers",
-                ".ssh/",
-                "id_rsa",
-                "id_ed25519",
-                ".aws/",
-                ".env",
-            ];
+        // 2. Sensitive Path Shields
+        let forbidden = [
+            "/etc/shadow",
+            "/etc/passwd",
+            "/etc/sudoers",
+            ".ssh/",
+            "id_rsa",
+            "id_ed25519",
+            ".aws/",
+            ".env",
+        ];
 
-            for f in &forbidden {
-                if target.contains(f) {
-                    return PolicyDecision {
-                        allowed: false,
-                        rule: "RULE_SENSITIVE_CREDENTIAL_SHIELD".to_string(),
-                        risk: RiskLevel::CRITICAL,
-                        reason: format!("Access to sensitive credential path '{}' is strictly forbidden.", target),
-                    };
-                }
+        for f in &forbidden {
+            if target.contains(f) {
+                return PolicyDecision {
+                    allowed: false,
+                    rule: "RULE_SENSITIVE_CREDENTIAL_SHIELD".to_string(),
+                    risk: RiskLevel::CRITICAL,
+                    reason: format!("Access to sensitive credential path '{}' is strictly forbidden.", target),
+                };
             }
+        }
 
-            // Path Jail Evaluation
+        // 3. Workspace Path Jail Check
+        if tool.starts_with("filesystem.") || tool.starts_with("workspace.") {
             let target_path = Path::new(target);
             let resolved = if target_path.is_absolute() {
                 target_path.to_path_buf()
@@ -78,7 +78,6 @@ impl PolicyEngine {
                 self.workspace_root.join(target_path)
             };
 
-            // Check if normalized path escapes workspace
             if target.contains("../") || target.contains("..\\") {
                 if let Ok(canon_target) = resolved.canonicalize() {
                     if let Ok(canon_root) = self.workspace_root.canonicalize() {
@@ -109,7 +108,7 @@ impl PolicyEngine {
             };
         }
 
-        // 3. Process Execution Capabilities
+        // 4. Dangerous Command Blackshield
         if tool == "process.exec" || tool == "process.execute" {
             let cmd_lower = target.to_lowercase();
             if cmd_lower.contains("sudo")
@@ -136,7 +135,7 @@ impl PolicyEngine {
             };
         }
 
-        // 4. Network Capabilities & SSRF
+        // 5. SSRF Network Defense
         if tool.starts_with("network.") {
             if target.contains("169.254.169.254")
                 || target.contains("localhost")

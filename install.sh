@@ -45,24 +45,26 @@ echo -e "${GREEN}[✓] Rust toolchain verified: $(rustc --version)${NC}"
 echo -e "${GREEN}[✓] Node.js runtime verified: $(node --version)${NC}"
 
 # Build Native Core
-echo -e "\n[*] Compiling ARGUS Native Core (crates/argusd)..."
-cargo build --release --manifest-path crates/argusd/Cargo.toml
-
-TARGET_BIN="crates/argusd/target/release/argusd"
-if [ ! -f "$TARGET_BIN" ]; then
-    TARGET_BIN="crates/argusd/target/debug/argusd"
-fi
+echo -e "\n[*] Compiling ARGUS Native Workspace Core (crates/argusd & crates/argus-cli)..."
+cargo build --release --workspace
 
 INSTALL_DIR="${HOME}/.local/bin"
 mkdir -p "${INSTALL_DIR}"
 mkdir -p "${HOME}/.argus/workspace"
 mkdir -p "${HOME}/.argus/flight_recorder"
 
-cp "$TARGET_BIN" "${INSTALL_DIR}/argusd"
+if [ -f "target/release/argusd" ]; then
+    cp target/release/argusd "${INSTALL_DIR}/argusd"
+elif [ -f "crates/argusd/target/release/argusd" ]; then
+    cp crates/argusd/target/release/argusd "${INSTALL_DIR}/argusd"
+fi
 chmod +x "${INSTALL_DIR}/argusd"
 
-# Install CLI wrapper
-cp bin/argus.mjs "${INSTALL_DIR}/argus"
+if [ -f "target/release/argus-cli" ]; then
+    cp target/release/argus-cli "${INSTALL_DIR}/argus"
+elif [ -f "crates/argus-cli/target/release/argus-cli" ]; then
+    cp crates/argus-cli/target/release/argus-cli "${INSTALL_DIR}/argus"
+fi
 chmod +x "${INSTALL_DIR}/argus"
 
 echo -e "\n${GREEN}${BOLD}================================================================================${NC}"

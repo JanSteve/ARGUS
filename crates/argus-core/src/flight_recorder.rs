@@ -2,7 +2,6 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
 
-#[allow(dead_code)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FlightEvent {
     pub timestamp: String,
@@ -13,7 +12,6 @@ pub struct FlightEvent {
     pub duration_ms: u64,
 }
 
-#[allow(dead_code)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FlightSession {
     pub session_id: String,
@@ -23,7 +21,6 @@ pub struct FlightSession {
     pub events: Vec<FlightEvent>,
 }
 
-#[allow(dead_code)]
 pub struct FlightRecorder {
     storage_dir: PathBuf,
 }
@@ -35,7 +32,6 @@ impl FlightRecorder {
         Self { storage_dir }
     }
 
-    #[allow(dead_code)]
     pub fn save_session(&self, session: &FlightSession) -> std::io::Result<PathBuf> {
         let file_path = self.storage_dir.join(format!("{}.json", session.session_id));
         let json = serde_json::to_string_pretty(session)?;

@@ -1,0 +1,11 @@
+[workspace]
+members = [
+    "crates/argusd",
+    "crates/argus-cli",
+    "crates/argus-core",
+    "crates/argus-sandbox",
+    "crates/argus-linux",
+    "crates/argus-agent",
+    "crates/argus-voice",
+]
+resolver = "2"
