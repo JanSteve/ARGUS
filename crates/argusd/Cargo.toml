@@ -8,11 +8,4 @@ description = "ARGUS 2.0 Native Linux Agent Governance Daemon"
 [dependencies]
 argus-core = { path = "../argus-core" }
 argus-sandbox = { path = "../argus-sandbox" }
-argus-linux = { path = "../argus-linux" }
-argus-agent = { path = "../argus-agent" }
-argus-voice = { path = "../argus-voice" }
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
-sha2 = "0.10"
-hmac = "0.12"
-hex = "0.4"
+argus-linux = { path = "

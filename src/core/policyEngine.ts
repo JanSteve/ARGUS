@@ -220,4 +220,8 @@ export class PolicyEngine {
       reason: `Outbound network access authorized: ${url}`,
       riskLevel: "LOW",
       matchedRule: "RULE_PUBLIC_NETWORK_ALLOW",
-      requires
+      requiresHumanApproval: false,
+      evaluatedAt,
+    };
+  }
+}
