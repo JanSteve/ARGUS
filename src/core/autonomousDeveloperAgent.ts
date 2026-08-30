@@ -315,12 +315,4 @@ ${finalTestOutput.trim()}
       planId: plan.planId,
       objective,
       success: allSuccessful,
-      tasksCompleted: plan.tasks.filter((t) => t.status === "COMPLETED" || t.status === "VERIFIED").length,
-      totalTasks: plan.tasks.length,
-      durationMs,
-      evidenceReportPath: path.join(this.workspaceDir, "EVIDENCE_REPORT.md"),
-      flightRecordPath,
-      sha256Proof: patchHash,
-    };
-  }
-}
+      tasksCompleted: plan.tasks.filter((t

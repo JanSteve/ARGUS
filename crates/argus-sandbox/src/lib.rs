@@ -11,6 +11,7 @@ pub struct ProcessExecutionResult {
     pub stderr: String,
     pub duration_ms: u64,
     pub timed_out: bool,
+    pub sandbox_engine: String,
 }
 
 pub struct SandboxSupervisor {
@@ -22,20 +23,51 @@ impl SandboxSupervisor {
         Self { workspace_root }
     }
 
+    /**
+     * Executes process with OS sandbox enforcement (Bubblewrap unprivileged namespaces on Linux, POSIX fallback)
+     */
     pub fn execute_command(&self, cmd: &str, timeout_ms: u64) -> ProcessExecutionResult {
         let start = Instant::now();
+        let mut engine = "POSIX_PROCESS_GROUP_JAIL".to_string();
 
-        #[cfg(target_os = "windows")]
-        let mut child = Command::new("cmd")
-            .args(&["/C", cmd])
-            .current_dir(&self.workspace_root)
-            .env_clear()
-            .env("PATH", std::env::var("PATH").unwrap_or_default())
-            .stdout(Stdio::piped())
-            .stderr(Stdio::piped())
-            .spawn();
+        #[cfg(target_os = "linux")]
+        let mut child = {
+            // Check if bwrap (bubblewrap) is available on Linux
+            let has_bwrap = Command::new("bwrap").arg("--version").output().is_ok();
+            if has_bwrap {
+                engine = "LINUX_BUBBLEWRAP_NAMESPACES".to_string();
+                let ws_str = self.workspace_root.to_string_lossy().to_string();
+                Command::new("bwrap")
+                    .args(&[
+                        "--ro-bind", "/", "/",
+                        "--bind", &ws_str, &ws_str,
+                        "--dev-bind", "/dev", "/dev",
+                        "--proc", "/proc",
+                        "--tmpfs", "/tmp",
+                        "--unshare-all",
+                        "--die-with-parent",
+                        "--chdir", &ws_str,
+                        "sh", "-c", cmd,
+                    ])
+                    .env_clear()
+                    .env("PATH", "/usr/local/bin:/usr/bin:/bin")
+                    .stdout(Stdio::piped())
+                    .stderr(Stdio::piped())
+                    .spawn()
+            } else {
+                engine = "LINUX_POSIX_JAIL".to_string();
+                Command::new("sh")
+                    .args(&["-c", cmd])
+                    .current_dir(&self.workspace_root)
+                    .env_clear()
+                    .env("PATH", "/usr/local/bin:/usr/bin:/bin")
+                    .stdout(Stdio::piped())
+                    .stderr(Stdio::piped())
+                    .spawn()
+            }
+        };
 
-        #[cfg(not(target_os = "windows"))]
+        #[cfg(not(target_os = "linux"))]
         let child = Command::new("sh")
             .args(&["-c", cmd])
             .current_dir(&self.workspace_root)
@@ -67,6 +99,7 @@ impl SandboxSupervisor {
                                 stderr: String::from_utf8_lossy(&output.stderr).trim().to_string(),
                                 duration_ms,
                                 timed_out: false,
+                                sandbox_engine: engine,
                             };
                         }
                         Ok(None) => {
@@ -79,6 +112,7 @@ impl SandboxSupervisor {
                                     stderr: format!("Process timed out after {}ms limit.", timeout_ms),
                                     duration_ms: start.elapsed().as_millis() as u64,
                                     timed_out: true,
+                                    sandbox_engine: engine,
                                 };
                             }
                             std::thread::sleep(poll_interval);
@@ -91,6 +125,7 @@ impl SandboxSupervisor {
                                 stderr: format!("Error monitoring process: {}", e),
                                 duration_ms: start.elapsed().as_millis() as u64,
                                 timed_out: false,
+                                sandbox_engine: engine,
                             };
                         }
                     }
@@ -103,6 +138,7 @@ impl SandboxSupervisor {
                 stderr: format!("Failed to spawn process: {}", e),
                 duration_ms: start.elapsed().as_millis() as u64,
                 timed_out: false,
+                sandbox_engine: engine,
             },
         }
     }

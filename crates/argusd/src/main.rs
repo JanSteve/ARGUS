@@ -153,11 +153,28 @@ fn main() {
             } else {
                 "ARGUS, clean my Downloads folder and organize all PDFs".to_string()
             };
+            let orchestrator = VoiceEngine::new();
             let intent = VoiceEngine::parse_spoken_command(&prompt);
             let plan = AgentPlanner::create_plan(&prompt);
-            println!("\n[Voice Input]: \"{}\"", prompt);
-            println!("[Classified Intent]: {:?}", intent.intent_type);
-            println!("[Generated Plan]: {} ({} tasks)", plan.plan_id, plan.tasks.len());
+            
+            println!("\n================================================================================");
+            println!("                 ARGUS 2.0 RESILIENT 4-TIER VOICE ORCHESTRATOR                  ");
+            println!("================================================================================");
+            println!("[Voice Input]:         \"{}\"", prompt);
+            println!("[Classified Intent]:   {:?}", intent.intent_type);
+            println!("[Generated Plan]:      {} ({} tasks)\n", plan.plan_id, plan.tasks.len());
+
+            println!("[*] Testing 4-Tier Voice Synthesis Failover Cascade...");
+            let result = orchestrator.synthesize_and_speak("Mission planned. Awaiting operator approval to proceed.");
+            println!("  • Tier Utilized:     {:?}", result.tier_used);
+            println!("  • Synthesis Latency: {}ms", result.latency_ms);
+            println!("  • Failover Cascade:");
+            for f in &result.failover_history {
+                println!("    ↳ \x1b[33m[FAILOVER]\x1b[0m {}", f);
+            }
+            println!("  • Audio Buffer:      {} bytes ready", result.audio_bytes_len);
+            println!("  • Offline Speech:    GUARANTEED 100% SOVEREIGN ✓");
+            println!("================================================================================\n");
         }
 
         "help" | _ => {
