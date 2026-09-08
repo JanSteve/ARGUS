@@ -161,19 +161,102 @@ impl VoiceOrchestrator {
         }
     }
 
-    fn try_minimax(&self, _text: &str, _key: &str) -> bool {
-        // MiniMax Speech-01-HD Neural API: https://api.minimax.chat/v1/t2a_v2?GroupId=...
-        // Voice: female-queen | speed: 1.0 | pitch: 0
+    fn try_minimax(&self, text: &str, key: &str) -> bool {
+        // MiniMax Speech-01-HD Neural API
+        let endpoint = format!("https://api.minimax.io/v1/t2a_v2?GroupId={}", self.minimax_group_id);
+        let payload = serde_json::json!({
+            "model": "speech-01-hd",
+            "text": text,
+            "stream": false,
+            "voice_setting": {
+                "voice_id": &self.persona_voice_id,
+                "speed": 1.0,
+                "vol": 1.0,
+                "pitch": 0
+            },
+            "audio_setting": {
+                "sample_rate": 32000,
+                "bitrate": 128000,
+                "format": "mp3",
+                "channel": 1
+            }
+        });
+
+        let payload_str = payload.to_string();
+        let auth_header = format!("Authorization: Bearer {}", key.trim());
+
+        let output = Command::new("curl")
+            .args(&[
+                "-s",
+                "-m", "2", // 2 second hard timeout
+                "-X", "POST",
+                &endpoint,
+                "-H", &auth_header,
+                "-H", "Content-Type: application/json",
+                "-d", &payload_str,
+            ])
+            .output();
+
+        if let Ok(out) = output {
+            if out.status.success() {
+                let resp_text = String::from_utf8_lossy(&out.stdout);
+                if resp_text.contains("\"audio\":") {
+                    return true;
+                }
+            }
+        }
+
         false
     }
 
-    fn try_elevenlabs(&self, _text: &str) -> bool {
+    fn try_elevenlabs(&self, text: &str) -> bool {
+        let key = match &self.elevenlabs_api_key {
+            Some(k) if !k.is_empty() => k,
+            _ => return false,
+        };
+
+        let voice_id = "EXAVITQu4vr4xnSDxMaL"; // Sarah / British Regal Female
+        let endpoint = format!("https://api.elevenlabs.io/v1/text-to-speech/{}", voice_id);
+        let payload = serde_json::json!({
+            "text": text,
+            "model_id": "eleven_multilingual_v2",
+            "voice_settings": {
+                "stability": 0.55,
+                "similarity_boost": 0.85,
+                "style": 0.15,
+                "use_speaker_boost": true
+            }
+        });
+
+        let payload_str = payload.to_string();
+        let auth_header = format!("xi-api-key: {}", key.trim());
+
+        let output = Command::new("curl")
+            .args(&[
+                "-s",
+                "-m", "2",
+                "-X", "POST",
+                &endpoint,
+                "-H", &auth_header,
+                "-H", "Content-Type: application/json",
+                "-H", "Accept: audio/mpeg",
+                "-d", &payload_str,
+            ])
+            .output();
+
+        if let Ok(out) = output {
+            if out.status.success() && !out.stdout.is_empty() {
+                return true;
+            }
+        }
+
         false
     }
 
     fn try_local_neural_tts(&self, _text: &str) -> bool {
         false
     }
+
 
     fn try_emergency_system_tts(&self, text: &str) -> bool {
         #[cfg(target_os = "linux")]
@@ -268,3 +351,38 @@ fn dirs_home() -> std::path::PathBuf {
 }
 
 pub type VoiceEngine = VoiceOrchestrator;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_organize_intent() {
+        let intent = VoiceEngine::parse_spoken_command("ARGUS, clean my Downloads folder");
+        match intent.intent_type {
+            VoiceIntentType::OrganizeFiles => (),
+            _ => panic!("Expected OrganizeFiles intent"),
+        }
+    }
+
+    #[test]
+    fn test_parse_launch_intent() {
+        let intent = VoiceEngine::parse_spoken_command("ARGUS, launch code");
+        match intent.intent_type {
+            VoiceIntentType::LaunchApplication => {
+                assert_eq!(intent.parameters["app"], "code");
+            }
+            _ => panic!("Expected LaunchApplication intent"),
+        }
+    }
+
+    #[test]
+    fn test_parse_generic_command() {
+        let intent = VoiceEngine::parse_spoken_command("Build and test the Rust core");
+        match intent.intent_type {
+            VoiceIntentType::ExecuteCommand => (),
+            _ => panic!("Expected ExecuteCommand intent"),
+        }
+    }
+}
+

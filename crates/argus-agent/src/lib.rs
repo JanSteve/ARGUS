@@ -73,3 +73,19 @@ impl AgentPlanner {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_create_plan_dag() {
+        let plan = AgentPlanner::create_plan("Organize Downloads");
+        assert_eq!(plan.objective, "Organize Downloads");
+        assert_eq!(plan.tasks.len(), 5);
+        assert_eq!(plan.tasks[0].capability, "workspace.list");
+        assert_eq!(plan.tasks[4].capability, "evidence.write");
+        assert!(plan.plan_id.starts_with("PLAN-"));
+    }
+}
+

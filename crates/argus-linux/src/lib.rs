@@ -300,3 +300,53 @@ impl LinuxFileOrchestrator {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::fs;
+
+    #[test]
+    fn test_list_applications_not_empty() {
+        let apps = LinuxDesktopManager::list_applications();
+        assert!(!apps.is_empty());
+    }
+
+    #[test]
+    fn test_organize_directory() {
+        let temp_dir = std::env::temp_dir().join("argus_test_organize");
+        let _ = fs::create_dir_all(&temp_dir);
+        let dl_dir = temp_dir.join("Downloads");
+        let _ = fs::create_dir_all(&dl_dir);
+
+        let _ = fs::write(dl_dir.join("invoice.pdf"), "DUMMY_PDF_DATA");
+        let _ = fs::write(dl_dir.join("photo.png"), "DUMMY_PNG_DATA");
+
+        let orchestrator = LinuxFileOrchestrator::new(temp_dir.clone());
+        let summary = orchestrator.organize_directory("Downloads");
+
+        assert_eq!(summary.total_processed, 2);
+        assert_eq!(summary.files_moved, 2);
+        assert!(temp_dir.join("Documents").join("PDFs").join("invoice.pdf").exists());
+        assert!(temp_dir.join("Pictures").join("photo.png").exists());
+
+        let _ = fs::remove_dir_all(&temp_dir);
+    }
+
+    #[test]
+    fn test_government_doc_processor() {
+        let temp_dir = std::env::temp_dir().join("argus_test_gov_doc");
+        let _ = fs::create_dir_all(&temp_dir);
+
+        let processor = GovernmentDocProcessor::new(temp_dir.clone());
+        let summary = processor.process_welfare_applications();
+
+        assert_eq!(summary.total_scanned, 5);
+        assert_eq!(summary.documents_classified, 5);
+        assert_eq!(summary.high_priority_count, 4);
+        assert!(temp_dir.join("GOVERNMENT_AUDIT_REPORT.md").exists());
+
+        let _ = fs::remove_dir_all(&temp_dir);
+    }
+}
+
