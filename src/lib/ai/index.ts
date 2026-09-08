@@ -23,12 +23,13 @@ export { ollamaProvider } from "./ollamaProvider";
 export { openrouterProvider } from "./openrouterProvider";
 export { duckchatProvider } from "./duckchatProvider";
 export { pollinationsProvider } from "./pollinationsProvider";
-export { geminiProvider } from "./geminiProvider";
 export * from "./minimaxVoice";
-export * from "./elevenlabsVoice";
+export * from "./elevenLabsVoice";
+export * from "./unifiedVoiceOrchestrator";
 export * from "./knowledgeEngine";
 export * from "./scaleLoadBalancer";
-export { speakElevenLabsVoice as speakVoice, stopElevenLabsPlayback as stopSpeaking } from "./elevenlabsVoice";
+export { speakArgusVoice as speakVoice, stopAllSpeech as stopSpeaking } from "./unifiedVoiceOrchestrator";
+
 
 export function loadAIConfig(): AIConfig {
   if (typeof window === "undefined") return { ...DEFAULT_AI_CONFIG };
