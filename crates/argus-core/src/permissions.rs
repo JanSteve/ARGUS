@@ -58,4 +58,7 @@ impl PermissionEngine {
             decision: AuthorityDecision::ALLOWED,
             capability: capability.to_string(),
             target: target.to_string(),
-            reason: "Standard bounded capability authorized.".
+            reason: "Standard bounded capability authorized.".to_string(),
+        }
+    }
+}

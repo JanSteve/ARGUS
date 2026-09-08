@@ -55,3 +55,24 @@ impl CapabilityManager {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_mint_and_verify_token() {
+        let token = CapabilityManager::mint_token("developer-agent", "workspace.read", "src/main.rs", 3600);
+        assert_eq!(token.agent_id, "developer-agent");
+        assert_eq!(token.capability, "workspace.read");
+        assert!(CapabilityManager::verify_token(&token));
+    }
+
+    #[test]
+    fn test_tampered_token_rejected() {
+        let mut token = CapabilityManager::mint_token("developer-agent", "workspace.read", "src/main.rs", 3600);
+        token.target = "/etc/shadow".to_string(); // Tamper target
+        assert!(!CapabilityManager::verify_token(&token));
+    }
+}
+

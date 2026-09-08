@@ -63,3 +63,40 @@ impl Verifier {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::fs;
+
+    #[test]
+    fn test_verifier_existing_file() {
+        let temp_dir = std::env::temp_dir().join("argus_test_verifier");
+        let _ = fs::create_dir_all(&temp_dir);
+        let test_file = "payload.txt";
+        let _ = fs::write(temp_dir.join(test_file), "ARGUS_TEST_VERIFIER_DATA");
+
+        let verifier = Verifier::new(temp_dir.clone());
+        let res = verifier.verify_file(test_file);
+        assert!(res.verified);
+        assert!(res.exists_on_disk);
+        assert_eq!(res.size_bytes, 24);
+        assert!(!res.sha256_checksum.is_empty());
+
+        let _ = fs::remove_dir_all(&temp_dir);
+    }
+
+    #[test]
+    fn test_verifier_nonexistent_file() {
+        let temp_dir = std::env::temp_dir().join("argus_test_verifier_missing");
+        let _ = fs::create_dir_all(&temp_dir);
+
+        let verifier = Verifier::new(temp_dir.clone());
+        let res = verifier.verify_file("does_not_exist.txt");
+        assert!(!res.verified);
+        assert!(!res.exists_on_disk);
+
+        let _ = fs::remove_dir_all(&temp_dir);
+    }
+}
+
