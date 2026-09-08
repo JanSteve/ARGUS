@@ -2,7 +2,7 @@ use argus_core::{
     get_argus_workspace, get_socket_path, CapabilityManager, IpcClient, IpcRequest, IpcResponse,
     IpcServer, PolicyEngine, Verifier,
 };
-use argus_sandbox::SandboxSupervisor;
+use argus_sandbox::{CgroupLimits, SandboxSupervisor};
 use argus_linux::LinuxFileOrchestrator;
 use argus_agent::AgentPlanner;
 use argus_voice::VoiceEngine;
@@ -110,7 +110,7 @@ fn main() {
             println!("Native Engine:        Rust 2021 Edition (Modular Workspace Core)");
             println!("Workspace Sandbox:    {}", workspace_root.display());
             println!("Policy Authority:     ARGUS Policy Engine / Governance Runtime (User-Space Rust)");
-            println!("Kernel Enforcement:   Linux Namespaces (bwrap/unshare), cgroups v2, POSIX Jails");
+            println!("Kernel Enforcement:   Landlock LSM, Seccomp-BPF Filters, Cgroups v2, Linux Namespaces");
             println!("Verifier:             Hardware SHA-256 Engine (sha2 crate)");
             println!("Capability Manager:   HMAC-SHA256 Token Minting Engine");
             println!("Daemon Service:       {}", daemon_status);
@@ -303,12 +303,59 @@ fn main() {
             println!("================================================================================\n");
         }
 
+        "sandbox" => {
+            let cmd_str = if args.len() > 2 {
+                args[2..].join(" ")
+            } else {
+                "echo 'ARGUS Sovereign Sandbox Active'".to_string()
+            };
+
+            let limits = CgroupLimits::default();
+            let supervisor = SandboxSupervisor::new(workspace_root.clone())
+                .with_cgroups("argusd_cli", limits);
+
+            println!("\n================================================================================");
+            println!("            ARGUS 2.0 SOVEREIGN KERNEL SANDBOX EXECUTION (argusd)               ");
+            println!("================================================================================");
+            println!("Target Command:     \"{}\"", cmd_str);
+            println!("Workspace Root:     {}", workspace_root.display());
+            println!("Memory Limit:       512 MiB");
+            println!("CPU Quota:          50% (50ms/100ms)");
+            println!("Fork-Bomb Cap:      64 max PIDs");
+            println!("Landlock LSM:       Read-only system directories, read-write workspace only");
+            println!("Seccomp BPF:        Hard-blocked kernel injection, reboot, mount, ptrace");
+            println!("--------------------------------------------------------------------------------");
+
+            let res = supervisor.execute_command(&cmd_str, 5000);
+
+            println!("Sandbox Engine:     {}", res.sandbox_engine);
+            println!("Execution Success:  {}", res.success);
+            println!("Exit Code:          {}", res.exit_code);
+            println!("Duration:           {} ms", res.duration_ms);
+            println!("Timed Out:          {}", res.timed_out);
+            if let Some(ref ll) = res.landlock_status {
+                println!("Landlock Status:    {:?}", ll);
+            }
+            if let Some(ref cg) = res.cgroup_telemetry {
+                println!("Cgroup Telemetry:   RAM: {} bytes | CPU: {} µs | PIDs: {}", 
+                    cg.memory_current_bytes, cg.cpu_usage_usec, cg.pids_current);
+            }
+            if !res.stdout.is_empty() {
+                println!("\n[STDOUT]:\n{}", res.stdout);
+            }
+            if !res.stderr.is_empty() {
+                println!("\n[STDERR]:\n{}", res.stderr);
+            }
+            println!("================================================================================\n");
+        }
+
         "help" | _ => {
             println!("\nARGUS {} Native Linux Governance Daemon (argusd)", VERSION);
             println!("Usage: argusd <command>\n");
             println!("Commands:");
             println!("  start          Start background Unix Domain Socket IPC governance service");
             println!("  status         Check status of running argusd daemon service");
+            println!("  sandbox [cmd]  Execute command with Landlock LSM, Seccomp-BPF, and Cgroups v2 quotas");
             println!("  doctor         Inspect native runtime architecture and security primitives");
             println!("  capabilities   Inspect registered capability contracts and authority bounds");
             println!("  security-test  Execute native Rust 20-point adversarial security suite");
