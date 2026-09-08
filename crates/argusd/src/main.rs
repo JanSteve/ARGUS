@@ -1,5 +1,5 @@
 use argus_core::{
-    get_argus_workspace, get_socket_path, CapabilityManager, IpcClient, IpcRequest, IpcResponse,
+    get_argus_workspace, get_socket_path, CapabilityManager, FlightRecorder, IpcClient, IpcRequest, IpcResponse,
     IpcServer, PolicyEngine, Verifier,
 };
 use argus_sandbox::{CgroupLimits, SandboxSupervisor};
@@ -349,6 +349,79 @@ fn main() {
             println!("================================================================================\n");
         }
 
+        "audit" => {
+            let recorder = FlightRecorder::new(workspace_root.clone());
+            let sub_arg = args.get(2).map(|s| s.as_str()).unwrap_or("list");
+
+            println!("\n================================================================================");
+            println!("           ARGUS 2.0 CRYPTOGRAPHIC FLIGHT RECORDER & AUDITOR (argusd)           ");
+            println!("================================================================================");
+
+            match sub_arg {
+                "verify" => {
+                    if let Some(sess_id) = args.get(3) {
+                        match recorder.load_session(sess_id) {
+                            Ok(sess) => {
+                                println!("Auditing Session:      {}", sess.session_id);
+                                println!("Objective:             \"{}\"", sess.objective);
+                                println!("Events Recorded:       {}", sess.events.len());
+                                println!("Final Status:          {}", sess.status);
+
+                                match FlightRecorder::verify_session_integrity(&sess) {
+                                    Ok(true) => {
+                                        println!("\n[✓] CRYPTOGRAPHIC INTEGRITY AUDIT: PASSED");
+                                        println!("    • Hash Chain: Valid unbroken sequence (0 tampering detected)");
+                                        if let Some(ref sig) = sess.session_signature {
+                                            let sig_short = if sig.len() >= 16 { &sig[..16] } else { sig.as_str() };
+                                            println!("    • Session Signature: HMAC-SHA256:{} (Verified)", sig_short);
+                                        }
+                                        println!("    • Non-Repudiation: Mathematically Confirmed ✓");
+                                    }
+                                    Ok(false) => {
+                                        println!("\n[!] CRYPTOGRAPHIC INTEGRITY AUDIT: FAILED");
+                                        println!("    • Violation: Hash chain mismatch or missing signature");
+                                        println!("    • Status: TAMPERING DETECTED ✗");
+                                    }
+                                    Err(e) => {
+                                        println!("\n[!] CRYPTOGRAPHIC INTEGRITY AUDIT: FAILED");
+                                        println!("    • Violation: {}", e);
+                                        println!("    • Status: TAMPERING DETECTED ✗");
+                                    }
+                                }
+                            }
+                            Err(e) => {
+                                println!("❌ Failed to load session '{}': {}", sess_id, e);
+                            }
+                        }
+                    } else {
+                        println!("Usage: argusd audit verify <session_id>");
+                    }
+                }
+                "list" | _ => {
+                    let sessions = recorder.list_sessions();
+                    println!("Total Flight Sessions Logged: {}\n", sessions.len());
+                    if sessions.is_empty() {
+                        println!("No recorded flight sessions found in {}", workspace_root.join(".argus").join("flight_recorder").display());
+                        println!("Run 'argus interactive' or 'argus mission' to execute governed agent actions.");
+                    } else {
+                        for (i, sess_id) in sessions.iter().rev().take(10).enumerate() {
+                            if let Ok(s) = recorder.load_session(sess_id) {
+                                let verified_badge = match FlightRecorder::verify_session_integrity(&s) {
+                                    Ok(true) => "\x1b[32m[SEALED ✓]\x1b[0m",
+                                    _ => "\x1b[31m[TAMPERED ✗]\x1b[0m",
+                                };
+                                println!("  {}. {} {} | Events: {} | Status: {}",
+                                    i + 1, verified_badge, s.session_id, s.events.len(), s.status);
+                                println!("     Objective: \"{}\"", s.objective);
+                            }
+                        }
+                        println!("\nVerify a session: argusd audit verify <session_id>");
+                    }
+                }
+            }
+            println!("================================================================================\n");
+        }
+
         "help" | _ => {
             println!("\nARGUS {} Native Linux Governance Daemon (argusd)", VERSION);
             println!("Usage: argusd <command>\n");
@@ -356,6 +429,7 @@ fn main() {
             println!("  start          Start background Unix Domain Socket IPC governance service");
             println!("  status         Check status of running argusd daemon service");
             println!("  sandbox [cmd]  Execute command with Landlock LSM, Seccomp-BPF, and Cgroups v2 quotas");
+            println!("  audit [verify] Audit flight recorder sessions and verify cryptographic integrity");
             println!("  doctor         Inspect native runtime architecture and security primitives");
             println!("  capabilities   Inspect registered capability contracts and authority bounds");
             println!("  security-test  Execute native Rust 20-point adversarial security suite");
