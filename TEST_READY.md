@@ -118,4 +118,4 @@ All core requirements and deliverables have been fully implemented, hardened, an
 5. **`docs/demo/`**: Implemented with complete demonstration walkthrough and asset scripts.
 6. **Zero-Trust Network Hardening (`crates/argus-net`)**: Backslash delimiter, percent-encoded IP, 6to4 prefix, and DNS rebinding protections implemented and verified.
 7. **Package Governance (`crates/argus-pkg`)**: Architecture suffixes and qualifier symbols protected.
-8. **Repositioning Guarantee**: Complete purge of "operating system" claims across all documentation and crates. ARGUS is firmly positioned as an autonomous Linux daemon (`argusd`).
+8. **Repositioning Guarantee**: Complete purge of legacy platform claims across all documentation and crates. ARGUS is firmly positioned as an autonomous Linux daemon (`argusd`).

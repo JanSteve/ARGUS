@@ -6,7 +6,7 @@ Modern software infrastructure has reached a tipping point of operational comple
 
 Until today, responding to server incidents has required waking up human site-reliability engineers (SREs) at 3:00 AM to manually inspect sockets with `lsof`, examine process trees with `ps -aux`, and untangle deadlocks.
 
-**ARGUS represents a paradigm shift:** It is not an operating system; it is an autonomous, voice-native system daemon (`argusd`) running **on top of the Linux kernel**. It bridges autonomous intelligence with the raw security and governance of Linux kernel primitives.
+**ARGUS represents a paradigm shift:** Rather than attempting to replace the host environment, ARGUS is an autonomous, voice-native system daemon (`argusd`) running **on top of the Linux kernel**. It bridges autonomous intelligence with the raw security and governance of Linux kernel primitives.
 
 ## The Core Foundations
 

@@ -11,10 +11,12 @@
 ```
 
 > **"Linux already knows how to run programs. ARGUS determines what an AI is permitted to make Linux do."**  
-> *ARGUS is strictly NOT an operating system. It is a high-performance, background system daemon (`argusd`) running on standard Linux to automate incident diagnosis, Landlock-sandboxed remediation, and hands-free voice operations.*
+> *ARGUS is an autonomous background system daemon (`argusd`), running as a user-space supervisor on standard Linux to automate incident diagnosis, Landlock-sandboxed remediation, and hands-free voice operations.*
 
 ---
 
+[![CI](https://github.com/JanSteve/ARGUS/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/JanSteve/ARGUS/actions/workflows/ci.yml)
+[![CI Pipeline](https://img.shields.io/github/actions/workflow/status/JanSteve/ARGUS/ci.yml?branch=main&label=CI%20Pipeline&style=for-the-badge&logo=githubactions)](https://github.com/JanSteve/ARGUS/actions/workflows/ci.yml)
 [![Platform](https://img.shields.io/badge/Platform-Ubuntu%20%7C%20Debian%20%7C%20Fedora%20%7C%20Arch%20%7C%20macOS%20(Shims)-blue?style=for-the-badge&logo=linux)](https://github.com/JanSteve/ARGUS)
 [![Language](https://img.shields.io/badge/Language-Rust%202021%20(14%20Crates)-orange?style=for-the-badge&logo=rust)](https://github.com/JanSteve/ARGUS)
 [![Security Suite](https://img.shields.io/badge/Red--Team%20Security-20%2F20%20PASS%20(100%25)-brightgreen?style=for-the-badge&logo=shield)](https://github.com/JanSteve/ARGUS)
@@ -78,6 +80,22 @@ cargo build --release
 # Runs full Landlock LSM, cgroups v2, and namespace isolation in Ubuntu 24.04 container
 ./scripts/test-linux.sh
 ```
+
+---
+
+## 🎬 89-Second Master Video Demonstration
+
+Watch ARGUS diagnose port collisions, enforce Landlock LSM jail enclosure, and orchestrate neural voice fallbacks:
+
+| Media Asset | Format | Resolution | Duration | Subtitles |
+|---|---|---|---|---|
+| [**`argus-ted-master.mp4`**](docs/demo/argus-ted-master.mp4) | MP4 (H.264 / AAC) | 1080p 60fps | 01:29 (89s) | [SRT](docs/demo/argus-ted-master.srt) · [VTT](docs/demo/argus-ted-master.vtt) |
+
+### Video Scene Breakdown:
+- `00:00 - 00:20`: Daemon Bootstrap & Capability Audit (`argusd doctor`)
+- `00:21 - 00:45`: Autonomous Port 8080 Collision Diagnosis & Safe Process Liberation
+- `00:46 - 01:05`: Adversarial Attack Interception (Path Traversal & Cloud Metadata SSRF blocked)
+- `01:06 - 01:29`: Landlock LSM Kernel Restriction & 4-Tier Voice Fallback Cascade
 
 ---
 
@@ -170,6 +188,71 @@ ARGUS implements a **10-Layer Defense-in-Depth** model designed to resist prompt
 └────────────────────────────────────────────────────────┘
 ```
 
+### 🔒 Landlock LSM Kernel Boundary Architecture
+
+```text
+ ┌─────────────────────────────────────────────────────────────────────────────┐
+ │                     ARGUS KERNEL LANDLOCK LSM BOUNDARY                      │
+ │                     (argus-sandbox :: LandlockSandbox)                      │
+ └─────────────────────────────────────────────────────────────────────────────┘
+                                        │
+                  argusd Fork / Pre-Execve Process Initialization
+                                        │
+                                        ▼
+    ┌───────────────────────────────────────────────────────────────────────┐
+    │ 1. PR_SET_NO_NEW_PRIVS                                                │
+    │    libc::prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)                       │
+    │    => Invariant: Process cannot gain privileges via SUID / SGID       │
+    └───────────────────────────────────────────────────────────────────────┘
+                                        │
+                                        ▼
+    ┌───────────────────────────────────────────────────────────────────────┐
+    │ 2. CREATE RULESET (Syscall 444: SYS_landlock_create_ruleset)          │
+    │    LandlockRulesetAttr { handled_access_fs: ALL_FS_ACCESS }           │
+    │    => Intercepts: READ, WRITE, EXEC, MKDIR, UNLINK, RMDIR, SYMLINK    │
+    └───────────────────────────────────────────────────────────────────────┘
+                                        │
+                                        ▼
+    ┌───────────────────────────────────────────────────────────────────────┐
+    │ 3. POPULATE PATH BENEATH RULES (Syscall 445: SYS_landlock_add_rule)   │
+    └───────────────────────────────────────────────────────────────────────┘
+                     │                                     │
+                     ▼                                     ▼
+  ┌─────────────────────────────────────┐   ┌─────────────────────────────────────┐
+  │ READ-ONLY ENCLOSURE (FULL_FS_READ)  │   │ READ-WRITE JAIL (ALL_FS_ACCESS)     │
+  │ • System Binaries: /usr, /bin       │   │ • Workspace Root ONLY (/workspace)  │
+  │ • Shared Libraries: /lib, /lib64    │   │ • Scoped Temporary Scratch Dirs     │
+  │ • Dynamic Linker: /etc/ld.so.cache  │   │   Permissions:                      │
+  │ • Resolver Config: /etc/resolv.conf │   │   - READ_FILE | WRITE_FILE          │
+  │   Permissions:                      │   │   - MAKE_REG  | REMOVE_FILE         │
+  │   - EXECUTE | READ_FILE | READ_DIR  │   │   - MAKE_DIR  | REMOVE_DIR          │
+  └─────────────────────────────────────┘   │   - MAKE_SYM                        │
+                     │                      └─────────────────────────────────────┘
+                     │                                     │
+                     └──────────────────┬──────────────────┘
+                                        │
+                                        ▼
+    ┌───────────────────────────────────────────────────────────────────────┐
+    │ 4. IRREVERSIBLE KERNEL RESTRICTION (Syscall 446: landlock_restrict)   │
+    │    libc::syscall(446, ruleset_fd, 0)                                  │
+    │    => One-Way Kernel Latch: cannot be revoked, inherited across fork  │
+    └───────────────────────────────────────────────────────────────────────┘
+                                        │
+                                        ▼
+ ═════════════════════════════════════════════════════════════════════════════════
+   ████████████████████   KERNEL LSM SECURITY BOUNDARY   ████████████████████
+ ═════════════════════════════════════════════════════════════════════════════════
+          │                                                │
+    ALLOWED CALLS                                    BLOCKED CALLS (EACCES)
+          │                                                │
+  ✔ open("/bin/ls", O_RDONLY)                      ✘ open("/etc/shadow", O_RDONLY)
+  ✔ open("/lib/libc.so", O_RDONLY)                 ✘ open("/etc/passwd", O_WRONLY)
+  ✔ open("/workspace/code.rs", O_RDWR)             ✘ open("/home/user/.ssh/id_rsa")
+  ✔ unlink("/workspace/temp.tmp")                  ✘ open("/root/.bashrc", O_WRONLY)
+  ✔ stat("/usr/include")                           ✘ open("/dev/mem", O_RDWR)
+                                                   ✘ mknod("/workspace/char_dev")
+```
+
 ### 🛑 20-Point Adversarial Red Team Security Benchmark (`argus security-test`)
 
 Every release of ARGUS is verified against a 20-point adversarial test matrix with a **100% pass rate**:
@@ -204,38 +287,85 @@ Every release of ARGUS is verified against a 20-point adversarial test matrix wi
 ARGUS is built for **real-time voice interaction with Linux servers and workstations**. Recognizing that network connectivity and cloud quotas fail, the voice engine uses an intelligent 4-tier waterfall fallback:
 
 ```text
-               Spoken User Input ("Fix port 8080 collision")
-                                     │
-                                     ▼
-                   ┌───────────────────────────────────┐
-                   │       argus-voice Pipeline        │
-                   └─────────────────┬─────────────────┘
-                                     │
-                           Tier 1: Cloud Neural TTS
-                            (MiniMax / ElevenLabs)
-                                     │
-                          ┌──────────┴──────────┐
-                       SUCCESS                FAIL (Rate limit / No network)
-                          │                     │
-                          │                     ▼
-                          │          Tier 2: Local Neural TTS
-                          │             (Piper / Kokoro)
-                          │                     │
-                          │           ┌─────────┴─────────┐
-                          │        SUCCESS              FAIL (Missing weights)
-                          │           │                   │
-                          │           │                   ▼
-                          │           │         Tier 3: Local Offline TTS
-                          │           │               (espeak-ng)
-                          │           │                   │
-                          │           │         ┌─────────┴─────────┐
-                          │           │      SUCCESS              FAIL
-                          │           │         │                   │
-                          └───────────┴─────────┴─────────┐         ▼
-                                                          │  Tier 4: System Native
-                                                          │   (macOS 'say' / ALSA)
-                                                          ▼
-                                            Audio Playback via Soundcard
+ ┌─────────────────────────────────────────────────────────────────────────────┐
+ │                    ARGUS 2.0 NEURAL VOICE CASCADE PIPELINE                  │
+ │                      (argus-voice :: VoiceOrchestrator)                     │
+ └─────────────────────────────────────────────────────────────────────────────┘
+                                        │
+                         User Spoken / CLI Input String
+                                        │
+                                        ▼
+                   ┌─────────────────────────────────────────┐
+                   │       Check ARGUS_OFFLINE_ONLY ?        │
+                   └─────────────────────────────────────────┘
+                                  │            │
+                         NO (Cloud Mode)   YES (Offline Enforced)
+                                  │            │
+                                  ▼            │
+  ┌─────────────────────────────────────────┐  │
+  │ TIER 1: MiniMax Speech-01-HD Neural     │  │
+  │ • Voice: "female-queen" (Imposing Queen)│  │
+  │ • Endpoint: api.minimax.io/v1/t2a_v2    │  │
+  │ • Format: 32kHz MP3, 128kbps            │  │
+  │ • Timeout: 2.0s Hard Network Guard      │  │
+  └─────────────────────────────────────────┘  │
+            │                  │               │
+       [Success]         [Fail / Rate Limit /  │
+            │             Missing Key / Timeout]
+            ▼                  │               │
+  ┌──────────────────┐         ▼               │
+  │ Emit Audio Stream│   ┌─────────────────────────────────────────┐
+  │ Latency: <850ms  │   │ TIER 2: ElevenLabs Multilingual v2      │
+  │ Tier: Tier1      │   │ • Voice ID: EXAVITQu4vr4xnSDxMaL (Sarah)│
+  └──────────────────┘   │ • Endpoint: api.elevenlabs.io/v1/tts    │
+                         │ • Stability: 0.55 | Similarity: 0.85    │
+                         │ • Timeout: 2.0s Hard Network Guard      │
+                         └─────────────────────────────────────────┘
+                                   │                  │
+                              [Success]         [Fail / Quota /
+                                   │             Timeout / Key]
+                                   ▼                  │
+                         ┌──────────────────┐         ▼
+                         │ Emit Audio Stream│   ┌─────────────────────────────┐
+                         │ Latency: <1100ms │   │ Skip to Sovereign Offline   │◄───┘
+                         │ Tier: Tier2      │   └─────────────────────────────┘
+                         └──────────────────┘                 │
+                                                              ▼
+                                  ┌─────────────────────────────────────────┐
+                                  │ TIER 3: Local Neural TTS                │
+                                  │ • Engine: Piper / Kokoro ONNX Runtime   │
+                                  │ • Weights: Local Sovereign Model Cache  │
+                                  │ • Zero External Network Connectivity    │
+                                  └─────────────────────────────────────────┘
+                                            │                  │
+                                       [Success]         [Model Weights
+                                            │             Not Loaded]
+                                            ▼                  │
+                                  ┌──────────────────┐         ▼
+                                  │ Emit Audio Stream│   ┌─────────────────────────────────────────┐
+                                  │ Latency: <400ms  │   │ TIER 4: Emergency Offline System TTS    │
+                                  │ Tier: Tier3      │   │ • Linux: espeak-ng -v en-gb-x-rp -s 160 │
+                                  └──────────────────┘   │          fallback -> spd-say -t female2 │
+                                                         │ • macOS: say -v Kate -r 175             │
+                                                         │          fallback -> say -v Serena      │
+                                                         │ • Universal Execution Guarantee         │
+                                                         └─────────────────────────────────────────┘
+                                                                       │
+                                                                  [Execution]
+                                                                       │
+                                                                       ▼
+                                                         ┌───────────────────────────┐
+                                                         │ Emit System Audio / Voice │
+                                                         │ Latency: <80ms            │
+                                                         │ Tier: Tier4Emergency      │
+                                                         └───────────────────────────┘
+                                                                       │
+                                                                       ▼
+                         ┌───────────────────────────────────────────────────────────┐
+                         │ Output: VoiceSynthesisResult                              │
+                         │ { success: true, tier_used, latency_ms, failover_history }│
+                         │ Logged to Cryptographic Flight Recorder (SHA-256 Chain)   │
+                         └───────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -292,9 +422,9 @@ ARGUS is backed by one of the most rigorous automated testing pipelines in open-
 
 ### Why Autonomous Daemon Infrastructure Wins
 - **$50B+ Total Addressable Market (TAM):** Encompasses Enterprise IT Operations Management ($40B), Cloud Infrastructure Monitoring ($18B), and Cyber Incident Response ($12B).
-- **Zero OS Replacement Friction:** Competitors attempting to sell "AI Operating Systems" face immense enterprise sales friction—Fortune 500 banks and healthcare providers cannot replace Linux with an unproven OS kernel. **ARGUS installs on standard Linux in 60 seconds.**
+- **Zero Host Kernel Friction:** Competitors attempting to introduce novel "AI Platforms" face immense enterprise sales friction—Fortune 500 banks and healthcare providers cannot replace proven Linux infrastructure with experimental kernels. **ARGUS installs on standard Linux in 60 seconds.**
 - **Hardware-Agnostic & Air-Gapped Ready:** Runs on commodity x86_64 servers, AWS EC2, Google Cloud, sovereign government on-premise clusters, and edge ARM64 devices (Raspberry Pi, NVIDIA Jetson).
-- **Compliance Built-In:** The append-only, SHA-256 hash-chained Flight Recorder provides native compliance proofs for SOC 2 Type II, ISO 27001, and HIPAA audit trails.
+- **Cryptographic Auditability:** Cryptographically append-only SHA-256 hash-chained flight recorder providing deterministic auditability for every autonomous diagnostic and remediation decision.
 
 ---
 
@@ -321,6 +451,28 @@ python3 tests/run_all_e2e.py
 - **macOS:** macOS 13+ (Ventura, Sonoma, Sequoia) via native Darwin shims
 - **Rust Toolchain:** Rust 1.78+ (Edition 2021)
 - **Optional Dependencies:** `espeak-ng` (local TTS), `bubblewrap` (Linux namespace isolation)
+
+---
+
+## ⚠️ Technical Boundaries & Known Limitations
+
+To maintain uncompromising technical transparency, the following architectural boundaries and runtime limitations are explicitly documented:
+
+### 1. Landlock LSM Syscall Enforcement Boundary
+- **Linux Kernel Support:** Native Landlock LSM security profile enforcement operates via ABI v1–v4 on Linux kernels 5.15 and newer (Linux 6.2+ recommended for TCP bind/connect port gating under ABI v3+). Sandboxing executes entirely in unprivileged user space without requiring `CAP_SYS_ADMIN` or root privileges.
+- **macOS / Darwin Behavior:** Apple Darwin kernels lack the Linux Security Module (LSM) framework and the Landlock subsystem. When running natively on macOS, ARGUS utilizes conditional compilation (`#[cfg(not(target_os = "linux"))]`) to engage development fallback shims and user-space path verification. Full kernel-enforced sandboxing must be verified inside a Linux container using `./scripts/test-linux.sh`.
+
+### 2. Out-of-Band Telephony & Cellular Gateway (`argus-phone`)
+- **Credential Requirement:** Autonomous PSTN incident dispatch and voice authorization callouts require user-provided third-party API credentials (Twilio Account SID / Auth Token, or Vapi.ai API Key and Assistant ID).
+- **Graceful Fallback:** If telephony credentials are omitted or network egress is partitioned, `argus-phone` degrades gracefully to local IPC notifications, terminal alert banners, and structured log events without halting daemon operations.
+
+### 3. Voice & Speech Synthesis Stack
+- **Local Neural Voice:** Local on-device TTS via Piper/Kokoro neural models requires compiled ONNX runtime support and local voice model weights.
+- **Headless Fallback:** If local neural models are absent and cloud TTS endpoints are unreachable, the 4-tier voice cascade safely falls back to offline system speech (`espeak-ng` on Linux, `say` on macOS), or operates purely via headless terminal and JSON-RPC IPC.
+
+### 4. Cryptographic Determinism vs. Organizational Compliance
+- **Audit Ledger Grounding:** ARGUS implements a cryptographically append-only SHA-256 hash-chained flight recorder providing deterministic auditability for every autonomous diagnostic and remediation decision.
+- **Certification Scope:** ARGUS provides the cryptographic evidence primitives necessary for auditability. It does not claim turnkey enterprise security certifications out-of-the-box, as formal compliance evaluations assess overall enterprise administrative procedures, personnel controls, and organizational governance rather than standalone agent daemon runtimes.
 
 ---
 

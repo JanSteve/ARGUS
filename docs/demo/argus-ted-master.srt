@@ -1,0 +1,164 @@
+1
+00:00:00,000 --> 00:00:01,369
+Every single day,
+
+2
+00:00:01,369 --> 00:00:05,023
+engineers lose sleep debugging production servers at three
+
+3
+00:00:05,023 --> 00:00:05,936
+AM Why?
+
+4
+00:00:05,936 --> 00:00:09,589
+Because existing AI models live trapped inside browser
+
+5
+00:00:09,589 --> 00:00:10,046
+tabs,
+
+6
+00:00:10,046 --> 00:00:13,699
+completely blind to the operating systems where code
+
+7
+00:00:13,699 --> 00:00:14,613
+actually runs.
+
+8
+00:00:14,613 --> 00:00:17,690
+Now you might wonder: why not just hand
+
+9
+00:00:17,690 --> 00:00:19,997
+an AI agent root shell access?
+
+10
+00:00:19,997 --> 00:00:23,074
+Because that is like handing a toddler a
+
+11
+00:00:23,074 --> 00:00:23,459
+flamethrower.
+
+12
+00:00:23,459 --> 00:00:26,536
+One prompt injection or hallucinated command can delete
+
+13
+00:00:26,536 --> 00:00:28,074
+your entire production database.
+
+14
+00:00:28,074 --> 00:00:30,689
+That is why we built ARGUS.
+
+15
+00:00:30,689 --> 00:00:34,175
+Engineered in memory-safe Rust across fourteen sovereign crates
+
+16
+00:00:34,175 --> 00:00:37,662
+by R Jan Steve Daniel for the Nebius
+
+17
+00:00:37,662 --> 00:00:39,841
+and NVIDIA Global AI Hackathon.
+
+18
+00:00:39,841 --> 00:00:43,327
+A zero-trust autonomous daemon running directly on Linux.
+
+19
+00:00:43,327 --> 00:00:45,747
+Security is not an afterthought;
+
+20
+00:00:45,747 --> 00:00:47,683
+it is our foundation.
+
+21
+00:00:47,683 --> 00:00:51,555
+ARGUS cages every tool execution inside Landlock Linux
+
+22
+00:00:51,555 --> 00:00:52,523
+Security Modules,
+
+23
+00:00:52,523 --> 00:00:54,459
+cgroups v2 resource ceilings,
+
+24
+00:00:54,459 --> 00:00:55,911
+and unprivileged namespaces.
+
+25
+00:00:55,911 --> 00:00:58,330
+Even if an agent hallucinates,
+
+26
+00:00:58,330 --> 00:01:00,266
+the kernel forbids escapes.
+
+27
+00:01:00,266 --> 00:01:03,631
+When a port collision freezes your web service,
+
+28
+00:01:03,631 --> 00:01:06,575
+ARGUS detects the failure through eBPF telemetry,
+
+29
+00:01:06,575 --> 00:01:08,257
+investigates the rogue PID,
+
+30
+00:01:08,257 --> 00:01:10,780
+executes safe remediation in two seconds,
+
+31
+00:01:10,780 --> 00:01:14,145
+and dispatches a cellular voice call to the
+
+32
+00:01:14,145 --> 00:01:14,986
+lead engineer.
+
+33
+00:01:14,986 --> 00:01:17,915
+This is what computing should look like.
+
+34
+00:01:17,915 --> 00:01:21,262
+An operating system where AI is not an
+
+35
+00:01:21,262 --> 00:01:22,099
+intrusive sidebar,
+
+36
+00:01:22,099 --> 00:01:23,354
+but a reliable,
+
+37
+00:01:23,354 --> 00:01:24,610
+sovereign kernel guardian.
+
+38
+00:01:24,610 --> 00:01:25,865
+Welcome to ARGUS.
+
+39
+00:01:25,865 --> 00:01:26,283
+Autonomous,
+
+40
+00:01:26,283 --> 00:01:26,702
+memory-safe,
+
+41
+00:01:26,702 --> 00:01:27,957
+and truly sovereign.
+

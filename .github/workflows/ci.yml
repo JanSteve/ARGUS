@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, batman ]
+  pull_request:
+    branches: [ main, batman ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: CI (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, macos-latest ]
+
+    env:
+      CARGO_TERM_COLOR: always
+      ARGUS_REPO_PATH: ${{ github.workspace }}
+      RUST_BACKTRACE: 1
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install System Dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential pkg-config libssl-dev bubblewrap espeak-ng
+
+      - name: Setup Rust Stable Toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: Setup Python 3
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Verify Workspace Compilation (cargo check --workspace)
+        run: cargo check --workspace --verbose
+
+      - name: Run Workspace Tests (14 Crates)
+        run: cargo test --workspace --verbose
+
+      - name: Run Integration Test Suite (tests/Cargo.toml)
+        run: cargo test --manifest-path tests/Cargo.toml --verbose
+
+      - name: Run E2E Test Suite (136/136 Tests)
+        run: python3 tests/run_all_e2e.py

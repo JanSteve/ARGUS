@@ -6,6 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV RUSTUP_HOME=/usr/local/rustup
 ENV CARGO_HOME=/usr/local/cargo
 ENV PATH=/usr/local/cargo/bin:$PATH
+ENV CARGO_TARGET_DIR=/tmp/cargo-target
 
 # Install system dependencies & build tools (including bubblewrap for user namespaces)
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -20,6 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     iproute2 \
     lsof \
     ca-certificates \
+    python3 \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Rust stable
@@ -27,5 +29,5 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --de
 
 WORKDIR /workspace
 
-# Default command: build and run full test suite + 20-point security benchmark
-CMD ["/bin/bash", "-c", "cargo check --workspace && cargo test --workspace && cargo run --bin argusd -- security-test"]
+# Default command: build and run full test suite + 20-point security benchmark + E2E suite
+CMD ["/bin/bash", "-c", "cargo check --workspace && cargo test --workspace && cargo run --bin argusd -- security-test && python3 tests/run_all_e2e.py"]

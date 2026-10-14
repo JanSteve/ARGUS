@@ -32,8 +32,11 @@ if command -v docker &> /dev/null && docker info &> /dev/null; then
     
     echo ""
     echo -e "${BLUE}▶ Executing 14-crate workspace test suite & 20-point security benchmark...${NC}"
-    docker run --rm --privileged -v "${ROOT_DIR}:/workspace" argus-test-env \
-        /bin/bash -c "cargo test --workspace && cargo run --bin argusd -- security-test"
+    docker run --rm --privileged \
+        -v "${ROOT_DIR}:/workspace" \
+        -v /workspace/target \
+        argus-test-env \
+        /bin/bash -c "cargo check --workspace && cargo test --workspace && cargo run --bin argusd -- security-test && python3 tests/run_all_e2e.py"
 
     echo ""
     echo -e "${BOLD}${GREEN}✓ All Linux verification tests and 20 security benchmarks PASSED!${NC}"
@@ -48,6 +51,12 @@ else
     
     echo -e "${BLUE}▶ Running workspace tests natively on macOS...${NC}"
     cargo test --workspace
+
+    echo -e "${BLUE}▶ Running integration tests natively on macOS...${NC}"
+    cargo test --manifest-path tests/Cargo.toml
+
+    echo -e "${BLUE}▶ Running E2E test suite natively on macOS...${NC}"
+    python3 tests/run_all_e2e.py
     
     echo ""
     echo -e "${BOLD}${GREEN}✓ Native macOS compilation and tests PASSED!${NC}"
@@ -55,4 +64,3 @@ else
 fi
 
 exit 0
-
