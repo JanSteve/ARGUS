@@ -7,6 +7,7 @@ export const siteConfig = {
     links: [
       { label: "About", href: "#about" },
       { label: "Agents", href: "#agents" },
+      { label: "Playground", href: "#playground" },
       { label: "Why Now", href: "#why-now" },
     ],
     cta: {

@@ -1,0 +1,17 @@
+[package]
+name = "argus-e2e-tests"
+version = "0.2.0"
+edition = "2021"
+authors = ["R Jan Steve Daniel"]
+description = "Comprehensive E2E Integration and Opaque-Box Test Suite for ARGUS Autonomous Linux Agent Daemon"
+
+[workspace]
+
+[dependencies]
+argus-core = { path = "../crates/argus-core" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+sha2 = "0.10"
+hmac = "0.12"
+hex = "0.4"
+

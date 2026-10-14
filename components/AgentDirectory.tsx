@@ -3,9 +3,11 @@
 import { useState, useMemo } from "react";
 import { agents, agentGroups, LegalAgent } from "@/content/agents";
 import { OrchestrationFlow } from "./OrchestrationFlow";
+import { AgentModal } from "./AgentModal";
 
 export function AgentDirectory() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedAgent, setSelectedAgent] = useState<LegalAgent | null>(null);
   // Accordion state for mobile: first group open by default
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     "Commercial & Regulatory Law": true,
@@ -124,10 +126,14 @@ export function AgentDirectory() {
                     {groupItems.map((agent) => (
                       <tr
                         key={agent.name}
-                        className="border-b border-slate/15 hover:bg-court-paper/80 transition-colors"
+                        onClick={() => setSelectedAgent(agent)}
+                        className="border-b border-slate/15 hover:bg-court-paper/90 cursor-pointer transition-colors group"
                       >
-                        <td className="py-4 px-4 font-semibold text-ink-navy">
-                          {agent.name}
+                        <td className="py-4 px-4 font-semibold text-ink-navy flex items-center gap-2">
+                          <span>{agent.name}</span>
+                          <span className="text-[10px] font-mono text-gazette-brass opacity-0 group-hover:opacity-100 transition-opacity">
+                            [Inspect →]
+                          </span>
                         </td>
                         <td className="py-4 px-4 text-xs font-medium text-slate">
                           {agent.domain}
@@ -188,10 +194,15 @@ export function AgentDirectory() {
                 {isOpen && (
                   <div className="p-4 divide-y divide-slate/15 space-y-4">
                     {groupItems.map((agent) => (
-                      <div key={agent.name} className="pt-4 first:pt-0 space-y-2">
+                      <div
+                        key={agent.name}
+                        onClick={() => setSelectedAgent(agent)}
+                        className="pt-4 first:pt-0 space-y-2 cursor-pointer hover:bg-slate/5 p-2 rounded-sm transition-colors"
+                      >
                         <div className="flex items-center justify-between">
-                          <h4 className="font-sans text-sm font-semibold text-ink-navy">
-                            {agent.name}
+                          <h4 className="font-sans text-sm font-semibold text-ink-navy flex items-center gap-2">
+                            <span>{agent.name}</span>
+                            <span className="text-[10px] font-mono text-gazette-brass">[Inspect →]</span>
                           </h4>
                           <span
                             className="w-2 h-2 rounded-sm bg-verdigris inline-block"
@@ -237,6 +248,16 @@ export function AgentDirectory() {
             12 agents. Every law. One platform.
           </p>
         </div>
+
+        {/* Deep-Dive Agent Modal */}
+        <AgentModal
+          agent={selectedAgent}
+          onClose={() => setSelectedAgent(null)}
+          onTestInPlayground={() => {
+            const el = document.getElementById("playground");
+            if (el) el.scrollIntoView({ behavior: "smooth" });
+          }}
+        />
       </div>
     </section>
   );

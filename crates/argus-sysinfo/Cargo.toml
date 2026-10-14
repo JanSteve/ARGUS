@@ -1,0 +1,10 @@
+[package]
+name = "argus-sysinfo"
+version = "0.2.0"
+edition = "2021"
+description = "ARGUS 2.0 Linux System Telemetry, Health Monitoring, and Diagnostic Engine"
+
+[dependencies]
+argus-core = { path = "../argus-core" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"

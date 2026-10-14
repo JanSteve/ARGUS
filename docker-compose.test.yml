@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  argus-test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    privileged: true
+    volumes:
+      - .:/workspace
+      - cargo-cache:/usr/local/cargo/registry
+      - target-cache:/workspace/target
+    environment:
+      - RUST_BACKTRACE=1
+      - ARGUS_ENV=test
+    command: /bin/bash -c "cargo test --workspace && cargo run --bin argusd -- security-test"
+
+volumes:
+  cargo-cache:
+  target-cache:

@@ -31,3 +31,16 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Rust artifacts
+target/
+**/target/
+*.rs.bk
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Logs and scratch
+*.log
+.agents/

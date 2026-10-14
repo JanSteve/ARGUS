@@ -1,0 +1,31 @@
+# ARGUS Autonomous Linux Agent - Docker Test & Verification Harness
+# Allows testing real Linux cgroups v2, user namespaces, Landlock LSM, and IPC on macOS
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV RUSTUP_HOME=/usr/local/rustup
+ENV CARGO_HOME=/usr/local/cargo
+ENV PATH=/usr/local/cargo/bin:$PATH
+
+# Install system dependencies & build tools (including bubblewrap for user namespaces)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    git \
+    pkg-config \
+    libssl-dev \
+    espeak-ng \
+    bubblewrap \
+    procps \
+    iproute2 \
+    lsof \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Rust stable
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+
+WORKDIR /workspace
+
+# Default command: build and run full test suite + 20-point security benchmark
+CMD ["/bin/bash", "-c", "cargo check --workspace && cargo test --workspace && cargo run --bin argusd -- security-test"]
