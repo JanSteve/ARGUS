@@ -44,3 +44,10 @@ __pycache__/
 # Logs and scratch
 *.log
 .agents/
+
+# Documents & reports
+*.docx
+make_full_report.py
+ARD.md
+
+

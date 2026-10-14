@@ -487,5 +487,5 @@ To maintain uncompromising technical transparency, the following architectural b
 
 ## 📜 License & Intellectual Property
 
-Source-Available & Proprietary. © 2026 R Jan Steve Daniel & Soulvai Technologies. All rights reserved.  
-Registered in India · Built for Global Enterprise Scale.
+Source-Available & Proprietary. © 2026 R Jan Steve Daniel. All rights reserved.  
+Built for Global Developer & Enterprise Scale.
